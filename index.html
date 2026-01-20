@@ -3,191 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - The Billionaire Journey</title>
+    <title>Spendio Pro - Fix Version</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --bg: #08090a;
-            --sidebar: #0f1113;
-            --card: #15181c;
-            --card-hover: #1c2126;
-            --border: #262c33;
-            --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.2);
-            --income: #10b981;
-            --expense: #ef4444;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-            --sidebar-width: 280px;
+            --bg: #08090a; --sidebar: #0f1113; --card: #15181c; --border: #262c33;
+            --primary: #3b82f6; --income: #10b981; --expense: #ef4444;
+            --text: #f8fafc; --text-dim: #94a3b8;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background-color: var(--bg); color: var(--text); 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            display: flex; height: 100vh; overflow: hidden;
-        }
-
-        /* Sidebar Standard Layout */
-        .sidebar {
-            width: var(--sidebar-width); background: var(--sidebar);
-            border-right: 1px solid var(--border); display: flex;
-            flex-direction: column; padding: 40px 24px; height: 100vh;
-            flex-shrink: 0; transition: all 0.3s ease;
-        }
-        .logo { font-size: 26px; font-weight: 800; margin-bottom: 48px; color: var(--primary); display: flex; align-items: center; gap: 12px; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
         
-        .nav-group { flex-grow: 1; }
-        .nav-item {
-            display: flex; align-items: center; gap: 14px; padding: 14px 18px;
-            border-radius: 12px; color: var(--text-dim); text-decoration: none;
-            margin-bottom: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 15px;
-        }
-        .nav-item i { font-size: 18px; width: 24px; text-align: center; }
+        /* Layout */
+        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 40px 24px; display: flex; flex-direction: column; }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; }
+        
+        /* Components */
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; color: var(--text-dim); cursor: pointer; font-weight: 600; margin-bottom: 5px; }
         .nav-item:hover, .nav-item.active { background: var(--card); color: white; }
-        .nav-item.active { border-left: 4px solid var(--primary); background: linear-gradient(90deg, var(--primary-glow), transparent); }
+        .nav-item.active { border-left: 4px solid var(--primary); }
 
-        .sidebar-footer { border-top: 1px solid var(--border); padding-top: 32px; }
-        .select-nav {
-            width: 100%; background: var(--card); color: var(--text-dim);
-            border: 1px solid var(--border); padding: 12px; border-radius: 12px;
-            margin-bottom: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer;
-        }
+        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 20px; flex: 1; }
+        .stats-grid { display: flex; gap: 20px; }
+        
+        .goal-card { background: linear-gradient(135deg, #1e293b, #0f172a); padding: 30px; border-radius: 24px; border: 1px solid var(--border); }
+        .progress-track { background: rgba(255,255,255,0.05); height: 10px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
+        .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1s; }
 
-        /* Main Dashboard Content */
-        .main-content { flex-grow: 1; padding: 48px; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; color: var(--text-dim); padding: 15px; border-bottom: 1px solid var(--border); font-size: 13px; }
+        td { padding: 15px; border-bottom: 1px solid #1c2126; font-size: 14px; }
 
-        .profile-chip {
-            display: flex; align-items: center; gap: 12px; background: var(--card);
-            padding: 8px 16px; border-radius: 40px; border: 1px solid var(--border);
-            cursor: pointer; transition: 0.2s;
-        }
-        .profile-chip:hover { border-color: var(--primary); }
-        .avatar { width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
-
-        /* Goal Progress Card */
-        .goal-card {
-            background: linear-gradient(135deg, #1e293b, #0f172a); padding: 32px;
-            border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .goal-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
-        .goal-info h3 { font-size: 18px; font-weight: 700; color: var(--text); }
-        .percent-tag { font-size: 24px; font-weight: 800; color: var(--primary); }
-        .progress-track { background: rgba(255,255,255,0.05); height: 12px; border-radius: 20px; overflow: hidden; position: relative; }
-        .progress-fill { background: var(--primary); height: 100%; width: 0%; border-radius: 20px; box-shadow: 0 0 20px var(--primary); transition: 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
-
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 32px; border-radius: 24px; transition: 0.3s; }
-        .stat-card:hover { border-color: var(--primary); transform: translateY(-5px); background: var(--card-hover); }
-        .stat-card label { color: var(--text-dim); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-        .stat-card .val { font-size: 32px; font-weight: 800; }
-
-        /* Charts Container */
-        .charts-row { display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 24px; }
-        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 32px; border-radius: 28px; height: 480px; }
-        .chart-box h4 { margin-bottom: 24px; font-size: 18px; font-weight: 700; color: var(--text-dim); display: flex; align-items: center; gap: 10px; }
-
-        /* Modern Table */
-        .table-wrap { background: var(--card); border: 1px solid var(--border); padding: 32px; border-radius: 28px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; color: var(--text-dim); padding: 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; text-transform: uppercase; }
-        td { padding: 20px 16px; border-bottom: 1px solid #1c2126; font-size: 15px; font-weight: 500; }
-        .cat-badge { background: #262c33; padding: 6px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; }
-
-        /* Auth Screen */
+        /* Auth & Modal */
         #authSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .auth-card { background: var(--card); border: 1px solid var(--border); padding: 48px; border-radius: 32px; width: 100%; max-width: 420px; text-align: center; }
-        .auth-card h2 { font-size: 28px; font-weight: 800; margin-bottom: 32px; }
-        input, select { width: 100%; padding: 16px; background: #0a0a0a; border: 1px solid var(--border); color: white; border-radius: 14px; margin-bottom: 20px; font-family: inherit; font-size: 15px; outline: none; }
-        input:focus { border-color: var(--primary); }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 14px; cursor: pointer; font-weight: 700; font-size: 16px; width: 100%; box-shadow: 0 8px 24px var(--primary-glow); }
+        .auth-card { background: var(--card); padding: 40px; border-radius: 24px; width: 350px; text-align: center; border: 1px solid var(--border); }
+        input, select { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 700; width: 100%; }
 
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 10000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 48px; border-radius: 32px; border: 1px solid var(--border); width: 90%; max-width: 440px; }
-
-        @media (max-width: 1024px) {
-            .sidebar { width: 0; padding: 0; visibility: hidden; }
-            .main-content { padding: 24px; }
-            .stats-grid, .charts-row { grid-template-columns: 1fr; }
-        }
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); padding: 40px; border-radius: 24px; width: 380px; }
     </style>
 </head>
 <body>
 
     <div id="authSection">
         <div class="auth-card">
-            <h2 style="color:var(--primary);"><i class="fa-solid fa-rocket"></i> Spendio Pro</h2>
-            <p style="color:var(--text-dim); margin-bottom: 32px;">Welcome to your Billionaire Journey</p>
-            <input type="email" id="email" placeholder="Email Address">
+            <h2 style="margin-bottom:20px; color:var(--primary);">Spendio Login</h2>
+            <input type="email" id="email" placeholder="Email">
             <input type="password" id="password" placeholder="Password">
-            <button class="btn-main" onclick="handleLogin()">Login to Dashboard <i class="fa-solid fa-chevron-right" style="margin-left:8px;"></i></button>
+            <button class="btn-main" onclick="handleLogin()">Login / Sign Up</button>
         </div>
     </div>
 
-    <div id="appContainer" style="display:none; width: 100%;">
+    <div id="appContainer" style="display:none; width:100%;">
         <div class="sidebar">
-            <div class="logo"><i class="fa-solid fa-gem"></i> Spendio</div>
+            <h2 style="color:var(--primary); margin-bottom:40px;"><i class="fa-solid fa-gem"></i> Spendio</h2>
             <div class="nav-group">
-                <div class="nav-item active"><i class="fa-solid fa-grid-2"></i> <span id="navDash">Overview</span></div>
-                <div class="nav-item" onclick="openModal()"><i class="fa-solid fa-plus-circle"></i> <span id="navAdd">Add Transaction</span></div>
-                <div class="nav-item"><i class="fa-solid fa-chart-pie"></i> <span>Analytics</span></div>
-                <div class="nav-item"><i class="fa-solid fa-gear"></i> <span>Settings</span></div>
+                <div class="nav-item active"><i class="fa-solid fa-house"></i> Overview</div>
+                <div class="nav-item" onclick="openModal()"><i class="fa-solid fa-plus"></i> Add Record</div>
             </div>
-            
-            <div class="sidebar-footer">
-                <select class="select-nav" id="langSel" onchange="changeLanguage(this.value)">
-                    <option value="en">English</option>
-                    <option value="my">မြန်မာဘာသာ</option>
-                </select>
-                <select class="select-nav" id="currSel" onchange="changeCurrency(this.value)">
+            <div style="margin-top:auto;">
+                <select id="currSel" onchange="changeCurrency(this.value)" class="select-nav" style="background:#111; border:1px solid #333; color:white; padding:10px; width:100%; border-radius:10px;">
                     <option value="THB">Thai Baht (฿)</option>
                     <option value="USD">US Dollar ($)</option>
                     <option value="MMK">Myanmar Kyat (Ks)</option>
                 </select>
-                <div class="nav-item" onclick="handleLogout()" style="color: var(--expense); margin-top: 20px;"><i class="fa-solid fa-power-off"></i> <span id="navOut">Sign Out</span></div>
+                <div class="nav-item" onclick="handleLogout()" style="color:var(--expense); margin-top:10px;"><i class="fa-solid fa-power-off"></i> Logout</div>
             </div>
         </div>
 
         <div class="main-content">
-            <div class="header">
-                <h1 id="headTitle">Dashboard</h1>
-                <div class="profile-chip">
-                    <div class="avatar" id="userInitial">A</div>
-                    <span id="displayEmail" style="font-weight: 700; font-size: 14px;">admin@mail.com</span>
-                </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h1>Dashboard</h1>
+                <div style="background:var(--card); padding:8px 15px; border-radius:20px; border:1px solid var(--border);" id="displayEmail"></div>
             </div>
 
             <div class="goal-card">
-                <div class="goal-info">
-                    <h3 id="goalText"><i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> Goal: $50,000 Journey</h3>
-                    <div class="percent-tag" id="percentLabel">0.0%</div>
+                <div style="display:flex; justify-content:space-between;">
+                    <h3><i class="fa-solid fa-bullseye"></i> Goal: $50,000 Journey</h3>
+                    <h2 id="percentLabel" style="color:var(--primary);">0%</h2>
                 </div>
                 <div class="progress-track"><div class="progress-fill" id="goalBar"></div></div>
-                <p id="remainText" style="margin-top: 16px; font-size: 14px; font-weight: 600; color: var(--text-dim);"></p>
+                <p id="remainText" style="margin-top:10px; color:var(--text-dim); font-size:14px;"></p>
             </div>
 
             <div class="stats-grid">
-                <div class="stat-card"><label id="lblInc"><i class="fa-solid fa-arrow-down-long" style="color:var(--income)"></i> Income</label><div class="val" id="totalIncome" style="color:var(--income);"></div></div>
-                <div class="stat-card"><label id="lblExp"><i class="fa-solid fa-arrow-up-long" style="color:var(--expense)"></i> Expenses</label><div class="val" id="totalExpense" style="color:var(--expense);"></div></div>
-                <div class="stat-card"><label id="lblNet"><i class="fa-solid fa-wallet" style="color:var(--primary)"></i> Net Balance</label><div class="val" id="netBalance" style="color:var(--primary);"></div></div>
+                <div class="stat-card"><label>Income</label><div class="val" id="totalIncome" style="color:var(--income);">0</div></div>
+                <div class="stat-card"><label>Expenses</label><div class="val" id="totalExpense" style="color:var(--expense);">0</div></div>
+                <div class="stat-card"><label>Net Balance</label><div class="val" id="netBalance" style="color:var(--primary);">0</div></div>
             </div>
 
-            <div class="charts-row">
-                <div class="chart-box"><h4 id="headBreak"><i class="fa-solid fa-chart-pie"></i> Distribution</h4><div style="height:320px;"><canvas id="donutChart"></canvas></div></div>
-                <div class="chart-box"><h4 id="headTrend"><i class="fa-solid fa-chart-line"></i> Performance Trend</h4><div style="height:320px;"><canvas id="lineChart"></canvas></div></div>
-            </div>
-
-            <div class="table-wrap">
-                <h4 id="headRecent" style="margin-bottom: 24px;"><i class="fa-solid fa-clock-rotate-left"></i> Transaction History</h4>
+            <div style="background:var(--card); padding:30px; border-radius:24px; border:1px solid var(--border);">
+                <h3>Transaction History</h3>
                 <table>
                     <thead>
-                        <tr><th id="thDate">Date</th><th id="thTitle">Description</th><th id="thCat">Category</th><th id="thAmt">Amount</th><th id="thAct">Action</th></tr>
+                        <tr><th>Date</th><th>Item</th><th>Category</th><th>Amount</th><th>Action</th></tr>
                     </thead>
                     <tbody id="transactionList"></tbody>
                 </table>
@@ -197,19 +110,18 @@
 
     <div id="modal">
         <div class="modal-content">
-            <h2 id="mHead" style="margin-bottom: 32px;"><i class="fa-solid fa-circle-plus"></i> Add Transaction</h2>
-            <input type="text" id="tIn" placeholder="Item Name">
+            <h2 style="margin-bottom:20px;">New Record</h2>
+            <input type="text" id="tIn" placeholder="What for?">
             <input type="number" id="aIn" placeholder="Amount">
-            <select id="cIn" onchange="toggleCustomInput()">
+            <select id="cIn">
                 <option value="Income">Income (+)</option>
                 <option value="Trading">Trading</option>
-                <option value="Food">Food & Drink</option>
-                <option value="Others">Others (Custom)</option>
+                <option value="Food">Food</option>
+                <option value="Others">Others</option>
             </select>
-            <input type="text" id="customCat" placeholder="Enter Category Name" style="display:none">
-            <div style="display:flex; gap:16px; margin-top: 12px;">
-                <button onclick="closeModal()" id="btnCan" style="flex:1; background:#262c33; color:white; border:none; border-radius:14px; padding:16px; cursor:pointer; font-weight:700;">Cancel</button>
-                <button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;"></button>
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeModal()" style="flex:1; padding:15px; background:#333; color:white; border:none; border-radius:10px;">Cancel</button>
+                <button onclick="saveData()" class="btn-main" style="flex:1;">Save</button>
             </div>
         </div>
     </div>
@@ -219,42 +131,16 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const i18n = {
-            en: { head:"Dashboard Overview", navDash:"Overview", navAdd:"Add Record", navOut:"Sign Out", inc:"Total Income", exp:"Total Expenses", net:"Net Balance", break:"Spending Breakdown", trend:"Performance Trend", recent:"Transaction History", date:"Date", title:"Description", cat:"Category", amt:"Amount", act:"Action", mHead:"Add Transaction", tPl:"Item Name", aPl:"Amount", can:"Cancel", sav:"Save Transaction", rem:"Remaining to Goal", conf:"Delete this entry?", goal:"Goal: $50,000 Journey" },
-            my: { head:"ဒိုင်ခွက်ခြုံငုံသုံးသပ်ချက်", navDash:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်သွင်းရန်", navOut:"အကောင့်ထွက်ရန်", inc:"စုစုပေါင်းဝင်ငွေ", exp:"စုစုပေါင်းထွက်ငွေ", net:"လက်ကျန်ငွေ", break:"အသုံးစရိတ်ခွဲခြားမှု", trend:"စီးဆင်းမှုမှတ်တမ်း", recent:"စာရင်းဟောင်းများ", date:"ရက်စွဲ", title:"အကြောင်းအရာ", cat:"အမျိုးအစား", amt:"ပမာဏ", act:"လုပ်ဆောင်ချက်", mHead:"စာရင်းသစ်သွင်းရန်", tPl:"ပစ္စည်းအမည်", aPl:"ပမာဏ", can:"မလုပ်တော့ပါ", sav:"သိမ်းဆည်းမည်", rem:"ပန်းတိုင်သို့ လိုအပ်ချက်", conf:"ဖျက်မှာလား?", goal:"ပန်းတိုင်: $၅၀,၀၀၀ ခရီးစဉ်" }
-        };
-
+        let curr = localStorage.getItem('curr') || 'THB';
         const currs = { THB: "฿", USD: "$", MMK: "Ks" };
-        let lang = localStorage.getItem('lang') || 'en', curr = localStorage.getItem('curr') || 'THB';
-
-        function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); applyUI(); }
-        function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); loadD(); }
-
-        function applyUI() {
-            const t = i18n[lang];
-            document.getElementById('headTitle').innerText = t.head;
-            document.getElementById('navDash').innerText = t.navDash;
-            document.getElementById('navAdd').innerText = t.navAdd;
-            document.getElementById('navOut').innerText = t.navOut;
-            document.getElementById('lblInc').innerHTML = `<i class="fa-solid fa-arrow-down-long" style="color:var(--income)"></i> ` + t.inc; 
-            document.getElementById('lblExp').innerHTML = `<i class="fa-solid fa-arrow-up-long" style="color:var(--expense)"></i> ` + t.exp;
-            document.getElementById('lblNet').innerHTML = `<i class="fa-solid fa-wallet" style="color:var(--primary)"></i> ` + t.net;
-            document.getElementById('headBreak').innerHTML = `<i class="fa-solid fa-chart-pie"></i> ` + t.break;
-            document.getElementById('headTrend').innerHTML = `<i class="fa-solid fa-chart-line"></i> ` + t.trend;
-            document.getElementById('headRecent').innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i> ` + t.recent;
-            document.getElementById('mHead').innerHTML = `<i class="fa-solid fa-circle-plus"></i> ` + t.mHead;
-            document.getElementById('tIn').placeholder = t.tPl; document.getElementById('aIn').placeholder = t.aPl;
-            document.getElementById('btnCan').innerText = t.can; document.getElementById('btnSav').innerText = t.sav;
-            document.getElementById('goalText').innerHTML = `<i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> ` + t.goal;
-            document.getElementById('langSel').value = lang;
-            document.getElementById('currSel').value = curr;
-            loadD();
-        }
 
         async function handleLogin() {
-            const e = document.getElementById('email').value, p = document.getElementById('password').value;
-            const { error } = await sc.auth.signInWithPassword({ email:e, password:p });
-            if(error) { const { error: sE } = await sc.auth.signUp({ email:e, password:p }); if(sE) alert(sE.message); else alert("Try Login Again!"); } else checkUser();
+            const email = document.getElementById('email').value, password = document.getElementById('password').value;
+            const { error } = await sc.auth.signInWithPassword({ email, password });
+            if(error) { 
+                const { error: sE } = await sc.auth.signUp({ email, password });
+                if(sE) alert("Error: " + sE.message); else alert("Check Email or Try Again!");
+            } else checkUser();
         }
 
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
@@ -265,53 +151,67 @@
                 document.getElementById('authSection').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'flex';
                 document.getElementById('displayEmail').innerText = user.email;
-                document.getElementById('userInitial').innerText = user.email[0].toUpperCase();
-                applyUI();
+                loadD();
             }
         }
 
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; document.getElementById('customCat').style.display = 'none'; }
-        function toggleCustomInput() { document.getElementById('customCat').style.display = (document.getElementById('cIn').value === 'Others') ? 'block' : 'none'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); loadD(); }
 
+        // --- ဒီနေရာက အဓိက ပြင်ဆင်ထားတဲ့ အပိုင်းပါ ---
         async function saveData() {
-            const t = document.getElementById('tIn').value, a = parseFloat(document.getElementById('aIn').value);
-            const sC = document.getElementById('cIn').value, cC = document.getElementById('customCat').value;
-            const finalC = (sC === 'Others') ? cC : sC;
+            const title = document.getElementById('tIn').value;
+            const amount = parseFloat(document.getElementById('aIn').value);
+            const category = document.getElementById('cIn').value;
             const { data: { user } } = await sc.auth.getUser();
-            if(t && !isNaN(a)) { await sc.from('transactions').insert([{ title: t, amount: a, category: finalC, user_id: user.id }]); closeModal(); loadD(); }
-        }
 
-        async function loadD() {
-            const { data } = await sc.from('transactions').select('*').order('created_at', { ascending: false });
-            if(data) {
-                let inc=0, exp=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
-                data.forEach(d => {
-                    if(d.category==='Income') inc += d.amount; else exp += d.amount;
-                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td>${d.title}</td><td><span class="cat-badge">${d.category}</span></td><td style="color:${d.category==='Income'?'#10b981':'#ef4444'}; font-weight:800;">${currs[curr]} ${d.amount.toLocaleString()}</td><td><button onclick="deleteT(${d.id})" style="background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:18px;"><i class="fa-solid fa-trash-can"></i></button></td></tr>`;
-                });
-                const net = inc - exp;
-                document.getElementById('totalIncome').innerText = `${currs[curr]} ${inc.toLocaleString()}`;
-                document.getElementById('totalExpense').innerText = `${currs[curr]} ${exp.toLocaleString()}`;
-                document.getElementById('netBalance').innerText = `${currs[curr]} ${net.toLocaleString()}`;
+            if(!title || isNaN(amount)) { alert("အချက်အလက် ပြည့်စုံအောင် ဖြည့်ပါ"); return; }
 
-                const target = 50000 * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1);
-                let p = (net / target) * 100; p = p < 0 ? 0 : (p > 100 ? 100 : p);
-                document.getElementById('goalBar').style.width = p + '%';
-                document.getElementById('percentLabel').innerText = p.toFixed(1) + '%';
-                document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - net).toLocaleString()}`;
-                renderCharts(data);
+            const { data, error } = await sc.from('transactions').insert([
+                { title: title, amount: amount, category: category, user_id: user.id }
+            ]).select();
+
+            if(error) {
+                console.error("Save Error:", error);
+                alert("သိမ်းလို့မရပါ- " + error.message);
+            } else {
+                closeModal();
+                loadD();
+                document.getElementById('tIn').value = '';
+                document.getElementById('aIn').value = '';
             }
         }
 
-        async function deleteT(id) { if(confirm(i18n[lang].conf)) { await sc.from('transactions').delete().eq('id', id); loadD(); } }
+        async function loadD() {
+            const { data, error } = await sc.from('transactions').select('*').order('created_at', { ascending: false });
+            if(error) { console.error("Fetch Error:", error); return; }
+            
+            let inc=0, exp=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
+            data.forEach(d => {
+                if(d.category==='Income') inc += d.amount; else exp += d.amount;
+                list.innerHTML += `<tr>
+                    <td>${new Date(d.created_at).toLocaleDateString()}</td>
+                    <td>${d.title}</td>
+                    <td>${d.category}</td>
+                    <td style="color:${d.category==='Income'?'#10b981':'#ef4444'}; font-weight:bold;">${currs[curr]} ${d.amount.toLocaleString()}</td>
+                    <td><button onclick="deleteT(${d.id})" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>`;
+            });
 
-        function renderCharts(data) {
-            const cats = {}; data.forEach(d => { if(d.category!=='Income') cats[d.category] = (cats[d.category] || 0) + d.amount; });
-            if(window.myDonut) window.myDonut.destroy(); if(window.myLine) window.myLine.destroy();
-            window.myDonut = new Chart(document.getElementById('donutChart'), { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', padding: 25, font: { family: 'Plus Jakarta Sans', size: 13, weight: '600' } } } } } });
-            window.myLine = new Chart(document.getElementById('lineChart'), { type: 'line', data: { labels: data.map(d => new Date(d.created_at).toLocaleDateString()).reverse(), datasets: [{ label: 'Flow', data: data.map(d => d.amount).reverse(), borderColor: '#3b82f6', borderWidth: 4, tension: 0.4, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.05)', pointRadius: 4, pointBackgroundColor: '#3b82f6' }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { color: '#64748b', font: { weight: '600' } }, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { ticks: { color: '#64748b', font: { weight: '600' } }, grid: { display: false } } }, plugins: { legend: { display: false } } } });
+            const net = inc - exp;
+            document.getElementById('totalIncome').innerText = `${currs[curr]} ${inc.toLocaleString()}`;
+            document.getElementById('totalExpense').innerText = `${currs[curr]} ${exp.toLocaleString()}`;
+            document.getElementById('netBalance').innerText = `${currs[curr]} ${net.toLocaleString()}`;
+
+            const target = 50000 * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1);
+            let p = (net / target) * 100; p = p < 0 ? 0 : (p > 100 ? 100 : p);
+            document.getElementById('goalBar').style.width = p + '%';
+            document.getElementById('percentLabel').innerText = p.toFixed(1) + '%';
+            document.getElementById('remainText').innerText = `Remaining: ${currs[curr]} ${(target - net).toLocaleString()}`;
         }
+
+        async function deleteT(id) { if(confirm("ဖျက်မှာလား?")) { await sc.from('transactions').delete().eq('id', id); loadD(); } }
         window.onload = checkUser;
     </script>
 </body>
