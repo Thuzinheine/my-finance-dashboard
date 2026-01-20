@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio - The Billionaire Journey</title>
+    <title>Spendio - Custom Category Support</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -54,7 +54,28 @@
         <table><thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th><th>Action</th></tr></thead><tbody id="transactionList"></tbody></table>
     </div>
 
-    <div id="modal"><div class="modal-content"><h2>New Entry</h2><input type="text" id="tIn" placeholder="Item Name"><input type="number" id="aIn" placeholder="Amount (฿)"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Tech">Tech</option><option value="Transport">Transport</option><option value="Trading">Trading Fees</option></select><div style="display:flex; gap:10px;"><button onclick="closeModal()" style="flex:1; padding:10px; background:#333; color:white; border:none; border-radius:8px;">Cancel</button><button onclick="saveData()" style="flex:1; padding:10px; background:var(--primary); color:white; border:none; border-radius:8px;">Save</button></div></div></div>
+    <div id="modal">
+        <div class="modal-content">
+            <h2>New Entry</h2>
+            <input type="text" id="tIn" placeholder="Item Name">
+            <input type="number" id="aIn" placeholder="Amount (฿)">
+            
+            <select id="cIn" onchange="toggleCustomInput()">
+                <option value="Income">Income (+)</option>
+                <option value="Food">Food</option>
+                <option value="Trading">Trading Fees</option>
+                <option value="Transport">Transport</option>
+                <option value="Others">Others (Type manually...)</option>
+            </select>
+            
+            <input type="text" id="customCat" placeholder="Enter Category Name" style="display: none;">
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeModal()" style="flex:1; padding:10px; background:#333; color:white; border:none; border-radius:8px;">Cancel</button>
+                <button onclick="saveData()" style="flex:1; padding:10px; background:var(--primary); color:white; border:none; border-radius:8px;">Save</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
@@ -62,11 +83,35 @@
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function closeModal() { 
+            document.getElementById('modal').style.display = 'none'; 
+            document.getElementById('customCat').style.display = 'none';
+            document.getElementById('cIn').value = 'Income';
+        }
+
+        // Dropdown ပြောင်းရင် Custom Input ပေါ်/မပေါ် စစ်ရန်
+        function toggleCustomInput() {
+            const select = document.getElementById('cIn');
+            const customInput = document.getElementById('customCat');
+            customInput.style.display = (select.value === 'Others') ? 'block' : 'none';
+        }
 
         async function saveData() {
-            const t = document.getElementById('tIn').value, a = parseFloat(document.getElementById('aIn').value), c = document.getElementById('cIn').value;
-            if(t && !isNaN(a)) { const { error } = await sc.from('transactions').insert([{ title: t, amount: a, category: c }]); if(!error) { closeModal(); location.reload(); } }
+            const t = document.getElementById('tIn').value;
+            const a = parseFloat(document.getElementById('aIn').value);
+            const selectCat = document.getElementById('cIn').value;
+            const customCat = document.getElementById('customCat').value;
+
+            // Others ရွေးထားရင် Custom Input ထဲက စာကိုယူ၊ မဟုတ်ရင် Dropdown ကဟာကိုယူ
+            const finalCategory = (selectCat === 'Others') ? customCat : selectCat;
+
+            if(t && !isNaN(a) && finalCategory) { 
+                const { error } = await sc.from('transactions').insert([{ title: t, amount: a, category: finalCategory }]); 
+                if(!error) { closeModal(); location.reload(); } 
+                else { alert("Error: " + error.message); }
+            } else {
+                alert("Please fill all fields!");
+            }
         }
 
         async function deleteT(id) { if(confirm("ဖျက်မှာလား?")) { await sc.from('transactions').delete().eq('id', id); location.reload(); } }
@@ -77,7 +122,7 @@
                 let i=0, e=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
                 data.forEach(d => {
                     if(d.category==='Income') i+=d.amount; else e+=d.amount;
-                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td>${d.title}</td><td>${d.category}</td><td style="color:${d.category==='Income'?'#4ade80':'#f87171'}">${d.category==='Income'?'+':'-'} ฿ ${d.amount.toLocaleString()}</td><td><button class="btn-delete" onclick="deleteT(${d.id})">Delete</button></td></tr>`;
+                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td>${d.title}</td><td><span style="background:#333;padding:4px 8px;border-radius:5px;font-size:12px">${d.category}</span></td><td style="color:${d.category==='Income'?'#4ade80':'#f87171'}">${d.category==='Income'?'+':'-'} ฿ ${d.amount.toLocaleString()}</td><td><button class="btn-delete" onclick="deleteT(${d.id})">Delete</button></td></tr>`;
                 });
                 document.getElementById('totalIncome').innerText = `฿ ${i.toLocaleString()}`;
                 document.getElementById('totalExpense').innerText = `฿ ${e.toLocaleString()}`;
