@@ -18,94 +18,28 @@
             --text-dim: #888;
         }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .add-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 20px;
-            border-radius: 15px;
-        }
-
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .add-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 15px; }
         .card label { color: var(--text-dim); font-size: 12px; display: block; margin-bottom: 10px; }
         .card .val { font-size: 24px; font-weight: bold; }
-
-        .charts-container {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 20px;
-        }
-
-        .chart-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 20px;
-            border-radius: 20px;
-        }
+        .charts-container { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-bottom: 25px; }
+        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; overflow-x: auto; }
+        
+        /* Table Style */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 500px; }
+        th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid #333; font-size: 13px; }
+        td { padding: 12px; border-bottom: 1px solid #222; font-size: 14px; }
+        .btn-delete { background: none; border: 1px solid var(--expense); color: var(--expense); padding: 5px 10px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .btn-delete:hover { background: var(--expense); color: white; }
 
         /* Modal Style */
-        #modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: var(--card);
-            padding: 30px;
-            border-radius: 20px;
-            width: 350px;
-            border: 1px solid #333;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: white;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-
-        .btn-save { background: var(--primary); color: white; border: none; }
-        .btn-cancel { background: #333; color: white; border: none; }
-
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); padding: 30px; border-radius: 20px; width: 350px; border: 1px solid #333; }
+        input, select { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
+        
         @media (max-width: 800px) { .charts-container { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -120,29 +54,24 @@
     </div>
 
     <div class="stats-grid">
-        <div class="card">
-            <label>INCOME</label>
-            <div class="val" id="totalIncome" style="color:var(--income);">฿ 0</div>
-        </div>
-        <div class="card">
-            <label>EXPENSES</label>
-            <div class="val" id="totalExpense" style="color:var(--expense);">฿ 0</div>
-        </div>
-        <div class="card">
-            <label>NET BALANCE</label>
-            <div class="val" id="netBalance" style="color:var(--primary);">฿ 0</div>
-        </div>
+        <div class="card"><label>INCOME</label><div class="val" id="totalIncome" style="color:var(--income);">฿ 0</div></div>
+        <div class="card"><label>EXPENSES</label><div class="val" id="totalExpense" style="color:var(--expense);">฿ 0</div></div>
+        <div class="card"><label>NET BALANCE</label><div class="val" id="netBalance" style="color:var(--primary);">฿ 0</div></div>
     </div>
 
     <div class="charts-container">
-        <div class="chart-box">
-            <h3>Category Breakdown</h3>
-            <canvas id="donutChart"></canvas>
-        </div>
-        <div class="chart-box">
-            <h3>Financial Trend</h3>
-            <canvas id="lineChart"></canvas>
-        </div>
+        <div class="chart-box"><h3>Category Breakdown</h3><canvas id="donutChart"></canvas></div>
+        <div class="chart-box"><h3>Financial Trend</h3><canvas id="lineChart"></canvas></div>
+    </div>
+
+    <div class="chart-box">
+        <h3>Recent Transactions</h3>
+        <table>
+            <thead>
+                <tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th><th>Action</th></tr>
+            </thead>
+            <tbody id="transactionList"></tbody>
+        </table>
     </div>
 
     <div id="modal">
@@ -158,14 +87,13 @@
                 <option value="Trading">Trading Fees</option>
             </select>
             <div style="display:flex; gap:10px;">
-                <button class="btn-cancel" onclick="closeModal()" style="flex:1; padding:12px; border-radius:8px; cursor:pointer;">Cancel</button>
-                <button class="btn-save" onclick="saveData()" style="flex:1; padding:12px; border-radius:8px; cursor:pointer;">Save</button>
+                <button onclick="closeModal()" style="flex:1; padding:12px; border-radius:8px; cursor:pointer; background:#333; color:white; border:none;">Cancel</button>
+                <button onclick="saveData()" style="flex:1; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; cursor:pointer;">Save</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- Supabase ချိတ်ဆက်မှု ---
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -173,98 +101,64 @@
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-        // --- Data သိမ်းဆည်းခြင်း ---
         async function saveData() {
             const title = document.getElementById('titleInput').value;
             const amount = parseFloat(document.getElementById('amountInput').value);
             const category = document.getElementById('categoryInput').value;
-
             if (title && !isNaN(amount)) {
-                const { data, error } = await supabaseClient
-                    .from('transactions')
-                    .insert([{ title, amount, category }]);
-
-                if (error) {
-                    console.error('Save error:', error);
-                    alert("Error: " + error.message);
-                } else {
-                    alert("အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။");
-                    closeModal();
-                    location.reload(); // Refresh လုပ်ပြီး ဒေတာသစ်ပြရန်
-                }
-            } else {
-                alert("အချက်အလက် ပြည့်စုံအောင် ဖြည့်ပါ။");
+                const { error } = await supabaseClient.from('transactions').insert([{ title, amount, category }]);
+                if (error) alert("Error: " + error.message);
+                else { closeModal(); location.reload(); }
             }
         }
 
-        // --- Data များ ပြန်ခေါ်ယူခြင်း ---
-        async function loadDashboard() {
-            const { data, error } = await supabaseClient
-                .from('transactions')
-                .select('*');
-
-            if (error) {
-                console.error('Fetch error:', error);
-                return;
+        async function deleteTransaction(id) {
+            if (confirm("ဒီစာရင်းကို တကယ်ဖျက်မှာ သေချာပါသလား?")) {
+                const { error } = await supabaseClient.from('transactions').delete().eq('id', id);
+                if (error) alert("Error: " + error.message);
+                else location.reload();
             }
+        }
 
-            if (data && data.length > 0) {
+        async function loadDashboard() {
+            const { data, error } = await supabaseClient.from('transactions').select('*').order('created_at', { ascending: false });
+            if (data) {
                 let inc = 0, exp = 0;
+                const list = document.getElementById('transactionList');
+                list.innerHTML = '';
                 data.forEach(d => {
-                    if (d.category === 'Income') inc += d.amount;
-                    else exp += d.amount;
+                    if (d.category === 'Income') inc += d.amount; else exp += d.amount;
+                    list.innerHTML += `
+                        <tr>
+                            <td style="color:#888">${new Date(d.created_at).toLocaleDateString()}</td>
+                            <td>${d.title}</td>
+                            <td><span style="background:#333;padding:4px 8px;border-radius:5px;font-size:12px">${d.category}</span></td>
+                            <td style="font-weight:bold; color:${d.category === 'Income' ? '#4ade80' : '#f87171'}">
+                                ${d.category === 'Income' ? '+' : '-'} ฿ ${d.amount.toLocaleString()}
+                            </td>
+                            <td><button class="btn-delete" onclick="deleteTransaction(${d.id})">Delete</button></td>
+                        </tr>`;
                 });
-
                 document.getElementById('totalIncome').innerText = `฿ ${inc.toLocaleString()}`;
                 document.getElementById('totalExpense').innerText = `฿ ${exp.toLocaleString()}`;
                 document.getElementById('netBalance').innerText = `฿ ${(inc - exp).toLocaleString()}`;
-
                 renderCharts(data);
             }
         }
 
-        // --- Chart များ ဆွဲခြင်း ---
         function renderCharts(data) {
-            // Donut Chart
-            const cats = {};
-            data.forEach(d => cats[d.category] = (cats[d.category] || 0) + d.amount);
-            
+            const cats = {}; data.forEach(d => cats[d.category] = (cats[d.category] || 0) + d.amount);
             new Chart(document.getElementById('donutChart'), {
                 type: 'doughnut',
-                data: {
-                    labels: Object.keys(cats),
-                    datasets: [{ 
-                        data: Object.values(cats), 
-                        backgroundColor: ['#4ade80', '#f87171', '#60a5fa', '#fbbf24', '#c084fc'],
-                        borderWidth: 0
-                    }]
-                },
+                data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#4ade80', '#f87171', '#60a5fa', '#fbbf24', '#c084fc'], borderWidth: 0 }] },
                 options: { plugins: { legend: { position: 'bottom', labels: { color: 'white' } } } }
             });
-
-            // Line Chart
             new Chart(document.getElementById('lineChart'), {
                 type: 'line',
-                data: {
-                    labels: data.map(d => new Date(d.created_at).toLocaleDateString()),
-                    datasets: [{ 
-                        label: 'Amount Trend', 
-                        data: data.map(d => d.amount), 
-                        borderColor: '#2563eb', 
-                        tension: 0.3,
-                        fill: false 
-                    }]
-                },
-                options: { 
-                    scales: { 
-                        y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
-                        x: { ticks: { color: '#888' }, grid: { display: false } } 
-                    },
-                    plugins: { legend: { labels: { color: 'white' } } }
-                }
+                data: { labels: data.map(d => new Date(d.created_at).toLocaleDateString()).reverse(), datasets: [{ label: 'Amount', data: data.map(d => d.amount).reverse(), borderColor: '#2563eb', tension: 0.3 }] },
+                options: { scales: { y: { ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } }, plugins: { legend: { labels: { color: 'white' } } } }
             });
         }
-
         window.onload = loadDashboard;
     </script>
 </body>
