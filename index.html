@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - Structured Table</title>
+    <title>Spendio Pro - Responsive Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,7 +18,11 @@
         body { background-color: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
 
         /* --- Sidebar UI --- */
-        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 40px 24px; flex-shrink: 0; }
+        .sidebar { 
+            width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); 
+            display: flex; flex-direction: column; padding: 40px 24px; flex-shrink: 0;
+            transition: transform 0.3s ease-in-out; z-index: 1000;
+        }
         .logo { font-size: 26px; font-weight: 800; margin-bottom: 48px; color: var(--primary); display: flex; align-items: center; gap: 12px; }
         .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 12px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
         .nav-item:hover { background: var(--card); color: white; transform: translateX(5px); }
@@ -26,116 +30,113 @@
 
         .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
         .select-custom {
-            width: 100%; background: var(--card); color: var(--text-dim);
-            border: 1px solid var(--border); padding: 12px 35px 12px 16px; 
-            border-radius: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 600;
-            outline: none; cursor: pointer; appearance: none;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2polyline%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 15px center; background-size: 14px;
+            width: 100%; background: var(--card); color: var(--text-dim); border: 1px solid var(--border);
+            padding: 12px 16px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer;
         }
 
         /* --- Main Content --- */
-        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; width: 100%; }
-        .card { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 28px; }
+        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; width: 100%; position: relative; }
         
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 24px; }
+        /* Mobile Header */
+        .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .menu-toggle { font-size: 24px; color: white; cursor: pointer; }
+
+        .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 20px; }
         
         .progress-track { background: rgba(255,255,255,0.03); height: 10px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
-        .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1s ease-in-out; box-shadow: 0 0 15px var(--primary); }
+        .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1.5s ease-in-out; }
 
-        /* Structured Table Design */
-        .table-wrap { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th { text-align: left; color: var(--text-dim); padding: 16px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-        td { padding: 20px 16px; border-bottom: 1px solid #1a1d21; font-size: 14px; vertical-align: middle; }
-        
-        .cat-badge { background: #1e252e; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; color: #888; display: inline-block; }
-        .note-col { color: var(--text-dim); font-size: 13px; font-style: italic; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .btn-delete { background: none; border: none; color: #444; cursor: pointer; transition: 0.3s; font-size: 18px; }
-        .btn-delete:hover { color: var(--expense); transform: scale(1.2); }
+        .table-wrap { overflow-x: auto; margin-top: 15px; border-radius: 15px; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        td { padding: 16px 12px; border-bottom: 1px solid #1a1d21; font-size: 14px; }
 
-        /* Auth & Modal */
-        #authSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; }
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; }
 
-        input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; outline: none; }
-        input:focus, textarea:focus { border-color: var(--primary); }
-        textarea { height: 80px; resize: none; }
+        /* --- MOBILE VIEW RESPONSIVE FIX --- */
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { padding: 20px; }
+            .mobile-header { display: flex; }
+            .stat-grid, .charts-row { grid-template-columns: 1fr; }
+            .desktop-email { display: none; }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+            .sidebar-overlay.active { display: block; }
+        }
+
+        input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; }
     </style>
 </head>
 <body>
 
-    <div id="authSection">
-        <div class="card" style="width:380px; text-align:center; padding:45px; border-radius:32px;">
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleMenu()"></div>
+
+    <div id="authSection" style="position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:9999;">
+        <div class="card" style="width:340px; text-align:center;">
             <h1 style="color:var(--primary); margin-bottom:30px;"><i class="fa-solid fa-rocket"></i> Spendio</h1>
-            <input type="email" id="email" placeholder="Email Address">
+            <input type="email" id="email" placeholder="Email">
             <input type="password" id="password" placeholder="Password">
-            <button class="btn-main" onclick="handleLogin()">Sign In to Journey</button>
+            <button class="btn-main" onclick="handleLogin()">Login</button>
         </div>
     </div>
 
     <div id="appContainer" style="display:none; width: 100%;">
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="logo"><i class="fa-solid fa-gem"></i> Spendio</div>
-            <div class="nav-item active"><i class="fa-solid fa-house"></i> <span id="navDash">Overview</span></div>
-            <div class="nav-item" onclick="openModal()"><i class="fa-solid fa-circle-plus"></i> <span id="navAdd">Add Record</span></div>
+            <div class="nav-item active"><i class="fa-solid fa-house"></i> <span>Overview</span></div>
+            <div class="nav-item" onclick="openModal(); toggleMenu();"><i class="fa-solid fa-circle-plus"></i> <span>Add Record</span></div>
             
             <div class="sidebar-footer">
                 <select class="select-custom" id="langSel" onchange="changeLanguage(this.value)">
-                    <option value="en">English</option>
-                    <option value="my">မြန်မာဘာသာ</option>
+                    <option value="en">English</option><option value="my">မြန်မာဘာသာ</option>
                 </select>
                 <select class="select-custom" id="currSel" onchange="changeCurrency(this.value)">
-                    <option value="THB">Thai Baht (฿)</option>
-                    <option value="USD">US Dollar ($)</option>
-                    <option value="MMK">Myanmar Kyat (Ks)</option>
+                    <option value="THB">Thai Baht (฿)</option><option value="USD">US Dollar ($)</option><option value="MMK">Myanmar Kyat (Ks)</option>
                 </select>
-                <div class="nav-item" onclick="handleLogout()" style="color:var(--expense);"><i class="fa-solid fa-power-off"></i> <span id="navOut">Logout</span></div>
+                <div class="nav-item" onclick="handleLogout()" style="color:var(--expense);"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div>
             </div>
         </div>
 
         <div class="main-content">
+            <div class="mobile-header">
+                <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div>
+                <div class="logo" style="margin:0; font-size:20px;">Spendio</div>
+            </div>
+
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h1 id="headTitle" style="font-weight: 800; font-size: 28px;">Dashboard</h1>
-                <div style="background:var(--card); padding:10px 22px; border-radius:40px; border:1px solid var(--border); font-size:14px; font-weight:700;" id="displayEmail"></div>
+                <h1 id="headTitle" style="font-weight: 800;">Dashboard</h1>
+                <div class="desktop-email" style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:13px; font-weight:700;" id="displayEmail"></div>
             </div>
 
             <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
                 <div style="display:flex; justify-content:space-between; align-items:flex-end;">
                     <h3 id="goalLabel">Goal: $50,000 Journey</h3>
-                    <div style="font-size:24px; font-weight:900; color:var(--primary);" id="percentLabel">0.0%</div>
+                    <div style="font-size:20px; font-weight:900; color:var(--primary);" id="percentLabel">0.0%</div>
                 </div>
                 <div class="progress-track"><div class="progress-fill" id="goalBar"></div></div>
-                <p id="remainText" style="margin-top:12px; font-size:13px; color:var(--text-dim); font-weight:600;"></p>
+                <p id="remainText" style="margin-top:12px; font-size:12px; color:var(--text-dim);"></p>
             </div>
 
             <div class="stat-grid">
-                <div class="card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:28px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:28px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="netBalance" style="color:var(--primary); font-size:28px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:22px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:22px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="netBalance" style="color:var(--primary); font-size:22px; font-weight:800; margin-top:10px;"></div></div>
             </div>
 
             <div class="charts-row">
-                <div class="card"><h4><i class="fa-solid fa-chart-pie" style="color:var(--primary); margin-right:8px;"></i> <span id="headBreak"></span></h4><div style="height:250px; margin-top:20px;"><canvas id="donutChart"></canvas></div></div>
-                <div class="card"><h4><i class="fa-solid fa-chart-line" style="color:var(--primary); margin-right:8px;"></i> <span id="headTrend"></span></h4><div style="height:250px; margin-top:20px;"><canvas id="lineChart"></canvas></div></div>
+                <div class="card"><h4><i class="fa-solid fa-chart-pie"></i> <span id="headBreak"></span></h4><div style="height:220px; margin-top:10px;"><canvas id="donutChart"></canvas></div></div>
+                <div class="card"><h4><i class="fa-solid fa-chart-line"></i> <span id="headTrend"></span></h4><div style="height:220px; margin-top:10px;"><canvas id="lineChart"></canvas></div></div>
             </div>
 
             <div class="card">
-                <h3 id="headRecent" style="margin-bottom:20px;"></h3>
+                <h3 id="headRecent" style="margin-bottom:15px;"></h3>
                 <div class="table-wrap">
                     <table>
-                        <thead>
-                            <tr>
-                                <th id="thDate">Date</th>
-                                <th id="thItem">Item</th>
-                                <th id="thCat">Category</th>
-                                <th id="thNote">Note</th>
-                                <th id="thAmt" style="text-align:right;">Amount</th>
-                                <th style="text-align:center;">Action</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th id="thDate">Date</th><th id="thItem">Item</th><th id="thCat">Cat</th><th id="thNote">Note</th><th id="thAmt" style="text-align:right;">Amount</th><th style="text-align:center;">Del</th></tr></thead>
                         <tbody id="transactionList"></tbody>
                     </table>
                 </div>
@@ -143,16 +144,13 @@
         </div>
     </div>
 
-    <div id="modal">
-        <div class="card" style="width:420px; padding:40px; border-radius:32px;">
-            <h2 id="mHead" style="margin-bottom:25px;"></h2>
-            <input type="text" id="tIn" placeholder="Title">
-            <input type="number" id="aIn" placeholder="Amount">
-            <select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select>
-            <textarea id="nIn" placeholder="Write a note..."></textarea>
-            <div style="display:flex; gap:12px; margin-top:10px;"><button onclick="closeModal()" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:15px; cursor:pointer; font-weight:700;"></button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;"></button></div>
-        </div>
-    </div>
+    <div id="modal"><div class="card" style="width:90%; max-width:400px;">
+        <h2 id="mHead" style="margin-bottom:20px;"></h2>
+        <input type="text" id="tIn" placeholder="Title"><input type="number" id="aIn" placeholder="Amount">
+        <select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select>
+        <textarea id="nIn" placeholder="Note..."></textarea>
+        <div style="display:flex; gap:10px;"><button onclick="closeModal()" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:12px;">Cancel</button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;"></button></div>
+    </div></div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
@@ -160,18 +158,20 @@
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const i18n = {
-            en: { head:"Overview", navDash:"Overview", navAdd:"Add Record", navOut:"Logout", inc:"INCOME", exp:"EXPENSES", net:"BALANCE", break:"Breakdown", trend:"Trend", recent:"Recent History", date:"Date", item:"Item", cat:"Category", note:"Note", amt:"Amount", mHead:"New Entry", nPl:"Write a note...", sav:"Save Record", goal:"Goal: $50,000 Journey", rem:"Remaining", can:"Cancel", conf:"Delete this entry?" },
-            my: { head:"ခြုံငုံသုံးသပ်ချက်", navDash:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navOut:"ထွက်ခွာရန်", inc:"ဝင်ငွေ", exp:"ထွက်ငွေ", net:"လက်ကျန်", break:"ခွဲခြားမှု", trend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", date:"ရက်စွဲ", item:"အမည်", cat:"အမျိုးအစား", note:"မှတ်စု", amt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", nPl:"မှတ်စုရေးရန်...", sav:"သိမ်းမည်", goal:"ပန်းတိုင်: $၅၀,၀၀၀ ခရီးစဉ်", rem:"လိုအပ်ချက်", can:"မလုပ်တော့ပါ", conf:"ဖျက်မှာလား?" }
+            en: { head:"Overview", navAdd:"Add Record", inc:"INCOME", exp:"EXPENSES", net:"BALANCE", break:"Breakdown", trend:"Trend", recent:"Recent History", date:"Date", item:"Item", cat:"Cat", note:"Note", amt:"Amount", mHead:"New Entry", sav:"Save", goal:"Goal: $50,000 Journey", rem:"Remaining", can:"Cancel", conf:"Delete?" },
+            my: { head:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", inc:"ဝင်ငွေ", exp:"ထွက်ငွေ", net:"လက်ကျန်", break:"ခွဲခြားမှု", trend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", date:"ရက်စွဲ", item:"အမည်", cat:"အမျိုးအစား", note:"မှတ်စု", amt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", sav:"သိမ်းမည်", goal:"ပန်းတိုင်: $၅၀,၀၀၀ ခရီးစဉ်", rem:"လိုအပ်ချက်", can:"မလုပ်တော့ပါ", conf:"ဖျက်မှာလား?" }
         };
 
         let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en';
         const currs = { THB: "฿", USD: "$", MMK: "Ks" };
 
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
         function applyLanguage() {
             const t = i18n[lang];
-            document.getElementById('navDash').innerText = t.navDash;
-            document.getElementById('navAdd').innerText = t.navAdd;
-            document.getElementById('navOut').innerText = t.navOut;
             document.getElementById('headTitle').innerText = t.head;
             document.getElementById('goalLabel').innerText = t.goal;
             document.getElementById('lblInc').innerText = t.inc;
@@ -186,7 +186,6 @@
             document.getElementById('thNote').innerText = t.note;
             document.getElementById('thAmt').innerText = t.amt;
             document.getElementById('mHead').innerText = t.mHead;
-            document.getElementById('nIn').placeholder = t.nPl;
             document.getElementById('btnSav').innerText = t.sav;
             document.getElementById('btnCan').innerText = t.can;
             document.getElementById('langSel').value = lang;
@@ -214,10 +213,7 @@
             const { data: { user } } = await sc.auth.getUser();
             if (!t || isNaN(a)) return;
             const { error } = await sc.from('transactions').insert([{ title: t, amount: a, category: c, note: n, user_id: user.id }]);
-            if (error) alert(error.message); else { 
-                document.getElementById('tIn').value=''; document.getElementById('aIn').value=''; document.getElementById('nIn').value='';
-                closeModal(); loadD(); 
-            }
+            if (error) alert(error.message); else { closeModal(); loadD(); }
         }
 
         async function loadD() {
@@ -225,26 +221,17 @@
             if (data) {
                 let inc=0, exp=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
                 data.forEach(d => {
-                    const dateStr = new Date(d.created_at).toLocaleDateString();
                     if (d.category === 'Income') inc += d.amount; else exp += d.amount;
-                    list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;">
-                        <td style="padding:16px; font-size:12px; color:var(--text-dim);">${dateStr}</td>
-                        <td style="padding:16px; font-weight:700;">${d.title}</td>
-                        <td style="padding:16px;"><span class="cat-badge">${d.category}</span></td>
-                        <td style="padding:16px;" class="note-col" title="${d.note || ''}">${d.note || '-'}</td>
-                        <td style="padding:16px; text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td>
-                        <td style="padding:16px; text-align:center;"><button class="btn-delete" onclick="deleteT(${d.id})"><i class="fa-solid fa-trash-can"></i></button></td>
-                    </tr>`;
+                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="background:#222; padding:4px 8px; border-radius:5px; font-size:11px;">${d.category}</span></td><td style="font-size:12px; color:#666;">${d.note || '-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i></td></tr>`;
                 });
-                const net = inc - exp;
                 document.getElementById('totalIncome').innerText = currs[curr] + " " + inc.toLocaleString();
                 document.getElementById('totalExpense').innerText = currs[curr] + " " + exp.toLocaleString();
-                document.getElementById('netBalance').innerText = currs[curr] + " " + net.toLocaleString();
+                document.getElementById('netBalance').innerText = currs[curr] + " " + (inc-exp).toLocaleString();
                 const target = 50000 * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1);
-                const p = Math.min((net / target) * 100, 100);
+                const p = Math.min(((inc - exp) / target) * 100, 100);
                 document.getElementById('goalBar').style.width = Math.max(p, 0) + '%';
                 document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
-                document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - net).toLocaleString()}`;
+                document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - (inc-exp)).toLocaleString()}`;
                 renderCharts(data);
             }
         }
@@ -254,7 +241,7 @@
         function renderCharts(data) {
             const cats = {}; data.forEach(d => { if(d.category !== 'Income') cats[d.category] = (cats[d.category] || 0) + d.amount; });
             if(window.myDonut) window.myDonut.destroy(); if(window.myLine) window.myLine.destroy();
-            window.myDonut = new Chart(document.getElementById('donutChart'), { type:'doughnut', data:{ labels:Object.keys(cats), datasets:[{ data:Object.values(cats), backgroundColor:['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444'], borderWidth:0 }] }, options:{ maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ color:'#94a3b8', font:{ size:11 } } } } } });
+            window.myDonut = new Chart(document.getElementById('donutChart'), { type:'doughnut', data:{ labels:Object.keys(cats), datasets:[{ data:Object.values(cats), backgroundColor:['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444'], borderWidth:0 }] }, options:{ maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ color:'#94a3b8', font:{ size:10 } } } } } });
             window.myLine = new Chart(document.getElementById('lineChart'), { type:'line', data:{ labels:data.map(d=>new Date(d.created_at).toLocaleDateString()).reverse(), datasets:[{ label:'Trend', data:data.map(d=>d.amount).reverse(), borderColor:'#3b82f6', tension:0.4, fill:true, backgroundColor:'rgba(59,130,246,0.05)', pointRadius:0 }] }, options:{ maintainAspectRatio:false, scales:{ y:{ ticks:{ color:'#444' }, grid:{ color:'rgba(255,255,255,0.03)' } }, x:{ ticks:{ color:'#444' }, grid:{ display:false } } }, plugins:{ legend:{ display:false } } } });
         }
         window.onload = checkUser;
