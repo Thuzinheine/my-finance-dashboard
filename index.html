@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - Note Extension</title>
+    <title>Spendio Pro - Structured Table</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -24,7 +24,6 @@
         .nav-item:hover { background: var(--card); color: white; transform: translateX(5px); }
         .nav-item.active { background: var(--card); color: white; border-left: 4px solid var(--primary); }
 
-        /* Dropdown UI */
         .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
         .select-custom {
             width: 100%; background: var(--card); color: var(--text-dim);
@@ -36,9 +35,8 @@
         }
 
         /* --- Main Content --- */
-        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .card { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 28px; transition: 0.3s; }
+        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; width: 100%; }
+        .card { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 28px; }
         
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 24px; }
@@ -46,33 +44,35 @@
         .progress-track { background: rgba(255,255,255,0.03); height: 10px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
         .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1s ease-in-out; box-shadow: 0 0 15px var(--primary); }
 
-        /* History Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; text-transform: uppercase; }
-        td { padding: 18px 12px; border-bottom: 1px solid #1a1d21; font-size: 14px; font-weight: 500; }
-        .cat-badge { background: #1e252e; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; color: #888; }
-        .note-text { display: block; font-size: 11px; color: var(--text-dim); font-weight: 400; margin-top: 4px; font-style: italic; }
-        .btn-delete { background: none; border: none; color: #444; cursor: pointer; transition: 0.3s; font-size: 16px; }
-        .btn-delete:hover { color: var(--expense); transform: scale(1.1); }
+        /* Structured Table Design */
+        .table-wrap { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { text-align: left; color: var(--text-dim); padding: 16px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 20px 16px; border-bottom: 1px solid #1a1d21; font-size: 14px; vertical-align: middle; }
+        
+        .cat-badge { background: #1e252e; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; color: #888; display: inline-block; }
+        .note-col { color: var(--text-dim); font-size: 13px; font-style: italic; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .btn-delete { background: none; border: none; color: #444; cursor: pointer; transition: 0.3s; font-size: 18px; }
+        .btn-delete:hover { color: var(--expense); transform: scale(1.2); }
 
         /* Auth & Modal */
         #authSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; transition: 0.3s; }
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59,130,246,0.3); }
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; }
 
-        input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; }
+        input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; outline: none; }
+        input:focus, textarea:focus { border-color: var(--primary); }
         textarea { height: 80px; resize: none; }
     </style>
 </head>
 <body>
 
     <div id="authSection">
-        <div class="card" style="width:380px; text-align:center; padding:45px;">
+        <div class="card" style="width:380px; text-align:center; padding:45px; border-radius:32px;">
             <h1 style="color:var(--primary); margin-bottom:30px;"><i class="fa-solid fa-rocket"></i> Spendio</h1>
-            <input type="email" id="email" placeholder="Email">
+            <input type="email" id="email" placeholder="Email Address">
             <input type="password" id="password" placeholder="Password">
-            <button class="btn-main" onclick="handleLogin()">Sign In</button>
+            <button class="btn-main" onclick="handleLogin()">Sign In to Journey</button>
         </div>
     </div>
 
@@ -97,8 +97,8 @@
         </div>
 
         <div class="main-content">
-            <div class="header">
-                <h1 id="headTitle" style="font-weight: 800;">Dashboard</h1>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h1 id="headTitle" style="font-weight: 800; font-size: 28px;">Dashboard</h1>
                 <div style="background:var(--card); padding:10px 22px; border-radius:40px; border:1px solid var(--border); font-size:14px; font-weight:700;" id="displayEmail"></div>
             </div>
 
@@ -124,30 +124,33 @@
 
             <div class="card">
                 <h3 id="headRecent" style="margin-bottom:20px;"></h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th id="thDate">Date</th>
-                            <th id="thItem">Item</th>
-                            <th id="thCat">Category</th>
-                            <th id="thAmt" style="text-align:right;">Amount</th>
-                            <th style="text-align:center;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionList"></tbody>
-                </table>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th id="thDate">Date</th>
+                                <th id="thItem">Item</th>
+                                <th id="thCat">Category</th>
+                                <th id="thNote">Note</th>
+                                <th id="thAmt" style="text-align:right;">Amount</th>
+                                <th style="text-align:center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionList"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="modal">
-        <div class="card" style="width:420px; padding:40px;">
+        <div class="card" style="width:420px; padding:40px; border-radius:32px;">
             <h2 id="mHead" style="margin-bottom:25px;"></h2>
             <input type="text" id="tIn" placeholder="Title">
             <input type="number" id="aIn" placeholder="Amount">
             <select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select>
-            <textarea id="nIn" placeholder="Note (Optional)..."></textarea>
-            <div style="display:flex; gap:12px; margin-top:10px;"><button onclick="closeModal()" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:15px; cursor:pointer;"></button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;"></button></div>
+            <textarea id="nIn" placeholder="Write a note..."></textarea>
+            <div style="display:flex; gap:12px; margin-top:10px;"><button onclick="closeModal()" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:15px; cursor:pointer; font-weight:700;"></button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;"></button></div>
         </div>
     </div>
 
@@ -157,8 +160,8 @@
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const i18n = {
-            en: { head:"Overview", navDash:"Overview", navAdd:"Add Record", navOut:"Logout", inc:"INCOME", exp:"EXPENSES", net:"BALANCE", break:"Breakdown", trend:"Trend", recent:"Recent History", date:"Date", item:"Item", cat:"Category", amt:"Amount", mHead:"New Entry", nPl:"Note (Optional)...", sav:"Save", goal:"Goal: $50,000 Journey", rem:"Remaining", can:"Cancel", conf:"Delete this?" },
-            my: { head:"ခြုံငုံသုံးသပ်ချက်", navDash:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navOut:"ထွက်ခွာရန်", inc:"ဝင်ငွေ", exp:"ထွက်ငွေ", net:"လက်ကျန်", break:"ခွဲခြားမှု", trend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", date:"ရက်စွဲ", item:"အမည်", cat:"အမျိုးအစား", amt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", nPl:"မှတ်စု (လိုအပ်ပါက)...", sav:"သိမ်းမည်", goal:"ပန်းတိုင်: $၅၀,၀၀၀ ခရီးစဉ်", rem:"လိုအပ်ချက်", can:"မလုပ်တော့ပါ", conf:"ဖျက်မှာလား?" }
+            en: { head:"Overview", navDash:"Overview", navAdd:"Add Record", navOut:"Logout", inc:"INCOME", exp:"EXPENSES", net:"BALANCE", break:"Breakdown", trend:"Trend", recent:"Recent History", date:"Date", item:"Item", cat:"Category", note:"Note", amt:"Amount", mHead:"New Entry", nPl:"Write a note...", sav:"Save Record", goal:"Goal: $50,000 Journey", rem:"Remaining", can:"Cancel", conf:"Delete this entry?" },
+            my: { head:"ခြုံငုံသုံးသပ်ချက်", navDash:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navOut:"ထွက်ခွာရန်", inc:"ဝင်ငွေ", exp:"ထွက်ငွေ", net:"လက်ကျန်", break:"ခွဲခြားမှု", trend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", date:"ရက်စွဲ", item:"အမည်", cat:"အမျိုးအစား", note:"မှတ်စု", amt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", nPl:"မှတ်စုရေးရန်...", sav:"သိမ်းမည်", goal:"ပန်းတိုင်: $၅၀,၀၀၀ ခရီးစဉ်", rem:"လိုအပ်ချက်", can:"မလုပ်တော့ပါ", conf:"ဖျက်မှာလား?" }
         };
 
         let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en';
@@ -180,6 +183,7 @@
             document.getElementById('thDate').innerText = t.date;
             document.getElementById('thItem').innerText = t.item;
             document.getElementById('thCat').innerText = t.cat;
+            document.getElementById('thNote').innerText = t.note;
             document.getElementById('thAmt').innerText = t.amt;
             document.getElementById('mHead').innerText = t.mHead;
             document.getElementById('nIn').placeholder = t.nPl;
@@ -224,14 +228,12 @@
                     const dateStr = new Date(d.created_at).toLocaleDateString();
                     if (d.category === 'Income') inc += d.amount; else exp += d.amount;
                     list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;">
-                        <td style="padding:15px; font-size:12px; color:var(--text-dim);">${dateStr}</td>
-                        <td style="padding:15px; font-weight:600;">
-                            ${d.title}
-                            ${d.note ? `<span class="note-text"><i class="fa-regular fa-note-sticky"></i> ${d.note}</span>` : ''}
-                        </td>
-                        <td style="padding:15px;"><span class="cat-badge">${d.category}</span></td>
-                        <td style="padding:15px; text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td>
-                        <td style="padding:15px; text-align:center;"><button class="btn-delete" onclick="deleteT(${d.id})"><i class="fa-solid fa-trash-can"></i></button></td>
+                        <td style="padding:16px; font-size:12px; color:var(--text-dim);">${dateStr}</td>
+                        <td style="padding:16px; font-weight:700;">${d.title}</td>
+                        <td style="padding:16px;"><span class="cat-badge">${d.category}</span></td>
+                        <td style="padding:16px;" class="note-col" title="${d.note || ''}">${d.note || '-'}</td>
+                        <td style="padding:16px; text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td>
+                        <td style="padding:16px; text-align:center;"><button class="btn-delete" onclick="deleteT(${d.id})"><i class="fa-solid fa-trash-can"></i></button></td>
                     </tr>`;
                 });
                 const net = inc - exp;
