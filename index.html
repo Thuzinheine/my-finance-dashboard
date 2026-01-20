@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio - Custom Category Support</title>
+    <title>Spendio - Multi-language Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --bg: #0a0a0a; --card: #121212; --border: #222; --primary: #2563eb; --income: #4ade80; --expense: #f87171; --text: #ffffff; --text-dim: #888; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', 'Pyidaungsu', sans-serif; margin: 0; padding: 20px; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
         .add-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .lang-select { background: #1a1a1a; color: white; border: 1px solid #333; padding: 8px; border-radius: 8px; cursor: pointer; }
+        
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 15px; }
-        .card label { color: var(--text-dim); font-size: 11px; display: block; margin-bottom: 8px; }
+        .card label { color: var(--text-dim); font-size: 11px; display: block; margin-bottom: 8px; text-transform: uppercase; }
         .card .val { font-size: 22px; font-weight: bold; }
         
         .charts-container { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-bottom: 25px; }
@@ -34,87 +37,98 @@
 </head>
 <body>
     <div class="header">
-        <div><h1 style="margin:0;">Spendio</h1><p style="color:var(--text-dim); margin:5px 0 0 0;">$375 to $50,000 Journey</p></div>
-        <button class="add-btn" onclick="openModal()">+ Add Transaction</button>
+        <div><h1 style="margin:0;">Spendio</h1><p id="subTitle" style="color:var(--text-dim); margin:5px 0 0 0;"></p></div>
+        <div class="nav-actions">
+            <select class="lang-select" onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="my">မြန်မာ</option>
+            </select>
+            <button class="add-btn" id="addBtn" onclick="openModal()"></button>
+        </div>
     </div>
 
     <div class="stats-grid">
-        <div class="card"><label>INCOME</label><div class="val" id="totalIncome" style="color:var(--income);">฿ 0</div></div>
-        <div class="card"><label>EXPENSES</label><div class="val" id="totalExpense" style="color:var(--expense);">฿ 0</div></div>
-        <div class="card"><label>NET BALANCE</label><div class="val" id="netBalance" style="color:var(--primary);">฿ 0</div></div>
+        <div class="card"><label id="lblInc"></label><div class="val" id="totalIncome" style="color:var(--income);">฿ 0</div></div>
+        <div class="card"><label id="lblExp"></label><div class="val" id="totalExpense" style="color:var(--expense);">฿ 0</div></div>
+        <div class="card"><label id="lblNet"></label><div class="val" id="netBalance" style="color:var(--primary);">฿ 0</div></div>
     </div>
 
     <div class="charts-container">
-        <div class="chart-box"><h3>Breakdown</h3><div class="chart-wrapper"><canvas id="donutChart"></canvas></div></div>
-        <div class="chart-box"><h3>Financial Trend</h3><div class="chart-wrapper"><canvas id="lineChart"></canvas></div></div>
+        <div class="chart-box"><h3 id="headBreak"></h3><div class="chart-wrapper"><canvas id="donutChart"></canvas></div></div>
+        <div class="chart-box"><h3 id="headTrend"></h3><div class="chart-wrapper"><canvas id="lineChart"></canvas></div></div>
     </div>
 
     <div class="chart-box" style="height: auto; overflow-x: auto;">
-        <h3>Recent Transactions</h3>
-        <table><thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th><th>Action</th></tr></thead><tbody id="transactionList"></tbody></table>
+        <h3 id="headRecent"></h3>
+        <table><thead><tr><th id="thDate"></th><th id="thTitle"></th><th id="thCat"></th><th id="thAmt"></th><th id="thAct"></th></tr></thead><tbody id="transactionList"></tbody></table>
     </div>
 
-    <div id="modal">
-        <div class="modal-content">
-            <h2>New Entry</h2>
-            <input type="text" id="tIn" placeholder="Item Name">
-            <input type="number" id="aIn" placeholder="Amount (฿)">
-            
-            <select id="cIn" onchange="toggleCustomInput()">
-                <option value="Income">Income (+)</option>
-                <option value="Food">Food</option>
-                <option value="Trading">Trading Fees</option>
-                <option value="Transport">Transport</option>
-                <option value="Others">Others (Type manually...)</option>
-            </select>
-            
-            <input type="text" id="customCat" placeholder="Enter Category Name" style="display: none;">
-
-            <div style="display:flex; gap:10px;">
-                <button onclick="closeModal()" style="flex:1; padding:10px; background:#333; color:white; border:none; border-radius:8px;">Cancel</button>
-                <button onclick="saveData()" style="flex:1; padding:10px; background:var(--primary); color:white; border:none; border-radius:8px;">Save</button>
-            </div>
-        </div>
-    </div>
+    <div id="modal"><div class="modal-content"><h2 id="modalHead"></h2><input type="text" id="tIn"><input type="number" id="aIn"><select id="cIn" onchange="toggleCustomInput()"><option value="Income" id="optInc"></option><option value="Food" id="optFood"></option><option value="Trading" id="optTrad"></option><option value="Transport" id="optTrans"></option><option value="Others" id="optOther"></option></select><input type="text" id="customCat" style="display: none;"><div style="display:flex; gap:10px;"><button onclick="closeModal()" id="btnCancel" style="flex:1; padding:10px; background:#333; color:white; border:none; border-radius:8px;"></button><button onclick="saveData()" id="btnSave" style="flex:1; padding:10px; background:var(--primary); color:white; border:none; border-radius:8px;"></button></div></div></div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        function openModal() { document.getElementById('modal').style.display = 'flex'; }
-        function closeModal() { 
-            document.getElementById('modal').style.display = 'none'; 
-            document.getElementById('customCat').style.display = 'none';
-            document.getElementById('cIn').value = 'Income';
+        // Language Dictionary
+        const i18n = {
+            en: {
+                sub: "$375 to $50,000 Journey", add: "+ Add Transaction", inc: "Income", exp: "Expenses", net: "Net Balance", break: "Breakdown", trend: "Financial Trend", recent: "Recent Transactions", date: "Date", title: "Title", cat: "Category", amt: "Amount", act: "Action", mHead: "New Entry", tPl: "Item Name", aPl: "Amount (฿)", cPl: "Category", optInc: "Income (+)", optFood: "Food", optTrad: "Trading Fees", optTrans: "Transport", optOther: "Others (Type...)", cancel: "Cancel", save: "Save", del: "Delete", conf: "Delete this record?", customPl: "Enter Category Name"
+            },
+            my: {
+                sub: "$၃၇၅ မှ $၅၀,၀၀၀ သို့ ခရီးစဉ်", add: "+ စာရင်းအသစ်ထည့်ရန်", inc: "ဝင်ငွေ", exp: "ထွက်ငွေ", net: "လက်ကျန်ငွေ", break: "အမျိုးအစားအလိုက် ခွဲခြားမှု", trend: "ငွေကြေးစီးဆင်းမှု ပြောင်းလဲပုံ", recent: "လတ်တလော စာရင်းများ", date: "ရက်စွဲ", title: "ခေါင်းစဉ်", cat: "အမျိုးအစား", amt: "ပမာဏ", act: "လုပ်ဆောင်ချက်", mHead: "စာရင်းသွင်းရန်", tPl: "ပစ္စည်းအမည်", aPl: "ပမာဏ (฿)", cPl: "အမျိုးအစား", optInc: "ဝင်ငွေ (+)", optFood: "အစားအသောက်", optTrad: "ထရိတ်ဒင်း အခကြေးငွေ", optTrans: "သယ်ယူပို့ဆောင်ရေး", optOther: "အခြား (ကိုယ်တိုင်ရိုက်ရန်...)", cancel: "မလုပ်တော့ပါ", save: "သိမ်းဆည်းမည်", del: "ဖျက်မည်", conf: "ဤစာရင်းကို ဖျက်ရန် သေချာပါသလား?", customPl: "အမျိုးအစား အမည်ရိုက်ပါ"
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'en';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            applyLanguage();
+            loadD(); // Table data တွေကို မြန်မာလို ပြန်ဖော်ပြရန်
         }
 
-        // Dropdown ပြောင်းရင် Custom Input ပေါ်/မပေါ် စစ်ရန်
-        function toggleCustomInput() {
-            const select = document.getElementById('cIn');
-            const customInput = document.getElementById('customCat');
-            customInput.style.display = (select.value === 'Others') ? 'block' : 'none';
+        function applyLanguage() {
+            const t = i18n[currentLang];
+            document.getElementById('subTitle').innerText = t.sub;
+            document.getElementById('addBtn').innerText = t.add;
+            document.getElementById('lblInc').innerText = t.inc;
+            document.getElementById('lblExp').innerText = t.exp;
+            document.getElementById('lblNet').innerText = t.net;
+            document.getElementById('headBreak').innerText = t.break;
+            document.getElementById('headTrend').innerText = t.trend;
+            document.getElementById('headRecent').innerText = t.recent;
+            document.getElementById('thDate').innerText = t.date;
+            document.getElementById('thTitle').innerText = t.title;
+            document.getElementById('thCat').innerText = t.cat;
+            document.getElementById('thAmt').innerText = t.amt;
+            document.getElementById('thAct').innerText = t.act;
+            document.getElementById('modalHead').innerText = t.mHead;
+            document.getElementById('tIn').placeholder = t.tPl;
+            document.getElementById('aIn').placeholder = t.aPl;
+            document.getElementById('customCat').placeholder = t.customPl;
+            document.getElementById('optInc').innerText = t.optInc;
+            document.getElementById('optFood').innerText = t.optFood;
+            document.getElementById('optTrad').innerText = t.optTrad;
+            document.getElementById('optTrans').innerText = t.optTrans;
+            document.getElementById('optOther').innerText = t.optOther;
+            document.getElementById('btnCancel').innerText = t.cancel;
+            document.getElementById('btnSave').innerText = t.save;
+            document.querySelector('.lang-select').value = currentLang;
         }
+
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; document.getElementById('customCat').style.display = 'none'; }
+        function toggleCustomInput() { document.getElementById('customCat').style.display = (document.getElementById('cIn').value === 'Others') ? 'block' : 'none'; }
 
         async function saveData() {
-            const t = document.getElementById('tIn').value;
-            const a = parseFloat(document.getElementById('aIn').value);
-            const selectCat = document.getElementById('cIn').value;
-            const customCat = document.getElementById('customCat').value;
-
-            // Others ရွေးထားရင် Custom Input ထဲက စာကိုယူ၊ မဟုတ်ရင် Dropdown ကဟာကိုယူ
-            const finalCategory = (selectCat === 'Others') ? customCat : selectCat;
-
-            if(t && !isNaN(a) && finalCategory) { 
-                const { error } = await sc.from('transactions').insert([{ title: t, amount: a, category: finalCategory }]); 
-                if(!error) { closeModal(); location.reload(); } 
-                else { alert("Error: " + error.message); }
-            } else {
-                alert("Please fill all fields!");
-            }
+            const t = document.getElementById('tIn').value, a = parseFloat(document.getElementById('aIn').value), sC = document.getElementById('cIn').value, cC = document.getElementById('customCat').value;
+            const finalC = (sC === 'Others') ? cC : sC;
+            if(t && !isNaN(a) && finalC) { const { error } = await sc.from('transactions').insert([{ title: t, amount: a, category: finalC }]); if(!error) { closeModal(); location.reload(); } }
         }
 
-        async function deleteT(id) { if(confirm("ဖျက်မှာလား?")) { await sc.from('transactions').delete().eq('id', id); location.reload(); } }
+        async function deleteT(id) { if(confirm(i18n[currentLang].conf)) { await sc.from('transactions').delete().eq('id', id); location.reload(); } }
 
         async function loadD() {
             const { data } = await sc.from('transactions').select('*').order('created_at', { ascending: false });
@@ -122,7 +136,7 @@
                 let i=0, e=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
                 data.forEach(d => {
                     if(d.category==='Income') i+=d.amount; else e+=d.amount;
-                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td>${d.title}</td><td><span style="background:#333;padding:4px 8px;border-radius:5px;font-size:12px">${d.category}</span></td><td style="color:${d.category==='Income'?'#4ade80':'#f87171'}">${d.category==='Income'?'+':'-'} ฿ ${d.amount.toLocaleString()}</td><td><button class="btn-delete" onclick="deleteT(${d.id})">Delete</button></td></tr>`;
+                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td>${d.title}</td><td><span style="background:#333;padding:4px 8px;border-radius:5px;font-size:12px">${d.category}</span></td><td style="color:${d.category==='Income'?'#4ade80':'#f87171'}">${d.category==='Income'?'+':'-'} ฿ ${d.amount.toLocaleString()}</td><td><button class="btn-delete" onclick="deleteT(${d.id})">${i18n[currentLang].del}</button></td></tr>`;
                 });
                 document.getElementById('totalIncome').innerText = `฿ ${i.toLocaleString()}`;
                 document.getElementById('totalExpense').innerText = `฿ ${e.toLocaleString()}`;
@@ -135,9 +149,10 @@
             const cats = {}; data.forEach(d => { if(d.category!=='Income') cats[d.category] = (cats[d.category] || 0) + d.amount; });
             if(window.myDonut) window.myDonut.destroy(); if(window.myLine) window.myLine.destroy();
             window.myDonut = new Chart(document.getElementById('donutChart'), { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#f87171', '#60a5fa', '#fbbf24', '#c084fc', '#4b5563'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: 'white', boxWidth: 10 } } } } });
-            window.myLine = new Chart(document.getElementById('lineChart'), { type: 'line', data: { labels: data.map(d => new Date(d.created_at).toLocaleDateString()).reverse(), datasets: [{ label: 'Trend', data: data.map(d => d.amount).reverse(), borderColor: '#2563eb', tension: 0.3 }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } }, plugins: { legend: { labels: { color: 'white' } } } } });
+            window.myLine = new Chart(document.getElementById('lineChart'), { type: 'line', data: { labels: data.map(d => new Date(d.created_at).toLocaleDateString()).reverse(), datasets: [{ label: currentLang === 'en' ? 'Trend' : 'စီးဆင်းမှု', data: data.map(d => d.amount).reverse(), borderColor: '#2563eb', tension: 0.3 }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } }, plugins: { legend: { labels: { color: 'white' } } } } });
         }
-        window.onload = loadD;
+
+        window.onload = () => { applyLanguage(); loadD(); };
     </script>
 </body>
 </html>
