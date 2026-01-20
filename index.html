@@ -3,74 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - The Billionaire Journey</title>
+    <title>Spendio Pro - Elite Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --bg: #08090a; --sidebar: #0f1113; --card: #15181c; --border: #262c33; --primary: #3b82f6; --income: #10b981; --expense: #ef4444; --text: #f8fafc; --text-dim: #94a3b8; }
+        :root {
+            --bg: #030405;
+            --sidebar: #0a0b0d;
+            --card: #111418;
+            --card-hover: #1a1f26;
+            --border: #222831;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.3);
+            --income: #10b981;
+            --expense: #ef4444;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 40px 24px; display: flex; flex-direction: column; }
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .profile-box { display: flex; align-items: center; gap: 12px; background: var(--card); padding: 8px 15px; border-radius: 40px; border: 1px solid var(--border); }
-        .avatar { width: 30px; height: 30px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
-        .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; }
-        .goal-bar-bg { background: rgba(255,255,255,0.05); height: 12px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
-        .goal-bar-fill { background: var(--primary); height: 100%; width: 0%; transition: 1s ease-in-out; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700; width: 100%; transition: 0.3s; }
-        input, select { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; }
+        body { 
+            background-color: var(--bg); color: var(--text); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            display: flex; height: 100vh; overflow: hidden;
+        }
+
+        /* --- Sidebar UI --- */
+        .sidebar {
+            width: 280px; background: var(--sidebar);
+            border-right: 1px solid var(--border); display: flex;
+            flex-direction: column; padding: 40px 24px; height: 100vh;
+            flex-shrink: 0;
+        }
+        .logo { 
+            font-size: 26px; font-weight: 800; margin-bottom: 48px; 
+            color: var(--primary); display: flex; align-items: center; gap: 12px;
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+        
+        .nav-item {
+            display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+            border-radius: 12px; color: var(--text-dim); text-decoration: none;
+            margin-bottom: 10px; cursor: pointer; transition: all 0.3s ease; 
+            font-weight: 600; font-size: 15px;
+        }
+        .nav-item i { font-size: 18px; width: 24px; text-align: center; }
+        .nav-item:hover { background: var(--card-hover); color: white; transform: translateX(5px); }
+        .nav-item.active { background: var(--card); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
+        .select-custom {
+            width: 100%; background: var(--card); color: var(--text-dim);
+            border: 1px solid var(--border); padding: 12px; border-radius: 12px;
+            margin-bottom: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer;
+        }
+
+        /* --- Main Content --- */
+        .main-content { flex-grow: 1; padding: 48px; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; }
+        .header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .profile-chip {
+            display: flex; align-items: center; gap: 12px; background: var(--card);
+            padding: 8px 18px; border-radius: 40px; border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+        .profile-chip:hover { border-color: var(--primary); background: var(--card-hover); }
+        .avatar { width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+
+        /* --- Goal Section --- */
+        .goal-card {
+            background: linear-gradient(145deg, #151921, #0a0c10); padding: 32px;
+            border-radius: 28px; border: 1px solid var(--border); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .progress-track { background: rgba(255,255,255,0.03); height: 14px; border-radius: 20px; margin-top: 20px; overflow: hidden; position: relative; }
+        .progress-fill { 
+            background: linear-gradient(90deg, var(--primary), #60a5fa); 
+            height: 100%; width: 0%; border-radius: 20px; 
+            box-shadow: 0 0 20px var(--primary-glow); transition: 1.5s cubic-bezier(0.34, 1.56, 0.64, 1); 
+        }
+
+        /* --- Stats Cards --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .stat-card { 
+            background: var(--card); border: 1px solid var(--border); 
+            padding: 32px; border-radius: 24px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .stat-card:hover { transform: translateY(-10px) scale(1.02); background: var(--card-hover); border-color: var(--primary); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .stat-card label { color: var(--text-dim); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .stat-card .val { font-size: 30px; font-weight: 800; }
+
+        /* --- Charts --- */
+        .charts-row { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; }
+        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 32px; border-radius: 28px; height: 420px; }
+
+        /* --- Table --- */
+        .table-wrap { background: var(--card); border: 1px solid var(--border); padding: 32px; border-radius: 28px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: var(--text-dim); padding: 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; }
+        td { padding: 20px 16px; border-bottom: 1px solid #1a1d21; font-size: 14px; }
+        .cat-badge { background: #1e252e; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; }
+
+        /* --- Auth & Modals --- */
         #authSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        @media (max-width: 1024px) { .sidebar { width: 0; padding: 0; visibility: hidden; } }
+        .auth-card { background: var(--card); padding: 50px; border-radius: 32px; width: 400px; border: 1px solid var(--border); text-align: center; }
+        input, select { width: 100%; padding: 16px; background: #000; border: 1px solid var(--border); color: white; border-radius: 14px; margin-bottom: 20px; outline: none; font-size: 15px; }
+        input:focus { border-color: var(--primary); }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 14px; cursor: pointer; font-weight: 800; width: 100%; box-shadow: 0 10px 20px var(--primary-glow); transition: 0.3s; }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 15px 25px var(--primary-glow); }
+
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 10000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); padding: 48px; border-radius: 32px; width: 420px; border: 1px solid var(--border); }
+
+        @media (max-width: 1100px) { .sidebar { width: 0; padding: 0; visibility: hidden; } .stats-grid, .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <div id="authSection">
-        <div style="background:var(--card); padding:40px; border-radius:24px; width:350px; border: 1px solid var(--border); text-align:center;">
-            <h2 style="color:var(--primary); margin-bottom:25px;">Spendio Login</h2>
-            <input type="email" id="email" placeholder="Email">
+        <div class="auth-card">
+            <h1 class="logo" style="justify-content:center; margin-bottom: 30px;"><i class="fa-solid fa-rocket"></i> Spendio</h1>
+            <input type="email" id="email" placeholder="Email Address">
             <input type="password" id="password" placeholder="Password">
-            <button class="btn-main" onclick="handleLogin()">Sign In / Sign Up</button>
+            <button class="btn-main" onclick="handleLogin()">Sign In <i class="fa-solid fa-arrow-right-long" style="margin-left:8px;"></i></button>
         </div>
     </div>
 
-    <div id="appContainer" style="display:none; width:100%;">
+    <div id="appContainer" style="display:none; width: 100%;">
         <div class="sidebar">
-            <h2 style="color:var(--primary); margin-bottom:50px;"><i class="fa-solid fa-gem"></i> Spendio</h2>
-            <div style="cursor:pointer; padding:15px; border-radius:12px; margin-bottom:10px;" onclick="openModal()"><i class="fa-solid fa-circle-plus"></i> Add Record</div>
-            <div style="margin-top:auto; color:var(--expense); cursor:pointer;" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Logout</div>
+            <div class="logo"><i class="fa-solid fa-gem"></i> Spendio</div>
+            <div class="nav-group">
+                <div class="nav-item active"><i class="fa-solid fa-house-chimney"></i> Overview</div>
+                <div class="nav-item" onclick="openModal()"><i class="fa-solid fa-circle-plus"></i> Add Record</div>
+                <div class="nav-item"><i class="fa-solid fa-chart-line"></i> Analytics</div>
+                <div class="nav-item"><i class="fa-solid fa-sliders"></i> Settings</div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <select class="select-custom" id="langSel" onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="my">မြန်မာဘာသာ</option>
+                </select>
+                <select class="select-custom" id="currSel" onchange="changeCurrency(this.value)">
+                    <option value="THB">Thai Baht (฿)</option>
+                    <option value="USD">US Dollar ($)</option>
+                    <option value="MMK">Myanmar Kyat (Ks)</option>
+                </select>
+                <div class="nav-item" onclick="handleLogout()" style="color: var(--expense);"><i class="fa-solid fa-power-off"></i> Sign Out</div>
+            </div>
         </div>
+
         <div class="main-content">
             <div class="header">
-                <h1 id="headTitle">Dashboard</h1>
-                <div class="profile-box">
+                <h1 style="font-weight: 800;">Dashboard</h1>
+                <div class="profile-chip">
                     <div class="avatar" id="userInitial">U</div>
-                    <span id="displayEmail" style="font-size: 13px; font-weight: 700;"></span>
+                    <span id="displayEmail" style="font-weight: 700; font-size: 14px;"></span>
                 </div>
             </div>
 
-            <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
-                <div style="display:flex; justify-content:space-between;">
-                    <h3>Goal: $50,000 Journey</h3>
-                    <h2 id="percentLabel" style="color:var(--primary);">0%</h2>
+            <div class="goal-card">
+                <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                    <h3 style="font-weight: 800;"><i class="fa-solid fa-bullseye" style="color:var(--primary); margin-right:8px;"></i> Goal: $50,000 Journey</h3>
+                    <div style="font-size: 24px; font-weight: 900; color:var(--primary);" id="percentLabel">0.0%</div>
                 </div>
-                <div class="goal-bar-bg"><div id="goalBar" class="goal-bar-fill"></div></div>
-                <p id="remainText" style="margin-top:10px; font-size:13px; color:var(--text-dim);"></p>
+                <div class="progress-track"><div class="progress-fill" id="goalBar"></div></div>
+                <p id="remainText" style="margin-top: 18px; font-size: 14px; font-weight: 700; color: var(--text-dim);"></p>
             </div>
 
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px;">
-                <div class="card"><label style="font-size:12px; color:var(--text-dim);">INCOME</label><div id="totalIncome" style="font-size:26px; font-weight:800; color:var(--income); margin-top:10px;"></div></div>
-                <div class="card"><label style="font-size:12px; color:var(--text-dim);">EXPENSES</label><div id="totalExpense" style="font-size:26px; font-weight:800; color:var(--expense); margin-top:10px;"></div></div>
-                <div class="card"><label style="font-size:12px; color:var(--text-dim);">BALANCE</label><div id="netBalance" style="font-size:26px; font-weight:800; color:var(--primary); margin-top:10px;"></div></div>
+            <div class="stats-grid">
+                <div class="stat-card"><label><i class="fa-solid fa-arrow-trend-up" style="color:var(--income)"></i> Income</label><div class="val" id="totalIncome" style="color:var(--income);"></div></div>
+                <div class="stat-card"><label><i class="fa-solid fa-arrow-trend-down" style="color:var(--expense)"></i> Expense</label><div class="val" id="totalExpense" style="color:var(--expense);"></div></div>
+                <div class="stat-card"><label><i class="fa-solid fa-piggy-bank" style="color:var(--primary)"></i> Balance</label><div class="val" id="netBalance" style="color:var(--primary);"></div></div>
             </div>
 
-            <div class="card">
-                <h3>Transaction History</h3>
-                <table style="width:100%; border-collapse:collapse; margin-top:20px;">
+            <div class="charts-row">
+                <div class="chart-box"><h4><i class="fa-solid fa-chart-pie" style="margin-right:10px;"></i> Breakdown</h4><div style="height:300px;"><canvas id="donutChart"></canvas></div></div>
+                <div class="chart-box"><h4><i class="fa-solid fa-chart-area" style="margin-right:10px;"></i> Performance</h4><div style="height:300px;"><canvas id="lineChart"></canvas></div></div>
+            </div>
+
+            <div class="table-wrap">
+                <h4 style="margin-bottom: 25px;"><i class="fa-solid fa-clock-rotate-left" style="margin-right:10px;"></i> Recent Transactions</h4>
+                <table>
+                    <thead>
+                        <tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Action</th></tr>
+                    </thead>
                     <tbody id="transactionList"></tbody>
                 </table>
             </div>
@@ -78,13 +196,16 @@
     </div>
 
     <div id="modal">
-        <div style="background:var(--card); padding:40px; border-radius:24px; width:400px; border:1px solid var(--border);">
-            <h2 style="margin-bottom:20px;">New Record</h2>
-            <input type="text" id="tIn" placeholder="Title">
-            <input type="number" id="aIn" placeholder="Amount">
-            <select id="cIn" onchange="toggleCustom()"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Others">Others (Custom)</option></select>
-            <input type="text" id="customCat" placeholder="Category Name" style="display:none;">
-            <div style="display:flex; gap:10px;"><button onclick="closeModal()" style="flex:1; background:#333; color:white; border:none; border-radius:12px; padding:15px;">Cancel</button><button onclick="saveData()" class="btn-main" style="flex:1;">Save</button></div>
+        <div class="modal-content">
+            <h2 style="margin-bottom: 30px;"><i class="fa-solid fa-circle-plus" style="color:var(--primary); margin-right:10px;"></i> New Entry</h2>
+            <input type="text" id="tIn" placeholder="What is this for?">
+            <input type="number" id="aIn" placeholder="Enter Amount">
+            <select id="cIn" onchange="toggleCustom()"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others (Custom)</option></select>
+            <input type="text" id="customCat" placeholder="Enter Category Name" style="display:none;">
+            <div style="display:flex; gap:15px; margin-top: 10px;">
+                <button onclick="closeModal()" style="flex:1; padding:16px; background:#222831; color:white; border:none; border-radius:14px; cursor:pointer; font-weight:700;">Cancel</button>
+                <button onclick="saveData()" class="btn-main" style="flex:1;">Save Record</button>
+            </div>
         </div>
     </div>
 
@@ -93,19 +214,32 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        const currs = { THB: "฿", USD: "$", MMK: "Ks" };
+        let curr = localStorage.getItem('curr') || 'THB';
+
         async function handleLogin() {
             const e = document.getElementById('email').value, p = document.getElementById('password').value;
             const { error } = await sc.auth.signInWithPassword({ email: e, password: p });
             if (error) { const { error: sE } = await sc.auth.signUp({ email: e, password: p }); if (sE) alert(sE.message); else alert("Check Email!"); } else checkUser();
         }
+
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
+
         async function checkUser() {
             const { data: { user } } = await sc.auth.getUser();
-            if (user) { document.getElementById('authSection').style.display = 'none'; document.getElementById('appContainer').style.display = 'flex'; document.getElementById('displayEmail').innerText = user.email; document.getElementById('userInitial').innerText = user.email[0].toUpperCase(); loadD(); }
+            if (user) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                document.getElementById('displayEmail').innerText = user.email;
+                document.getElementById('userInitial').innerText = user.email[0].toUpperCase();
+                loadD();
+            }
         }
+
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; document.getElementById('customCat').style.display = 'none'; }
         function toggleCustom() { document.getElementById('customCat').style.display = (document.getElementById('cIn').value === 'Others') ? 'block' : 'none'; }
+        function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); loadD(); }
 
         async function saveData() {
             const t = document.getElementById('tIn').value, a = parseFloat(document.getElementById('aIn').value), cS = document.getElementById('cIn').value, cC = document.getElementById('customCat').value;
@@ -113,7 +247,7 @@
             const { data: { user } } = await sc.auth.getUser();
             if (!t || isNaN(a)) return;
             const { error } = await sc.from('transactions').insert([{ title: t, amount: a, category: finalC, user_id: user.id }]);
-            if (error) { console.error(error); alert("Error: " + error.message); } else { closeModal(); loadD(); }
+            if (error) alert(error.message); else { closeModal(); loadD(); }
         }
 
         async function loadD() {
@@ -122,15 +256,27 @@
                 let inc = 0, exp = 0; const list = document.getElementById('transactionList'); list.innerHTML = '';
                 data.forEach(d => {
                     if (d.category === 'Income') inc += d.amount; else exp += d.amount;
-                    list.innerHTML += `<tr style="border-bottom:1px solid #222;"><td style="padding:15px;">${d.title} <br><small style="color:var(--text-dim)">${d.category}</small></td><td style="padding:15px; text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">฿ ${d.amount.toLocaleString()}</td></tr>`;
+                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td>${d.title}</td><td><span class="cat-badge">${d.category}</span></td><td style="color:${d.category==='Income'?'#10b981':'#ef4444'}; font-weight:800;">${currs[curr]} ${d.amount.toLocaleString()}</td><td><button onclick="deleteT(${d.id})" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 });
-                document.getElementById('totalIncome').innerText = "฿ " + inc.toLocaleString();
-                document.getElementById('totalExpense').innerText = "฿ " + exp.toLocaleString();
-                document.getElementById('netBalance').innerText = "฿ " + (inc-exp).toLocaleString();
-                const p = Math.min(((inc - exp) / (50000 * 35)) * 100, 100);
-                document.getElementById('goalBar').style.width = Math.max(p, 0) + '%';
-                document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
+                document.getElementById('totalIncome').innerText = `${currs[curr]} ${inc.toLocaleString()}`;
+                document.getElementById('totalExpense').innerText = `${currs[curr]} ${exp.toLocaleString()}`;
+                document.getElementById('netBalance').innerText = `${currs[curr]} ${(inc-exp).toLocaleString()}`;
+                const target = 50000 * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1);
+                let p = ((inc - exp) / target) * 100; p = Math.max(0, Math.min(100, p));
+                document.getElementById('goalBar').style.width = p + '%';
+                document.getElementById('percentLabel').innerText = p.toFixed(1) + '%';
+                document.getElementById('remainText').innerText = `Remaining to Goal: ${currs[curr]} ${(target - (inc-exp)).toLocaleString()}`;
+                renderCharts(data);
             }
+        }
+
+        async function deleteT(id) { if(confirm("Delete this?")) { await sc.from('transactions').delete().eq('id', id); loadD(); } }
+
+        function renderCharts(data) {
+            const cats = {}; data.forEach(d => { if(d.category!=='Income') cats[d.category] = (cats[d.category] || 0) + d.amount; });
+            if(window.myDonut) window.myDonut.destroy(); if(window.myLine) window.myLine.destroy();
+            window.myDonut = new Chart(document.getElementById('donutChart'), { type: 'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', padding: 20, font: { weight: '600' } } } } } });
+            window.myLine = new Chart(document.getElementById('lineChart'), { type: 'line', data: { labels: data.map(d => new Date(d.created_at).toLocaleDateString()).reverse(), datasets: [{ label: 'Performance', data: data.map(d => d.amount).reverse(), borderColor: '#3b82f6', borderWidth: 4, tension: 0.4, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.05)', pointRadius: 4, pointBackgroundColor: '#3b82f6' }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { ticks: { color: '#64748b' }, grid: { display: false } } }, plugins: { legend: { display: false } } } });
         }
         window.onload = checkUser;
     </script>
