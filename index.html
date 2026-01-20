@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - Elite Dashboard</title>
+    <title>Spendio Pro - Note Extension</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -24,7 +24,7 @@
         .nav-item:hover { background: var(--card); color: white; transform: translateX(5px); }
         .nav-item.active { background: var(--card); color: white; border-left: 4px solid var(--primary); }
 
-        /* Dropdown UI Fix */
+        /* Dropdown UI */
         .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
         .select-custom {
             width: 100%; background: var(--card); color: var(--text-dim);
@@ -38,18 +38,20 @@
         /* --- Main Content --- */
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; }
         .header { display: flex; justify-content: space-between; align-items: center; }
-        .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; transition: 0.3s; }
+        .card { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 28px; transition: 0.3s; }
+        
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 24px; }
         
         .progress-track { background: rgba(255,255,255,0.03); height: 10px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
         .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1s ease-in-out; box-shadow: 0 0 15px var(--primary); }
 
-        /* Table Design Fix */
+        /* History Table */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; text-transform: uppercase; }
         td { padding: 18px 12px; border-bottom: 1px solid #1a1d21; font-size: 14px; font-weight: 500; }
         .cat-badge { background: #1e252e; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; color: #888; }
+        .note-text { display: block; font-size: 11px; color: var(--text-dim); font-weight: 400; margin-top: 4px; font-style: italic; }
         .btn-delete { background: none; border: none; color: #444; cursor: pointer; transition: 0.3s; font-size: 16px; }
         .btn-delete:hover { color: var(--expense); transform: scale(1.1); }
 
@@ -59,7 +61,8 @@
         .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; transition: 0.3s; }
         .btn-main:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59,130,246,0.3); }
 
-        input, select { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; }
+        input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; }
+        textarea { height: 80px; resize: none; }
     </style>
 </head>
 <body>
@@ -142,8 +145,8 @@
             <h2 id="mHead" style="margin-bottom:25px;"></h2>
             <input type="text" id="tIn" placeholder="Title">
             <input type="number" id="aIn" placeholder="Amount">
-            <select id="cIn" onchange="toggleCustom()"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select>
-            <input type="text" id="customCat" placeholder="Category Name" style="display:none;">
+            <select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select>
+            <textarea id="nIn" placeholder="Note (Optional)..."></textarea>
             <div style="display:flex; gap:12px; margin-top:10px;"><button onclick="closeModal()" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:15px; cursor:pointer;"></button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;"></button></div>
         </div>
     </div>
@@ -154,8 +157,8 @@
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const i18n = {
-            en: { head:"Overview", navDash:"Overview", navAdd:"Add Record", navOut:"Logout", inc:"INCOME", exp:"EXPENSES", net:"BALANCE", break:"Breakdown", trend:"Trend", recent:"Recent History", date:"Date", item:"Item", cat:"Category", amt:"Amount", mHead:"New Entry", sav:"Save", goal:"Goal: $50,000 Journey", rem:"Remaining", can:"Cancel", conf:"Delete this entry?" },
-            my: { head:"ခြုံငုံသုံးသပ်ချက်", navDash:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navOut:"ထွက်ခွာရန်", inc:"ဝင်ငွေ", exp:"ထွက်ငွေ", net:"လက်ကျန်", break:"ခွဲခြားမှု", trend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", date:"ရက်စွဲ", item:"အမည်", cat:"အမျိုးအစား", amt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", sav:"သိမ်းမည်", goal:"ပန်းတိုင်: $၅၀,၀၀၀ ခရီးစဉ်", rem:"လိုအပ်ချက်", can:"မလုပ်တော့ပါ", conf:"ဖျက်မှာလား?" }
+            en: { head:"Overview", navDash:"Overview", navAdd:"Add Record", navOut:"Logout", inc:"INCOME", exp:"EXPENSES", net:"BALANCE", break:"Breakdown", trend:"Trend", recent:"Recent History", date:"Date", item:"Item", cat:"Category", amt:"Amount", mHead:"New Entry", nPl:"Note (Optional)...", sav:"Save", goal:"Goal: $50,000 Journey", rem:"Remaining", can:"Cancel", conf:"Delete this?" },
+            my: { head:"ခြုံငုံသုံးသပ်ချက်", navDash:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navOut:"ထွက်ခွာရန်", inc:"ဝင်ငွေ", exp:"ထွက်ငွေ", net:"လက်ကျန်", break:"ခွဲခြားမှု", trend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", date:"ရက်စွဲ", item:"အမည်", cat:"အမျိုးအစား", amt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", nPl:"မှတ်စု (လိုအပ်ပါက)...", sav:"သိမ်းမည်", goal:"ပန်းတိုင်: $၅၀,၀၀၀ ခရီးစဉ်", rem:"လိုအပ်ချက်", can:"မလုပ်တော့ပါ", conf:"ဖျက်မှာလား?" }
         };
 
         let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en';
@@ -179,6 +182,7 @@
             document.getElementById('thCat').innerText = t.cat;
             document.getElementById('thAmt').innerText = t.amt;
             document.getElementById('mHead').innerText = t.mHead;
+            document.getElementById('nIn').placeholder = t.nPl;
             document.getElementById('btnSav').innerText = t.sav;
             document.getElementById('btnCan').innerText = t.can;
             document.getElementById('langSel').value = lang;
@@ -199,16 +203,17 @@
         function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); applyLanguage(); loadD(); }
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); loadD(); }
         function openModal() { document.getElementById('modal').style.display='flex'; }
-        function closeModal() { document.getElementById('modal').style.display='none'; document.getElementById('customCat').style.display='none'; }
-        function toggleCustom() { document.getElementById('customCat').style.display = (document.getElementById('cIn').value === 'Others') ? 'block' : 'none'; }
+        function closeModal() { document.getElementById('modal').style.display='none'; }
 
         async function saveData() {
-            const t = document.getElementById('tIn').value, a = parseFloat(document.getElementById('aIn').value), cS = document.getElementById('cIn').value, cC = document.getElementById('customCat').value;
-            const finalC = (cS === 'Others') ? cC : cS;
+            const t = document.getElementById('tIn').value, a = parseFloat(document.getElementById('aIn').value), c = document.getElementById('cIn').value, n = document.getElementById('nIn').value;
             const { data: { user } } = await sc.auth.getUser();
             if (!t || isNaN(a)) return;
-            const { error } = await sc.from('transactions').insert([{ title: t, amount: a, category: finalC, user_id: user.id }]);
-            if (error) alert(error.message); else { closeModal(); loadD(); }
+            const { error } = await sc.from('transactions').insert([{ title: t, amount: a, category: c, note: n, user_id: user.id }]);
+            if (error) alert(error.message); else { 
+                document.getElementById('tIn').value=''; document.getElementById('aIn').value=''; document.getElementById('nIn').value='';
+                closeModal(); loadD(); 
+            }
         }
 
         async function loadD() {
@@ -220,7 +225,10 @@
                     if (d.category === 'Income') inc += d.amount; else exp += d.amount;
                     list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;">
                         <td style="padding:15px; font-size:12px; color:var(--text-dim);">${dateStr}</td>
-                        <td style="padding:15px; font-weight:600;">${d.title}</td>
+                        <td style="padding:15px; font-weight:600;">
+                            ${d.title}
+                            ${d.note ? `<span class="note-text"><i class="fa-regular fa-note-sticky"></i> ${d.note}</span>` : ''}
+                        </td>
                         <td style="padding:15px;"><span class="cat-badge">${d.category}</span></td>
                         <td style="padding:15px; text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td>
                         <td style="padding:15px; text-align:center;"><button class="btn-delete" onclick="deleteT(${d.id})"><i class="fa-solid fa-trash-can"></i></button></td>
