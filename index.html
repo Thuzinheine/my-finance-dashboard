@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Billionaire Journey - Finance Dashboard</title>
+    <title>The Billionaire Journey - Spendio</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -103,6 +103,9 @@
             box-sizing: border-box;
         }
 
+        .btn-save { background: var(--primary); color: white; border: none; }
+        .btn-cancel { background: #333; color: white; border: none; }
+
         @media (max-width: 800px) { .charts-container { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -145,9 +148,9 @@
     <div id="modal">
         <div class="modal-content">
             <h2 style="margin-top:0">New Entry</h2>
-            <input type="text" id="title" placeholder="Item Name">
-            <input type="number" id="amount" placeholder="Amount (฿)">
-            <select id="category">
+            <input type="text" id="titleInput" placeholder="Item Name">
+            <input type="number" id="amountInput" placeholder="Amount (฿)">
+            <select id="categoryInput">
                 <option value="Income">Income (+)</option>
                 <option value="Food">Food</option>
                 <option value="Tech">Tech</option>
@@ -155,42 +158,57 @@
                 <option value="Trading">Trading Fees</option>
             </select>
             <div style="display:flex; gap:10px;">
-                <button onclick="closeModal()" style="flex:1; padding:10px; border-radius:8px; cursor:pointer;">Cancel</button>
-                <button onclick="saveData()" style="flex:1; padding:10px; background:var(--primary); color:white; border:none; border-radius:8px; cursor:pointer;">Save</button>
+                <button class="btn-cancel" onclick="closeModal()" style="flex:1; padding:12px; border-radius:8px; cursor:pointer;">Cancel</button>
+                <button class="btn-save" onclick="saveData()" style="flex:1; padding:12px; border-radius:8px; cursor:pointer;">Save</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- Supabase Config ---
+        // --- Supabase ချိတ်ဆက်မှု ---
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- UI Functions ---
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-        // --- Save Data ---
+        // --- Data သိမ်းဆည်းခြင်း ---
         async function saveData() {
-            const title = document.getElementById('title').value;
-            const amount = parseFloat(document.getElementById('amount').value);
-            const category = document.getElementById('category').value;
+            const title = document.getElementById('titleInput').value;
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            const category = document.getElementById('categoryInput').value;
 
-            if (title && amount) {
-                const { error } = await supabase.from('transactions').insert([{ title, amount, category }]);
-                if (error) alert("Error saving: " + error.message);
-                else {
+            if (title && !isNaN(amount)) {
+                const { data, error } = await supabaseClient
+                    .from('transactions')
+                    .insert([{ title, amount, category }]);
+
+                if (error) {
+                    console.error('Save error:', error);
+                    alert("Error: " + error.message);
+                } else {
+                    alert("အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။");
                     closeModal();
-                    location.reload(); // Refresh to update charts
+                    location.reload(); // Refresh လုပ်ပြီး ဒေတာသစ်ပြရန်
                 }
+            } else {
+                alert("အချက်အလက် ပြည့်စုံအောင် ဖြည့်ပါ။");
             }
         }
 
-        // --- Fetch & Update Charts ---
+        // --- Data များ ပြန်ခေါ်ယူခြင်း ---
         async function loadDashboard() {
-            const { data, error } = await supabase.from('transactions').select('*');
-            if (data) {
+            const { data, error } = await supabaseClient
+                .from('transactions')
+                .select('*');
+
+            if (error) {
+                console.error('Fetch error:', error);
+                return;
+            }
+
+            if (data && data.length > 0) {
                 let inc = 0, exp = 0;
                 data.forEach(d => {
                     if (d.category === 'Income') inc += d.amount;
@@ -205,8 +223,9 @@
             }
         }
 
+        // --- Chart များ ဆွဲခြင်း ---
         function renderCharts(data) {
-            // Donut Chart Logic
+            // Donut Chart
             const cats = {};
             data.forEach(d => cats[d.category] = (cats[d.category] || 0) + d.amount);
             
@@ -214,19 +233,35 @@
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(cats),
-                    datasets: [{ data: Object.values(cats), backgroundColor: ['#4ade80', '#f87171', '#60a5fa', '#fbbf24', '#c084fc'] }]
+                    datasets: [{ 
+                        data: Object.values(cats), 
+                        backgroundColor: ['#4ade80', '#f87171', '#60a5fa', '#fbbf24', '#c084fc'],
+                        borderWidth: 0
+                    }]
                 },
-                options: { plugins: { legend: { labels: { color: 'white' } } } }
+                options: { plugins: { legend: { position: 'bottom', labels: { color: 'white' } } } }
             });
 
-            // Line Chart Logic
+            // Line Chart
             new Chart(document.getElementById('lineChart'), {
                 type: 'line',
                 data: {
                     labels: data.map(d => new Date(d.created_at).toLocaleDateString()),
-                    datasets: [{ label: 'Amount', data: data.map(d => d.amount), borderColor: '#2563eb', tension: 0.3 }]
+                    datasets: [{ 
+                        label: 'Amount Trend', 
+                        data: data.map(d => d.amount), 
+                        borderColor: '#2563eb', 
+                        tension: 0.3,
+                        fill: false 
+                    }]
                 },
-                options: { scales: { y: { ticks: { color: 'white' } }, x: { ticks: { color: 'white' } } } }
+                options: { 
+                    scales: { 
+                        y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
+                        x: { ticks: { color: '#888' }, grid: { display: false } } 
+                    },
+                    plugins: { legend: { labels: { color: 'white' } } }
+                }
             });
         }
 
