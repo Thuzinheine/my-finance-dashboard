@@ -24,38 +24,19 @@
             transition: transform 0.3s ease; z-index: 1500;
         }
         .logo { font-size: 26px; font-weight: 800; margin-bottom: 48px; color: var(--primary); display: flex; align-items: center; gap: 12px; }
-        .nav-item { 
-            display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 12px; 
-            color: var(--text-dim); cursor: pointer; transition: 0.2s ease; font-weight: 600; font-size: 14px; margin-bottom: 5px; 
-        }
+        .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 12px; color: var(--text-dim); cursor: pointer; transition: 0.2s ease; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
         .nav-item:hover { background: var(--card); color: white; }
         .nav-item.active { background: var(--card); color: white; border-left: 3px solid var(--primary); }
 
         .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
-        .select-custom {
-            width: 100%; background: var(--card); color: var(--text-dim); border: 1px solid var(--border);
-            padding: 12px 35px 12px 16px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 600;
-            outline: none; cursor: pointer; appearance: none; transition: 0.2s;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2polyline%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 15px center; background-size: 14px;
-        }
+        .select-custom { width: 100%; background: var(--card); color: var(--text-dim); border: 1px solid var(--border); padding: 12px 35px 12px 16px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2polyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px center; background-size: 14px; }
 
         /* --- Main Content --- */
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; width: 100%; }
-        .card { 
-            background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; 
-            transition: 0.2s ease; 
-        }
-
-        /* Stats Cards Soft Hover Fix */
-        .stat-card:hover { 
-            border-color: #3b82f6; /* Primary color border only */
-            background: rgba(255,255,255,0.02);
-        }
-
+        .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; transition: 0.2s ease; }
+        .stat-card:hover { border-color: #3b82f6; background: rgba(255,255,255,0.02); }
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 20px; }
-        
         .progress-track { background: rgba(255,255,255,0.03); height: 10px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
         .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1.5s; }
 
@@ -64,18 +45,24 @@
         th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; text-transform: uppercase; }
         td { padding: 16px 12px; border-bottom: 1px solid #1a1d21; font-size: 14px; }
 
+        /* Actions */
         .btn-icon { cursor: pointer; transition: 0.2s; margin: 0 8px; color: #444; }
         .btn-edit:hover { color: var(--primary); }
         .btn-del:hover { color: var(--expense); }
 
+        /* --- AUTH FIX: Default ကို display: none ထားသည် --- */
+        #authSection { 
+            display: none; position: fixed; inset: 0; background: var(--bg); 
+            align-items: center; justify-content: center; z-index: 9999; 
+        }
+
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
         .modal-content { background: var(--card); padding: 40px; border-radius: 32px; width: 90%; max-width: 420px; border: 1px solid var(--border); }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; transition: 0.2s; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; }
 
         @media (max-width: 1024px) {
             .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
-            .mobile-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
             .main-content { padding: 20px; }
             .stat-grid, .charts-row { grid-template-columns: 1fr; }
         }
@@ -106,11 +93,6 @@
         </div>
 
         <div class="main-content">
-            <div class="mobile-header" style="display: none;">
-                <div style="font-size:24px; cursor:pointer;" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div>
-                <div class="logo" style="margin:0; font-size:20px;">Spendio</div>
-            </div>
-
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h1 id="headTitle" style="font-weight: 800;">Dashboard</h1>
                 <div style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:13px; font-weight:700;" id="displayEmail"></div>
@@ -163,11 +145,11 @@
         <div class="modal-content">
             <h2 id="setHead" style="margin-bottom:25px;"><i class="fa-solid fa-bullseye"></i> Goal Settings</h2>
             <input type="number" id="goalInput">
-            <div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" id="btnSetCan" style="flex:1; background:#222; border:none; border-radius:12px; padding:12px;">Cancel</button><button onclick="updateGoal()" id="btnSetSav" class="btn-main" style="flex:1;">Update</button></div>
+            <div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" id="btnSetCan" style="flex:1; background:#222; border:none; border-radius:12px; padding:15px;">Cancel</button><button onclick="updateGoal()" id="btnSetSav" class="btn-main" style="flex:1;">Update</button></div>
         </div>
     </div>
 
-    <div id="authSection" style="position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:9999;">
+    <div id="authSection">
         <div class="card" style="width:360px; text-align:center; padding:45px; border-radius:32px;">
             <h1 style="color:var(--primary); margin-bottom:30px;"><i class="fa-solid fa-rocket"></i> Spendio</h1>
             <input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password">
@@ -201,9 +183,21 @@
             if (error) { await sc.auth.signUp({ email:e, password:p }); alert("Try Login!"); } else checkUser();
         }
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
+        
         async function checkUser() {
             const { data: { user } } = await sc.auth.getUser();
-            if (user) { document.getElementById('authSection').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; applyLanguage(); fetchGoal(); }
+            const authSec = document.getElementById('authSection');
+            const appCon = document.getElementById('appContainer');
+
+            if (user) {
+                authSec.style.display = 'none';
+                appCon.style.display = 'flex';
+                document.getElementById('displayEmail').innerText = user.email;
+                applyLanguage(); fetchGoal();
+            } else {
+                authSec.style.display = 'flex'; // User မရှိမှသာ Box ကို ပြသည်
+                appCon.style.display = 'none';
+            }
         }
 
         async function fetchGoal() {
@@ -272,8 +266,8 @@
                         <td style="font-size:12px; color:#666;">${d.note || '-'}</td>
                         <td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td>
                         <td style="text-align:center;">
-                            <i class="fa-solid fa-pen-to-square btn-icon btn-edit" onclick="editT(${d.id})"></i>
-                            <i class="fa-solid fa-trash btn-icon btn-del" onclick="deleteT(${d.id})"></i>
+                            <i class="fa-solid fa-pen-to-square btn-icon btn-edit" onclick="editT(${d.id})" style="cursor:pointer; color:#3b82f6; margin-right:15px;"></i>
+                            <i class="fa-solid fa-trash btn-icon btn-del" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i>
                         </td>
                     </tr>`;
                 });
@@ -285,7 +279,7 @@
                 const p = Math.min((net / target) * 100, 100);
                 document.getElementById('goalBar').style.width = Math.max(p, 0) + '%';
                 document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
-                document.getElementById('goalLabel').innerText = `${i18n[lang].goal}: $${cloudGoal.toLocaleString()} Journey`;
+                document.getElementById('goalLabel').innerText = `Goal: $${cloudGoal.toLocaleString()} Journey`;
                 document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - net).toLocaleString()}`;
                 renderCharts(data);
             }
