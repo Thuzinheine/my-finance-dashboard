@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - Final Fix</title>
+    <title>Spendio Pro - f09 Hover Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,31 +17,47 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
 
-        /* --- Sidebar --- */
+        /* --- Sidebar UI --- */
         .sidebar { 
             width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); 
             display: flex; flex-direction: column; padding: 40px 24px; flex-shrink: 0;
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1500;
         }
         .logo { font-size: 26px; font-weight: 800; margin-bottom: 48px; color: var(--primary); display: flex; align-items: center; gap: 12px; }
-        .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 12px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
-        .nav-item:hover, .nav-item.active { background: var(--card); color: white; }
-        .nav-item.active { border-left: 4px solid var(--primary); }
+        .nav-item { 
+            display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 12px; 
+            color: var(--text-dim); cursor: pointer; transition: 0.3s ease; font-weight: 600; font-size: 14px; margin-bottom: 5px; 
+        }
+        /* Hover Effect for Sidebar Items */
+        .nav-item:hover { 
+            background: var(--card); color: white; transform: translateX(8px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .nav-item.active { background: var(--card); color: white; border-left: 4px solid var(--primary); }
 
         .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
         .select-custom {
             width: 100%; background: var(--card); color: var(--text-dim); border: 1px solid var(--border);
             padding: 12px 35px 12px 16px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 600;
-            outline: none; cursor: pointer; appearance: none;
+            outline: none; cursor: pointer; appearance: none; transition: 0.3s;
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2polyline%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat; background-position: right 15px center; background-size: 14px;
         }
+        .select-custom:hover { border-color: var(--primary); color: white; }
 
         /* --- Main Content --- */
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; width: 100%; }
-        .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        
-        .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; }
+        .card { 
+            background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        /* Hover Effect for Cards */
+        .stat-card:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 15px rgba(59,130,246,0.1); 
+        }
+
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 20px; }
         
@@ -51,50 +67,49 @@
         .table-wrap { overflow-x: auto; margin-top: 15px; border-radius: 15px; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        td { padding: 16px 12px; border-bottom: 1px solid #1a1d21; font-size: 14px; }
-        .cat-badge { background: #1e252e; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; color: #888; }
+        td { padding: 16px 12px; border-bottom: 1px solid #1a1d21; font-size: 14px; transition: 0.2s; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
 
-        /* --- MODAL FIX (ဒီနေရာက အရေးကြီးဆုံးပါ) --- */
-        .modal-overlay { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
-            backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; 
-        }
+        /* Action Buttons Hover */
+        .btn-icon { cursor: pointer; transition: 0.3s; margin: 0 8px; }
+        .btn-edit:hover { color: var(--primary); transform: scale(1.3); }
+        .btn-del:hover { color: var(--expense); transform: scale(1.3); }
+
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
         .modal-content { background: var(--card); padding: 40px; border-radius: 32px; width: 90%; max-width: 420px; border: 1px solid var(--border); }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; }
-
-        /* Mobile Overlay */
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1400; backdrop-filter: blur(4px); }
         
+        .btn-main { 
+            background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; 
+            cursor: pointer; font-weight: 800; width: 100%; transition: 0.3s; 
+        }
+        .btn-main:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 20px rgba(59,130,246,0.4); 
+            filter: brightness(1.1);
+        }
+
         @media (max-width: 1024px) {
             .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
-            .sidebar-overlay.active { display: block; }
             .main-content { padding: 20px; }
-            .mobile-header { display: flex; }
             .stat-grid, .charts-row { grid-template-columns: 1fr; }
         }
 
-        input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; outline: none; }
+        input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; transition: 0.3s; outline: none; }
+        input:focus, textarea:focus { border-color: var(--primary); background: #050505; }
     </style>
 </head>
 <body>
 
-    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleMenu()"></div>
-
-    <div id="authSection" style="position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:9999;">
-        <div class="card" style="width:340px; text-align:center;">
-            <h1 style="color:var(--primary); margin-bottom:30px;"><i class="fa-solid fa-rocket"></i> Spendio</h1>
-            <input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password">
-            <button class="btn-main" onclick="handleLogin()">Sign In</button>
-        </div>
-    </div>
+    <div id="sidebarOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1400; backdrop-filter: blur(4px);" onclick="toggleMenu()"></div>
 
     <div id="appContainer" style="display:none; width: 100%;">
         <div class="sidebar" id="sidebar">
             <div class="logo"><i class="fa-solid fa-gem"></i> Spendio</div>
-            <div class="nav-item active" onclick="if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-house"></i> <span id="navDash">Overview</span></div>
-            <div class="nav-item" onclick="openModal('entryModal'); if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-circle-plus"></i> <span id="navAdd">Add Record</span></div>
-            <div class="nav-item" onclick="openModal('settingsModal'); if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-gear"></i> <span id="navSet">Settings</span></div>
+            <div class="nav-item active"><i class="fa-solid fa-house"></i> <span id="navDash">Overview</span></div>
+            <div class="nav-item" onclick="openModal('entryModal')"><i class="fa-solid fa-circle-plus"></i> <span id="navAdd">Add Record</span></div>
+            <div class="nav-item" onclick="openModal('settingsModal')"><i class="fa-solid fa-gear"></i> <span id="navSet">Settings</span></div>
             
             <div class="sidebar-footer">
                 <select class="select-custom" id="langSel" onchange="changeLanguage(this.value)">
@@ -108,17 +123,12 @@
         </div>
 
         <div class="main-content">
-            <div class="mobile-header">
-                <div style="font-size:24px;" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div>
-                <div class="logo" style="margin:0; font-size:20px;">Spendio</div>
-            </div>
-
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h1 id="headTitle" style="font-weight: 800;">Dashboard</h1>
                 <div style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:13px; font-weight:700;" id="displayEmail"></div>
             </div>
 
-            <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
+            <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); cursor: default;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-end;">
                     <h3 id="goalLabel">Goal Journey</h3>
                     <div style="font-size:20px; font-weight:900; color:var(--primary);" id="percentLabel">0.0%</div>
@@ -128,9 +138,9 @@
             </div>
 
             <div class="stat-grid">
-                <div class="card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="netBalance" style="color:var(--primary); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="netBalance" style="color:var(--primary); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
             </div>
 
             <div class="charts-row">
@@ -158,7 +168,7 @@
             <input type="number" id="aIn" placeholder="Amount">
             <select id="cIn" class="select-custom" style="padding:14px; background-image:none;"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select>
             <textarea id="nIn" placeholder="Note..." style="height:80px; resize:none;"></textarea>
-            <div style="display:flex; gap:10px;"><button onclick="closeModal('entryModal')" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:12px;">Cancel</button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;">Save</button></div>
+            <div style="display:flex; gap:10px;"><button onclick="closeModal('entryModal')" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:12px; cursor:pointer;">Cancel</button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;">Save</button></div>
         </div>
     </div>
 
@@ -166,7 +176,15 @@
         <div class="modal-content">
             <h2 id="setHead" style="margin-bottom:25px;"><i class="fa-solid fa-bullseye"></i> Goal Settings</h2>
             <input type="number" id="goalInput">
-            <div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" id="btnSetCan" style="flex:1; background:#222; border:none; border-radius:12px; padding:12px;">Cancel</button><button onclick="updateGoal()" id="btnSetSav" class="btn-main" style="flex:1;">Update</button></div>
+            <div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" id="btnSetCan" style="flex:1; background:#222; border:none; border-radius:12px; padding:12px; cursor:pointer;">Cancel</button><button onclick="updateGoal()" id="btnSetSav" class="btn-main" style="flex:1;">Update</button></div>
+        </div>
+    </div>
+
+    <div id="authSection" style="position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:9999;">
+        <div class="card" style="width:360px; text-align:center; padding:45px; border-radius:32px;">
+            <h1 style="color:var(--primary); margin-bottom:30px;"><i class="fa-solid fa-rocket"></i> Spendio</h1>
+            <input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password">
+            <button class="btn-main" onclick="handleLogin()">Sign In</button>
         </div>
     </div>
 
@@ -184,14 +202,16 @@
         const currs = { THB: "฿", USD: "$", MMK: "Ks" };
 
         function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('sidebarOverlay');
+            sb.classList.toggle('active');
+            ov.style.display = sb.classList.contains('active') ? 'block' : 'none';
         }
 
         async function handleLogin() {
             const e = document.getElementById('email').value, p = document.getElementById('password').value;
             const { error } = await sc.auth.signInWithPassword({ email:e, password:p });
-            if (error) { await sc.auth.signUp({ email:e, password:p }); alert("Try Login!"); } else checkUser();
+            if (error) { await sc.auth.signUp({ email:e, password:p }); alert("Check Email or Login!"); } else checkUser();
         }
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
         async function checkUser() {
@@ -258,17 +278,27 @@
                 let inc=0, exp=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
                 data.forEach(d => {
                     if (d.category === 'Income') inc += d.amount; else exp += d.amount;
-                    list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;"><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="background:#222; padding:4px 8px; border-radius:5px; font-size:11px;">${d.category}</span></td><td style="font-size:12px; color:#666;">${d.note || '-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-pen-to-square" onclick="editT(${d.id})" style="cursor:pointer; color:#3b82f6; margin-right:15px;"></i><i class="fa-solid fa-trash" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i></td></tr>`;
+                    list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;">
+                        <td>${new Date(d.created_at).toLocaleDateString()}</td>
+                        <td style="font-weight:700;">${d.title}</td>
+                        <td><span class="cat-badge">${d.category}</span></td>
+                        <td style="font-size:12px; color:#666;">${d.note || '-'}</td>
+                        <td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td>
+                        <td style="text-align:center;">
+                            <i class="fa-solid fa-pen-to-square btn-icon btn-edit" onclick="editT(${d.id})"></i>
+                            <i class="fa-solid fa-trash btn-icon btn-del" onclick="deleteT(${d.id})"></i>
+                        </td>
+                    </tr>`;
                 });
                 const net = inc - exp;
                 document.getElementById('totalIncome').innerText = currs[curr] + " " + inc.toLocaleString();
                 document.getElementById('totalExpense').innerText = currs[curr] + " " + exp.toLocaleString();
                 document.getElementById('netBalance').innerText = currs[curr] + " " + net.toLocaleString();
                 const target = cloudGoal * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1);
-                const p = Math.min(((inc - exp) / target) * 100, 100);
+                const p = Math.min((net / target) * 100, 100);
                 document.getElementById('goalBar').style.width = Math.max(p, 0) + '%';
                 document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
-                document.getElementById('goalLabel').innerText = `${i18n[lang].goal}: $${cloudGoal.toLocaleString()} Journey`;
+                document.getElementById('goalLabel').innerText = `Goal: $${cloudGoal.toLocaleString()} Journey`;
                 document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - net).toLocaleString()}`;
                 renderCharts(data);
             }
