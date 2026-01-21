@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - Custom Category</title>
+    <title>Spendio Pro - Final Labels</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -29,9 +29,15 @@
 
         /* --- Main Content --- */
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; width: 100%; }
+        .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .menu-toggle { font-size: 24px; color: white; cursor: pointer; }
+
         .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; transition: 0.2s ease; }
+        .stat-card:hover { border-color: #333; }
+
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 20px; }
+        
         .progress-track { background: rgba(255,255,255,0.03); height: 10px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
         .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1.5s; }
 
@@ -49,13 +55,15 @@
         .btn-edit:hover { color: var(--primary); }
         .btn-del:hover { color: var(--expense); }
 
-        @media (max-width: 1024px) { .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); } .sidebar.active { transform: translateX(0); } .main-content { padding: 20px; } .stat-grid, .charts-row { grid-template-columns: 1fr; } }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1400; backdrop-filter: blur(4px); }
+
+        @media (max-width: 1024px) { .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); } .sidebar.active { transform: translateX(0); } .sidebar-overlay.active { display: block; } .main-content { padding: 20px; } .mobile-header { display: flex; } .stat-grid, .charts-row { grid-template-columns: 1fr; } }
         input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; outline: none; }
     </style>
 </head>
 <body>
 
-    <div id="sidebarOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1400; backdrop-filter: blur(4px);" onclick="toggleMenu()"></div>
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleMenu()"></div>
 
     <div id="appContainer" style="display:none; width: 100%;">
         <div class="sidebar" id="sidebar">
@@ -71,18 +79,27 @@
         </div>
 
         <div class="main-content">
+            <div class="mobile-header"><div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div><div class="logo" style="margin:0; font-size:20px;">Spendio</div></div>
             <div style="display:flex; justify-content:space-between; align-items:center;"><h1 id="headTitle" style="font-weight: 800;">Dashboard</h1><div style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:13px; font-weight:700;" id="displayEmail"></div></div>
-            <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a);"><div style="display:flex; justify-content:space-between; align-items:flex-end;"><h3 id="goalLabel">Goal Journey</h3><div style="font-size:20px; font-weight:900; color:var(--primary);" id="percentLabel">0.0%</div></div><div class="progress-track"><div class="progress-fill" id="goalBar"></div></div><p id="remainText" style="margin-top:12px; font-size:12px; color:var(--text-dim)"></p></div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end;"><h3 id="goalLabel">Goal Journey</h3><div style="font-size:20px; font-weight:900; color:var(--primary);" id="percentLabel">0.0%</div></div>
+                <div class="progress-track"><div class="progress-fill" id="goalBar"></div></div>
+                <p id="remainText" style="margin-top:12px; font-size:12px; color:var(--text-dim)"></p>
+            </div>
+
             <div class="stat-grid">
-                <div class="card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="netBalance" style="color:var(--primary); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700; text-transform: uppercase;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700; text-transform: uppercase;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700; text-transform: uppercase;"></label><div class="val" id="netBalance" style="color:var(--primary); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
             </div>
+
             <div class="charts-row">
-                <div class="card"><h4><i class="fa-solid fa-chart-pie"></i> <span id="headBreak"></span></h4><div style="height:220px; margin-top:15px;"><canvas id="donutChart"></canvas></div></div>
-                <div class="card"><h4><i class="fa-solid fa-chart-line"></i> <span id="headTrend"></span></h4><div style="height:220px; margin-top:15px;"><canvas id="lineChart"></canvas></div></div>
+                <div class="card"><h4><i class="fa-solid fa-chart-pie"></i> <span id="headBreak">Breakdown</span></h4><div style="height:220px; margin-top:15px;"><canvas id="donutChart"></canvas></div></div>
+                <div class="card"><h4><i class="fa-solid fa-chart-line"></i> <span id="headTrend">Trend</span></h4><div style="height:220px; margin-top:15px;"><canvas id="lineChart"></canvas></div></div>
             </div>
-            <div class="card"><h3 id="headRecent" style="margin-bottom:15px;">History</h3><div class="table-wrap"><table><thead><tr><th id="thDate">Date</th><th id="thItem">Item</th><th id="thCat">Cat</th><th id="thNote">Note</th><th id="thAmt" style="text-align:right;">Amount</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
+
+            <div class="card"><h3 id="headRecent" style="margin-bottom:15px;">Transaction History</h3><div class="table-wrap"><table><thead><tr><th id="thDate">Date</th><th id="thItem">Item</th><th id="thCat">Category</th><th id="thNote">Note</th><th id="thAmt" style="text-align:right;">Amount</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
         </div>
     </div>
 
@@ -109,21 +126,25 @@
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const i18n = {
-            en: { head:"Overview", navAdd:"Add Record", navSet:"Settings", inc:"INCOME", exp:"EXPENSES", net:"BALANCE", break:"Breakdown", trend:"Trend", recent:"History", date:"Date", item:"Item", cat:"Cat", note:"Note", amt:"Amount", mHead:"New Entry", sav:"Save", goal:"Goal", rem:"Remaining", can:"Cancel", upHead:"Edit Entry", conf:"Delete?" },
+            en: { head:"Overview", navAdd:"Add Record", navSet:"Settings", inc:"INCOME", exp:"EXPENSES", net:"BALANCE", break:"Breakdown", trend:"Trend", recent:"Recent History", date:"Date", item:"Item", cat:"Category", note:"Note", amt:"Amount", mHead:"New Entry", sav:"Save", goal:"Goal", rem:"Remaining", can:"Cancel", upHead:"Edit Entry", conf:"Delete?" },
             my: { head:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navSet:"ပြင်ဆင်ချက်", inc:"ဝင်ငွေ", exp:"ထွက်ငွေ", net:"လက်ကျန်", break:"ခွဲခြားမှု", trend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", date:"ရက်စွဲ", item:"အမည်", cat:"အမျိုးအစား", note:"မှတ်စု", amt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", sav:"သိမ်းမည်", goal:"ပန်းတိုင်", rem:"လိုအပ်ချက်", can:"မလုပ်တော့ပါ", upHead:"စာရင်းပြင်ရန်", conf:"ဖျက်မှာလား?" }
         };
 
         let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en', cloudGoal = 50000;
         const currs = { THB: "฿", USD: "$", MMK: "Ks" };
 
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none'; }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').classList.toggle('active'); }
         function toggleCustomCat() { document.getElementById('customCatIn').style.display = (document.getElementById('cIn').value === 'Others') ? 'block' : 'none'; }
         async function handleLogin() { const e = document.getElementById('email').value, p = document.getElementById('password').value; const { error } = await sc.auth.signInWithPassword({ email:e, password:p }); if (error) { await sc.auth.signUp({ email:e, password:p }); alert("Try Login!"); } else checkUser(); }
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
         async function checkUser() { const { data: { user } } = await sc.auth.getUser(); if (user) { document.getElementById('authSection').style.display = 'none'; document.getElementById('appContainer').style.display = 'flex'; document.getElementById('displayEmail').innerText = user.email; applyLanguage(); fetchGoal(); } else { document.getElementById('authSection').style.display = 'flex'; } }
         async function fetchGoal() { const { data: { user } } = await sc.auth.getUser(); const { data } = await sc.from('profiles').select('target_goal').eq('id', user.id).single(); if (data) cloudGoal = data.target_goal; else await sc.from('profiles').insert([{ id: user.id, target_goal: 50000 }]); loadD(); }
         async function updateGoal() { const val = parseFloat(document.getElementById('goalInput').value); if (val > 0) { const { data: { user } } = await sc.auth.getUser(); await sc.from('profiles').update({ target_goal: val }).eq('id', user.id); cloudGoal = val; closeModal('settingsModal'); loadD(); } }
-        function applyLanguage() { const t = i18n[lang]; ["headTitle", "lblInc", "lblExp", "lblNet", "headBreak", "headTrend", "headRecent", "thDate", "thItem", "thCat", "thNote", "thAmt", "mHead", "btnSav", "btnCan"].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id] || t.head; }); document.getElementById('langSel').value = lang; document.getElementById('currSel').value = curr; }
+        function applyLanguage() { 
+            const t = i18n[lang]; 
+            ["headTitle", "lblInc", "lblExp", "lblNet", "headBreak", "headTrend", "headRecent", "thDate", "thItem", "thCat", "thNote", "thAmt", "mHead", "btnSav", "btnCan"].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; }); 
+            document.getElementById('langSel').value = lang; document.getElementById('currSel').value = curr; 
+        }
         function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); applyLanguage(); loadD(); }
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); loadD(); }
         function openModal(id) { document.getElementById(id).style.display='flex'; if(id==='settingsModal') document.getElementById('goalInput').value = cloudGoal; }
@@ -142,10 +163,7 @@
             const { data } = await sc.from('transactions').select('*').order('created_at', { ascending: false });
             if (data) {
                 let inc=0, exp=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
-                data.forEach(d => {
-                    if (d.category === 'Income') inc += d.amount; else exp += d.amount;
-                    list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;"><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span class="cat-badge">${d.category}</span></td><td style="font-size:12px; color:#666;">${d.note || '-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-pen-to-square btn-icon btn-edit" onclick="editT(${d.id})" style="cursor:pointer; color:#3b82f6; margin-right:15px;"></i><i class="fa-solid fa-trash btn-icon btn-del" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i></td></tr>`;
-                });
+                data.forEach(d => { if (d.category === 'Income') inc += d.amount; else exp += d.amount; list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;"><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span class="cat-badge">${d.category}</span></td><td style="font-size:12px; color:#666;">${d.note || '-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-pen-to-square btn-icon btn-edit" onclick="editT(${d.id})" style="cursor:pointer; color:#3b82f6; margin-right:15px;"></i><i class="fa-solid fa-trash btn-icon btn-del" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i></td></tr>`; });
                 const net = inc - exp; document.getElementById('totalIncome').innerText = currs[curr] + " " + inc.toLocaleString(); document.getElementById('totalExpense').innerText = currs[curr] + " " + exp.toLocaleString(); document.getElementById('netBalance').innerText = currs[curr] + " " + net.toLocaleString();
                 const target = cloudGoal * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1); const p = Math.min((net / target) * 100, 100); document.getElementById('goalBar').style.width = Math.max(p, 0) + '%'; document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
                 document.getElementById('goalLabel').innerText = `Goal: $${cloudGoal.toLocaleString()} Journey`; document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - net).toLocaleString()}`;
