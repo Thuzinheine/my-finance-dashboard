@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - Responsive Edition</title>
+    <title>Spendio Pro - Perfect UI Fix</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -21,75 +21,78 @@
         .sidebar { 
             width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); 
             display: flex; flex-direction: column; padding: 40px 24px; flex-shrink: 0;
-            transition: transform 0.3s ease-in-out; z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1100;
         }
         .logo { font-size: 26px; font-weight: 800; margin-bottom: 48px; color: var(--primary); display: flex; align-items: center; gap: 12px; }
         .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 12px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
         .nav-item:hover, .nav-item.active { background: var(--card); color: white; }
         .nav-item.active { border-left: 4px solid var(--primary); }
 
+        /* --- Dropdown Arrows Fix (မြှားခေါင်း နေရာချထားမှု) --- */
         .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
         .select-custom {
-            width: 100%; background: var(--card); color: var(--text-dim); border: 1px solid var(--border);
-            padding: 12px 16px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer;
+            width: 100%; background: var(--card); color: var(--text-dim);
+            border: 1px solid var(--border); 
+            padding: 12px 40px 12px 16px; /* ညာဘက်ကို နေရာပိုချန်သည် */
+            border-radius: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 600;
+            outline: none; cursor: pointer; appearance: none; /* အရင်မြှားကို ဖျောက်သည် */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2polyline%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center; /* မြှားကို ညာဘက်မှ 15px အကွာတွင် ထားသည် */
+            background-size: 14px;
         }
 
         /* --- Main Content --- */
-        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; width: 100%; position: relative; }
+        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; width: 100%; }
+        .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         
-        /* Mobile Header */
-        .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .menu-toggle { font-size: 24px; color: white; cursor: pointer; }
-
         .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; }
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 20px; }
         
         .progress-track { background: rgba(255,255,255,0.03); height: 10px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
-        .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1.5s ease-in-out; }
+        .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1.5s; box-shadow: 0 0 15px var(--primary); }
 
         .table-wrap { overflow-x: auto; margin-top: 15px; border-radius: 15px; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; text-transform: uppercase; }
         td { padding: 16px 12px; border-bottom: 1px solid #1a1d21; font-size: 14px; }
 
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; }
+        /* Mobile Adjustments */
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1050; backdrop-filter: blur(4px); }
+        .overlay.active { display: block; }
 
-        /* --- MOBILE VIEW RESPONSIVE FIX --- */
         @media (max-width: 1024px) {
             .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
             .main-content { padding: 20px; }
             .mobile-header { display: flex; }
             .stat-grid, .charts-row { grid-template-columns: 1fr; }
-            .desktop-email { display: none; }
-            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
-            .sidebar-overlay.active { display: block; }
         }
 
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; }
         input, select, textarea { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; font-family: inherit; }
     </style>
 </head>
 <body>
 
-    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleMenu()"></div>
+    <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
 
     <div id="authSection" style="position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:9999;">
         <div class="card" style="width:340px; text-align:center;">
             <h1 style="color:var(--primary); margin-bottom:30px;"><i class="fa-solid fa-rocket"></i> Spendio</h1>
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Password">
-            <button class="btn-main" onclick="handleLogin()">Login</button>
+            <input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password">
+            <button class="btn-main" onclick="handleLogin()">Sign In</button>
         </div>
     </div>
 
     <div id="appContainer" style="display:none; width: 100%;">
         <div class="sidebar" id="sidebar">
             <div class="logo"><i class="fa-solid fa-gem"></i> Spendio</div>
-            <div class="nav-item active" onclick="toggleMenu()"><i class="fa-solid fa-house"></i> <span>Overview</span></div>
-            <div class="nav-item" onclick="openModal('entryModal'); toggleMenu();"><i class="fa-solid fa-circle-plus"></i> <span>Add Record</span></div>
-            <div class="nav-item" onclick="openModal('settingsModal'); toggleMenu();"><i class="fa-solid fa-gear"></i> <span>Settings</span></div>
+            <div class="nav-item active" onclick="if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-house"></i> <span>Overview</span></div>
+            <div class="nav-item" onclick="openModal('entryModal'); if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-circle-plus"></i> <span>Add Record</span></div>
+            <div class="nav-item" onclick="openModal('settingsModal'); if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-gear"></i> <span>Settings</span></div>
             
             <div class="sidebar-footer">
                 <select class="select-custom" id="langSel" onchange="changeLanguage(this.value)">
@@ -104,33 +107,33 @@
 
         <div class="main-content">
             <div class="mobile-header">
-                <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div>
+                <div style="font-size:24px; cursor:pointer;" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div>
                 <div class="logo" style="margin:0; font-size:20px;">Spendio</div>
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h1 id="headTitle" style="font-weight: 800;">Dashboard</h1>
-                <div class="desktop-email" style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:13px; font-weight:700;" id="displayEmail"></div>
+                <div style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:13px; font-weight:700;" id="displayEmail"></div>
             </div>
 
             <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
                 <div style="display:flex; justify-content:space-between; align-items:flex-end;">
                     <h3 id="goalLabel">Goal Journey</h3>
-                    <div style="font-size:20px; font-weight:900; color:var(--primary);" id="percentLabel">0.0%</div>
+                    <div style="font-size:22px; font-weight:900; color:var(--primary);" id="percentLabel">0.0%</div>
                 </div>
                 <div class="progress-track"><div class="progress-fill" id="goalBar"></div></div>
-                <p id="remainText" style="margin-top:12px; font-size:12px; color:var(--text-dim);"></p>
+                <p id="remainText" style="margin-top:12px; font-size:12px; color:var(--text-dim)"></p>
             </div>
 
             <div class="stat-grid">
-                <div class="card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:22px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:22px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="netBalance" style="color:var(--primary); font-size:22px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="netBalance" style="color:var(--primary); font-size:24px; font-weight:800; margin-top:10px;"></div></div>
             </div>
 
             <div class="charts-row">
-                <div class="card"><h4><i class="fa-solid fa-chart-pie"></i> <span id="headBreak"></span></h4><div style="height:220px; margin-top:10px;"><canvas id="donutChart"></canvas></div></div>
-                <div class="card"><h4><i class="fa-solid fa-chart-line"></i> <span id="headTrend"></span></h4><div style="height:220px; margin-top:10px;"><canvas id="lineChart"></canvas></div></div>
+                <div class="card"><h4><i class="fa-solid fa-chart-pie"></i> <span id="headBreak"></span></h4><div style="height:250px; margin-top:15px;"><canvas id="donutChart"></canvas></div></div>
+                <div class="card"><h4><i class="fa-solid fa-chart-line"></i> <span id="headTrend"></span></h4><div style="height:250px; margin-top:15px;"><canvas id="lineChart"></canvas></div></div>
             </div>
 
             <div class="card">
@@ -149,8 +152,8 @@
         <h2 id="mHead" style="margin-bottom:20px;"></h2>
         <input type="hidden" id="editId">
         <input type="text" id="tIn" placeholder="Title"><input type="number" id="aIn" placeholder="Amount">
-        <select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select>
-        <textarea id="nIn" placeholder="Note..."></textarea>
+        <select id="cIn" class="select-custom" style="padding:14px; background-image:none;"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select>
+        <textarea id="nIn" placeholder="Note..." style="height:80px; resize:none;"></textarea>
         <div style="display:flex; gap:10px;"><button onclick="closeModal('entryModal')" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:12px;">Cancel</button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;">Save</button></div>
     </div></div>
 
@@ -170,22 +173,12 @@
             my: { head:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navSet:"ပြင်ဆင်ချက်", inc:"ဝင်ငွေ", exp:"ထွက်ငွေ", net:"လက်ကျန်", break:"ခွဲခြားမှု", trend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", date:"ရက်စွဲ", item:"အမည်", cat:"အမျိုးအစား", note:"မှတ်စု", amt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", sav:"သိမ်းမည်", goal:"ပန်းတိုင်", rem:"လိုအပ်ချက်", can:"မလုပ်တော့ပါ", upHead:"စာရင်းပြင်ရန်", conf:"ဖျက်မှာလား?" }
         };
 
-        let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en';
-        let cloudGoal = 50000;
+        let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en', cloudGoal = 50000;
         const currs = { THB: "฿", USD: "$", MMK: "Ks" };
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
-        }
-
-        function applyLanguage() {
-            const t = i18n[lang];
-            ["headTitle", "lblInc", "lblExp", "lblNet", "headBreak", "headTrend", "headRecent", "thDate", "thItem", "thCat", "thNote", "thAmt", "mHead", "btnSav", "btnCan", "navAdd", "navSet"].forEach(id => {
-                if(document.getElementById(id)) document.getElementById(id).innerText = t[id] || t.head;
-            });
-            document.getElementById('langSel').value = lang;
-            document.getElementById('currSel').value = curr;
+            document.getElementById('overlay').classList.toggle('active');
         }
 
         async function handleLogin() {
@@ -214,6 +207,15 @@
                 await sc.from('profiles').update({ target_goal: val }).eq('id', user.id);
                 cloudGoal = val; closeModal('settingsModal'); loadD();
             }
+        }
+
+        function applyLanguage() {
+            const t = i18n[lang];
+            ["headTitle", "lblInc", "lblExp", "lblNet", "headBreak", "headTrend", "headRecent", "thDate", "thItem", "thCat", "thNote", "thAmt", "mHead", "btnSav", "btnCan", "navAdd", "navSet"].forEach(id => {
+                if(document.getElementById(id)) document.getElementById(id).innerText = t[id] || t.head;
+            });
+            document.getElementById('langSel').value = lang;
+            document.getElementById('currSel').value = curr;
         }
 
         function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); applyLanguage(); loadD(); }
@@ -249,17 +251,18 @@
                 let inc=0, exp=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
                 data.forEach(d => {
                     if (d.category === 'Income') inc += d.amount; else exp += d.amount;
-                    list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;"><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="background:#222; padding:4px 8px; border-radius:5px; font-size:11px;">${d.category}</span></td><td style="font-size:12px; color:#666;">${d.note || '-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-pen-to-square" onclick="editT(${d.id})" style="cursor:pointer; color:#3b82f6; margin-right:10px;"></i><i class="fa-solid fa-trash" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i></td></tr>`;
+                    list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;"><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="background:#222; padding:4px 8px; border-radius:5px; font-size:11px;">${d.category}</span></td><td style="font-size:12px; color:#666;">${d.note || '-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-pen-to-square" onclick="editT(${d.id})" style="cursor:pointer; color:#3b82f6; margin-right:15px;"></i><i class="fa-solid fa-trash" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i></td></tr>`;
                 });
+                const net = inc - exp;
                 document.getElementById('totalIncome').innerText = currs[curr] + " " + inc.toLocaleString();
                 document.getElementById('totalExpense').innerText = currs[curr] + " " + exp.toLocaleString();
-                document.getElementById('netBalance').innerText = currs[curr] + " " + (inc-exp).toLocaleString();
+                document.getElementById('netBalance').innerText = currs[curr] + " " + net.toLocaleString();
                 const target = cloudGoal * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1);
-                const p = Math.min(((inc - exp) / target) * 100, 100);
+                const p = Math.min((net / target) * 100, 100);
                 document.getElementById('goalBar').style.width = Math.max(p, 0) + '%';
                 document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
-                document.getElementById('goalLabel').innerText = `Goal: $${cloudGoal.toLocaleString()} Journey`;
-                document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - (inc-exp)).toLocaleString()}`;
+                document.getElementById('goalLabel').innerText = `${i18n[lang].goal}: $${cloudGoal.toLocaleString()} Journey`;
+                document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - net).toLocaleString()}`;
                 renderCharts(data);
             }
         }
