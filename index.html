@@ -3,173 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - Urbix Precision UI</title>
+    <title>Spendio - Urbix Stable Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Myanmar Font Loading */
+        /* Myanmar Font Integration */
         @font-face { font-family: 'WaloneBold'; src: url('fonts/Z06-Walone Bold.ttf') format('truetype'); font-display: swap; }
         @font-face { font-family: 'WaloneThin'; src: url('fonts/Z06-Walone Thin.ttf') format('truetype'); font-display: swap; }
 
         :root {
             --bg: #0f111a; --sidebar: #161926; --card: #1c2133; --border: #262c40;
             --primary: #6366f1; --income: #10b981; --expense: #ef4444; --warning: #f59e0b;
-            --text: #f8fafc; --text-dim: #94a3b8; --menu-label: #4e5569;
+            --text: #f8fafc; --text-dim: #94a3b8; --menu-header: #4e5569;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* --- URBIX SIDEBAR MENU --- */
-        .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
-        .logo-box { padding: 25px 25px 35px 25px; display: flex; align-items: center; gap: 12px; font-size: 24px; color: white; font-family: 'WaloneBold'; }
-        .logo-box i { color: var(--primary); font-size: 22px; }
+        /* --- URBIX SIDEBAR (Fixed) --- */
+        .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; z-index: 1000; }
+        .logo-box { padding: 30px 25px; display: flex; align-items: center; gap: 12px; font-size: 24px; color: white; font-family: 'WaloneBold'; }
+        .logo-box i { color: var(--primary); }
         
-        /* Section Header - Exact Styling */
-        .menu-section-label { 
-            font-size: 11px; font-weight: 800; color: var(--menu-label); 
-            padding: 25px 25px 12px 25px; text-transform: uppercase; letter-spacing: 1.2px; 
-        }
+        .menu-label { font-size: 11px; font-weight: 800; color: var(--menu-header); padding: 20px 25px 10px; text-transform: uppercase; letter-spacing: 1.2px; }
+        .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 13px 25px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 14px; font-weight: 500; }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.02); }
+        .nav-item.active { background: var(--primary); color: white; margin: 0 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
 
-        /* Nav Item - Font & Size */
-        .nav-item { 
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 13px 25px; color: var(--text-dim); cursor: pointer; transition: 0.3s; 
-            font-size: 14px; /* Urbix Standard Font Size */
-            font-weight: 500;
-        }
-        .nav-item-content { display: flex; align-items: center; gap: 15px; }
-        .nav-item i.main-icon { font-size: 17px; width: 20px; text-align: center; color: var(--text-dim); }
-        .nav-item i.chevron { font-size: 11px; opacity: 0.5; }
-        
-        .nav-item:hover { color: white; }
-        
-        /* Active State - Purple Highlight */
-        .nav-item.active { 
-            background: var(--primary); color: white; 
-            margin: 0 15px; border-radius: 8px; 
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
-        .nav-item.active i { color: white; opacity: 1; }
-
-        /* --- MAIN CONTENT UI --- */
-        .main-container { flex: 1; overflow-y: auto; background-image: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent); }
+        /* --- MAIN LAYOUT --- */
+        .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; position: sticky; top: 0; z-index: 100; }
-        
-        .content-body { padding: 40px; display: flex; flex-direction: column; gap: 30px; }
+        .content-body { padding: 30px 40px; display: flex; flex-direction: column; gap: 24px; }
 
-        /* Myanmar Font for Burmese Text only */
-        .my-font { font-family: 'WaloneBold', sans-serif !important; }
-        .my-font-thin { font-family: 'WaloneThin', sans-serif !important; }
-
-        /* Urbix 4-Grid Stats */
+        /* Urbix 4-Grid Card Style */
         .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 12px; display: flex; align-items: center; gap: 18px; }
-        .icon-box { width: 52px; height: 52px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-        
-        /* Colors for icon boxes */
-        .bg-primary { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
-        .bg-income { background: rgba(16, 185, 129, 0.1); color: var(--income); }
-        .bg-expense { background: rgba(239, 68, 68, 0.1); color: var(--expense); }
-        .bg-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .icon-box { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .stat-info h4 { font-size: 11px; color: var(--menu-header); text-transform: uppercase; margin-bottom: 5px; font-family: 'WaloneBold'; }
+        .stat-info .val { font-size: 20px; font-weight: 700; color: white; }
 
-        .stat-info h4 { font-size: 11px; color: var(--menu-label); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-        .stat-info .val { font-size: 20px; color: white; font-weight: 700; }
-
-        /* History Card */
-        .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .table-card h3 { padding: 25px; font-size: 18px; border-bottom: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-label); text-transform: uppercase; border-bottom: 1px solid var(--border); }
-        td { padding: 18px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; }
-
-        /* Modal Urbix Style */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 5000; display: none; align-items: center; justify-content: center; }
+        /* --- MODAL FIX (STABLE) --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 35px; border-radius: 15px; width: 400px; }
+        .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 35px; border-radius: 20px; width: 400px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
 
-        /* Mobile Settings Fix */
+        /* Burmese Classes */
+        .my-font { font-family: 'WaloneBold' !important; }
+        .my-font-thin { font-family: 'WaloneThin' !important; }
+
         @media (max-width: 1024px) {
-            .sidebar { position: fixed; left: -260px; z-index: 2000; transition: 0.3s; height: 100%; }
+            .sidebar { position: fixed; left: -260px; transition: 0.3s; }
             .sidebar.active { left: 0; }
             .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .content-body { padding: 20px; }
         }
         @media (max-width: 600px) { .stat-grid { grid-template-columns: 1fr; } }
 
         input, select, textarea { width: 100%; padding: 12px; background: #0b0d14; border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 15px; outline: none; }
+        .btn-action { padding: 12px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; transition: 0.3s; }
     </style>
 </head>
 <body>
 
+    <div id="sidebarOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:900;" onclick="toggleMenu()"></div>
+
     <div id="appContainer" style="display:none; width: 100%; height: 100%;">
         <div class="sidebar" id="sidebar">
-            <div class="logo-box my-font"><i class="fa-solid fa-gem"></i> Spendio</div>
+            <div class="logo-box my-font"><i class="fa-solid fa-graduation-cap"></i> Spendio</div>
             
-            <div class="menu-section-label">Main</div>
-            <div class="nav-item active">
-                <div class="nav-item-content"><i class="fa-solid fa-grip main-icon"></i> <span>Dashboards</span></div>
-                <i class="fa-solid fa-chevron-up chevron"></i>
-            </div>
+            <div class="menu-label">Main Menu</div>
+            <div class="nav-item active"><div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-gauge-high"></i> <span class="my-font">ခြုံငုံသုံးသပ်ချက်</span></div></div>
+            <div class="nav-item" onclick="openModal('entryModal')"><div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-circle-plus"></i> <span class="my-font">စာရင်းအသစ်</span></div></div>
             
-            <div class="menu-section-label">Pages</div>
-            <div class="nav-item" onclick="openModal('entryModal')">
-                <div class="nav-item-content"><i class="fa-solid fa-file-invoice main-icon"></i> <span class="my-font-thin">စာရင်းသွင်းရန်</span></div>
-                <i class="fa-solid fa-chevron-down chevron"></i>
-            </div>
+            <div class="menu-label">Settings</div>
+            <div class="nav-item" onclick="openModal('settingsModal')"><div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-bullseye"></i> <span class="my-font">ပန်းတိုင်</span></div></div>
             
-            <div class="menu-section-label">Components</div>
-            <div class="nav-item" onclick="openModal('settingsModal')">
-                <div class="nav-item-content"><i class="fa-solid fa-bullseye main-icon"></i> <span class="my-font-thin">ပန်းတိုင်</span></div>
-                <i class="fa-solid fa-chevron-down chevron"></i>
+            <div style="padding: 15px 25px;">
+                <select id="langSel" onchange="changeLanguage(this.value)" style="background:transparent; border:1px solid #333; color:var(--text-dim); font-size:12px;"><option value="en">English (US)</option><option value="my">မြန်မာဘာသာ</option></select>
+                <select id="currSel" onchange="changeCurrency(this.value)" style="background:transparent; border:1px solid #333; color:var(--text-dim); font-size:12px;"><option value="THB">Thai Baht (฿)</option><option value="USD">US Dollar ($)</option><option value="MMK">Myanmar Kyat (Ks)</option></select>
             </div>
 
-            <div class="menu-section-label">Settings</div>
-            <div style="padding: 0 15px;">
-                <select id="langSel" onchange="changeLanguage(this.value)" class="my-font-thin" style="background:transparent; color:var(--text-dim); border:1px solid #222; font-size:12px; height: 35px;"><option value="en">English (US)</option><option value="my">မြန်မာဘာသာ</option></select>
-                <select id="currSel" onchange="changeCurrency(this.value)" style="background:transparent; color:var(--text-dim); border:1px solid #222; font-size:12px; height: 35px;"><option value="THB">Thai Baht (฿)</option><option value="USD">US Dollar ($)</option><option value="MMK">Myanmar Kyat (Ks)</option></select>
-            </div>
-
-            <div style="margin-top: auto; padding-bottom: 20px;">
-                <div class="nav-item" onclick="handleLogout()" style="color: var(--expense);">
-                    <div class="nav-item-content"><i class="fa-solid fa-power-off main-icon"></i> <span>Logout</span></div>
-                </div>
+            <div style="margin-top: auto; padding-bottom: 25px;">
+                <div class="nav-item" onclick="handleLogout()" style="color:var(--expense);"><div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div></div>
             </div>
         </div>
 
         <div class="main-container">
             <div class="top-header">
                 <div style="display:flex; align-items:center; gap:20px;">
-                    <div onclick="toggleMenu()" style="font-size:22px; color:var(--menu-label); cursor:pointer;"><i class="fa-solid fa-bars-staggered"></i></div>
-                    <div style="color:var(--menu-label); font-size:13px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-magnifying-glass"></i> Search...</div>
+                    <div onclick="toggleMenu()" style="font-size:22px; color:var(--menu-header); cursor:pointer;"><i class="fa-solid fa-bars"></i></div>
+                    <div style="color:var(--menu-header); font-size:13px;"><i class="fa-solid fa-magnifying-glass"></i> Search...</div>
                 </div>
-                <div id="displayEmail" style="font-size: 12px; color: var(--menu-label);"></div>
+                <div id="displayEmail" style="font-size:11px; color:var(--menu-header); background:var(--card); padding:8px 20px; border-radius:30px; border:1px solid var(--border);"></div>
             </div>
 
             <div class="content-body">
                 <div class="stat-grid">
                     <div class="stat-card">
-                        <div class="icon-box bg-warning"><i class="fa-solid fa-bullseye"></i></div>
-                        <div class="stat-info"><h4 class="my-font" id="goalLabel"></h4><div class="val" id="goalValDisp"></div></div>
+                        <div class="icon-box" style="background:rgba(245,158,11,0.1); color:var(--warning);"><i class="fa-solid fa-bullseye"></i></div>
+                        <div class="stat-info"><h4 class="my-font" id="goalTitle">ပန်းတိုင်</h4><div class="val" id="goalVal">฿ 0</div></div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon-box bg-income"><i class="fa-solid fa-chart-line"></i></div>
-                        <div class="stat-info"><h4 class="my-font" id="lblInc"></h4><div class="val" id="totalIncome" style="color:var(--income);"></div></div>
+                        <div class="icon-box" style="background:rgba(16,185,129,0.1); color:var(--income);"><i class="fa-solid fa-arrow-down"></i></div>
+                        <div class="stat-info"><h4 class="my-font" id="incTitle">ဝင်ငွေ</h4><div class="val" id="totalInc" style="color:var(--income);">฿ 0</div></div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon-box bg-expense"><i class="fa-solid fa-chart-area"></i></div>
-                        <div class="stat-info"><h4 class="my-font" id="lblExp"></h4><div class="val" id="totalExpense" style="color:var(--expense);"></div></div>
+                        <div class="icon-box" style="background:rgba(239,68,68,0.1); color:var(--expense);"><i class="fa-solid fa-arrow-up"></i></div>
+                        <div class="stat-info"><h4 class="my-font" id="expTitle">ထွက်ငွေ</h4><div class="val" id="totalExp" style="color:var(--expense);">฿ 0</div></div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon-box bg-primary"><i class="fa-solid fa-wallet"></i></div>
-                        <div class="stat-info"><h4 class="my-font" id="lblNet"></h4><div class="val" id="netBalance" style="color:var(--primary);"></div></div>
+                        <div class="icon-box" style="background:rgba(99,102,241,0.1); color:var(--primary);"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="stat-info"><h4 class="my-font" id="netTitle">လက်ကျန်</h4><div class="val" id="netBal" style="color:var(--primary);">฿ 0</div></div>
                     </div>
                 </div>
 
-                <div class="table-card">
-                    <h3 class="my-font" id="headRecent"></h3>
-                    <div style="overflow-x:auto;">
-                        <table><thead><tr><th class="my-font">ရက်စွဲ</th><th class="my-font">အမည်</th><th class="my-font">အမျိုးအစား</th><th style="text-align:right;" class="my-font">ပမာဏ</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table>
+                <div class="stat-card" style="justify-content:space-between; padding:30px;">
+                    <div><h4 class="my-font" style="color:var(--menu-header); font-size:12px;">GOAL JOURNEY PROGRESS</h4><p id="remText" style="font-size:13px; margin-top:5px; color:var(--text-dim);"></p></div>
+                    <div style="font-size:32px; font-weight:900; color:var(--primary);" id="percentLabel">0.0%</div>
+                </div>
+
+                <div class="stat-card" style="flex-direction:column; align-items:flex-start; padding:0; overflow:hidden;">
+                    <h3 class="my-font" style="padding:25px; font-size:18px; border-bottom:1px solid var(--border); width:100%;" id="histTitle">မှတ်တမ်း</h3>
+                    <div style="overflow-x:auto; width:100%;">
+                        <table style="width:100%; border-collapse:collapse;">
+                            <thead><tr style="background:rgba(255,255,255,0.01);"><th class="my-font">ရက်စွဲ</th><th class="my-font">အကြောင်းအရာ</th><th class="my-font">အမျိုးအစား</th><th style="text-align:right;" class="my-font">ပမာဏ</th><th style="text-align:center;">Action</th></tr></thead>
+                            <tbody id="transactionList"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -178,42 +138,61 @@
 
     <div id="entryModal" class="modal-overlay"><div class="modal-content">
         <h2 class="my-font" style="margin-bottom:25px;">စာရင်းအသစ်သွင်းရန်</h2>
-        <input type="text" id="tIn" placeholder="Title..."><input type="number" id="aIn" placeholder="Amount...">
+        <input type="text" id="tIn" placeholder="Description"><input type="number" id="aIn" placeholder="Amount">
         <select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option></select>
-        <div style="display:flex; gap:10px; margin-top:10px;"><button onclick="closeModal('entryModal')" style="flex:1; background:#222; color:white; border:none; border-radius:8px; padding:12px; cursor:pointer;">Cancel</button><button onclick="saveData()" style="flex:1; background:var(--primary); color:white; border:none; border-radius:8px; padding:12px; cursor:pointer; font-weight:800;">Save</button></div>
+        <div style="display:flex; gap:12px;"><button onclick="closeModal('entryModal')" class="btn-action" style="flex:1; background:#262c40; color:white;">Cancel</button><button onclick="saveData()" class="btn-action" style="flex:1; background:var(--primary); color:white;">Confirm</button></div>
     </div></div>
 
-    <div id="settingsModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" style="margin-bottom:25px;">ပန်းတိုင်သတ်မှတ်ချက်</h2><input type="number" id="goalInput" placeholder="Target Amount ($)..."><div style="display:flex; gap:10px;"><button onclick="closeModal('settingsModal')" style="flex:1; background:#222; color:white; border:none; border-radius:8px; padding:12px; cursor:pointer;">Cancel</button><button onclick="updateGoal()" style="flex:1; background:var(--primary); color:white; border:none; border-radius:8px; padding:12px; cursor:pointer; font-weight:800;">Update</button></div></div></div>
+    <div id="settingsModal" class="modal-overlay"><div class="modal-content">
+        <h2 class="my-font" style="margin-bottom:25px;">ပန်းတိုင်သတ်မှတ်ရန် ($)</h2>
+        <input type="number" id="goalInput" placeholder="Target 100000">
+        <div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" class="btn-action" style="flex:1; background:#262c40; color:white;">Cancel</button><button onclick="updateGoal()" class="btn-action" style="flex:1; background:var(--primary); color:white;">Update</button></div>
+    </div></div>
 
-    <div id="authSection" style="display:none; position:fixed; inset:0; background:var(--bg); align-items:center; justify-content:center; z-index:9999;"><div class="stat-card" style="width:360px; flex-direction:column; padding:50px;"><h1 style="color:var(--primary); margin-bottom:30px;" class="my-font">Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button onclick="handleLogin()" style="width:100%; background:var(--primary); color:white; border:none; padding:15px; border-radius:8px; cursor:pointer; font-weight:800;">Sign In</button></div></div>
+    <div id="authSection" style="display:none; position:fixed; inset:0; background:var(--bg); align-items:center; justify-content:center; z-index:9999;">
+        <div class="stat-card" style="width:360px; flex-direction:column; padding:50px; border-radius:30px;"><h1 style="color:var(--primary); margin-bottom:30px;" class="my-font">Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button onclick="handleLogin()" class="btn-action" style="width:100%; background:var(--primary); color:white;">Sign In</button></div>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const i18n = { en: { lblInc:"Income", lblExp:"Expenses", lblNet:"Net Balance", goalLabel:"Goal", headRecent:"History" }, my: { lblInc:"ဝင်ငွေ", lblExp:"ထွက်ငွေ", lblNet:"လက်ကျန်ငွေ", goalLabel:"ပန်းတိုင်", headRecent:"စာရင်းမှတ်တမ်း" } };
+
+        const i18n = {
+            en: { goalTitle:"Goal", incTitle:"Income", expTitle:"Expenses", netTitle:"Balance", remText:"Remaining", histTitle:"History" },
+            my: { goalTitle:"ပန်းတိုင်", incTitle:"ဝင်ငွေ", expTitle:"ထွက်ငွေ", netTitle:"လက်ကျန်", remText:"လိုအပ်ချက်", histTitle:"မှတ်တမ်း" }
+        };
+
         let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en', cloudGoal = 100000;
         const currs = { THB: "฿", USD: "$", MMK: "Ks" };
 
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none'; }
         async function handleLogin() { const e=document.getElementById('email').value, p=document.getElementById('password').value; await sc.auth.signInWithPassword({email:e, password:p}); checkUser(); }
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
         async function checkUser() { const {data:{user}}=await sc.auth.getUser(); if(user){ document.getElementById('authSection').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; updateUI(); fetchGoal(); } else { document.getElementById('authSection').style.display='flex'; } }
         async function fetchGoal() { const {data:{user}}=await sc.auth.getUser(); const {data}=await sc.from('profiles').select('target_goal').eq('id', user.id).single(); if(data) cloudGoal=data.target_goal; loadD(); }
         async function updateGoal() { const val=parseFloat(document.getElementById('goalInput').value); if(val>0){ const {data:{user}}=await sc.auth.getUser(); await sc.from('profiles').update({target_goal:val}).eq('id', user.id); cloudGoal=val; closeModal('settingsModal'); loadD(); } }
-        function updateUI() { const t=i18n[lang]; Object.keys(t).forEach(id=>{ if(document.getElementById(id)) document.getElementById(id).innerText=t[id]; }); document.getElementById('langSel').value=lang; document.getElementById('currSel').value=curr; }
         function changeLanguage(v) { lang=v; localStorage.setItem('lang',v); updateUI(); loadD(); }
-        function changeCurrency(v) { curr=v; localStorage.setItem('curr',v); updateUI(); loadD(); }
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function changeCurrency(v) { curr=v; localStorage.setItem('curr',v); loadD(); }
+        function updateUI() { const t=i18n[lang]; document.getElementById('goalTitle').innerText=t.goalTitle; document.getElementById('incTitle').innerText=t.incTitle; document.getElementById('expTitle').innerText=t.expTitle; document.getElementById('netTitle').innerText=t.netTitle; document.getElementById('histTitle').innerText=t.histTitle; document.getElementById('langSel').value=lang; document.getElementById('currSel').value=curr; }
+        function openModal(id) { document.getElementById(id).classList.add('active'); if(window.innerWidth<=1024) toggleMenu(); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        async function saveData() { const t=document.getElementById('tIn').value, a=parseFloat(document.getElementById('aIn').value), cVal=document.getElementById('cIn').value; const {data:{user}}=await sc.auth.getUser(); if(!t || isNaN(a)) return; await sc.from('transactions').insert([{title:t, amount:a, category:cVal, user_id:user.id}]); closeModal('entryModal'); loadD(); }
+        async function saveData() {
+            const t=document.getElementById('tIn').value, a=parseFloat(document.getElementById('aIn').value), c=document.getElementById('cIn').value; const {data:{user}}=await sc.auth.getUser(); if(!t || isNaN(a)) return;
+            await sc.from('transactions').insert([{title:t, amount:a, category:c, user_id:user.id}]); closeModal('entryModal'); loadD();
+        }
         async function loadD() {
             const {data}=await sc.from('transactions').select('*').order('created_at',{ascending:false});
             if(data){
                 let inc=0, exp=0; const list=document.getElementById('transactionList'); list.innerHTML='';
-                data.forEach(d => { if(d.category==='Income') inc+=d.amount; else exp+=d.amount; list.innerHTML += `<tr><td style="color:var(--menu-label); font-size:12px;">${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="background:rgba(255,255,255,0.03); padding:5px 12px; border-radius:6px; font-size:11px;">${d.category}</span></td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash" onclick="deleteT(${d.id})" style="cursor:pointer; color:var(--menu-label);"></i></td></tr>`; });
-                const net=inc-exp; document.getElementById('totalIncome').innerText=currs[curr]+" "+inc.toLocaleString(); document.getElementById('totalExpense').innerText=currs[curr]+" "+exp.toLocaleString(); document.getElementById('netBalance').innerText=currs[curr]+" "+net.toLocaleString();
-                const rate = (curr==='MMK') ? 3500 : (curr==='THB') ? 35 : 1; const targetInCurrent = cloudGoal * rate; document.getElementById('goalValDisp').innerText = currs[curr] + " " + targetInCurrent.toLocaleString();
+                data.forEach(d => { 
+                    if(d.category==='Income') inc+=d.amount; else exp+=d.amount;
+                    list.innerHTML += `<tr style="border-bottom:1px solid rgba(255,255,255,0.01);"><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="background:rgba(255,255,255,0.03); padding:4px 10px; border-radius:6px; font-size:11px;">${d.category}</span></td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash" onclick="deleteT(${d.id})" style="cursor:pointer; opacity:0.3;"></i></td></tr>`;
+                });
+                const net=inc-exp; document.getElementById('totalInc').innerText=currs[curr]+" "+inc.toLocaleString(); document.getElementById('totalExp').innerText=currs[curr]+" "+exp.toLocaleString(); document.getElementById('netBal').innerText=currs[curr]+" "+net.toLocaleString();
+                const rate = (curr==='MMK') ? 3500 : (curr==='THB') ? 35 : 1; const target = cloudGoal * rate; const p = Math.min((net / target) * 100, 100);
+                document.getElementById('goalVal').innerText = currs[curr] + " " + target.toLocaleString(); document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
+                document.getElementById('remText').innerText = i18n[lang].remText + ": " + currs[curr] + " " + (target - net).toLocaleString();
             }
         }
         async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
