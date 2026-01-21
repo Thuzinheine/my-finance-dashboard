@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio - Elite Spacing Fix</title>
+    <title>Spendio - Interactive Trend</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,7 +17,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar */
         .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 40px 24px; flex-shrink: 0; z-index: 1500; }
         .logo { font-size: 24px; font-weight: 800; margin-bottom: 48px; color: var(--primary); display: flex; align-items: center; gap: 12px; }
         .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; color: var(--text-dim); cursor: pointer; transition: 0.2s ease; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
@@ -27,7 +26,6 @@
         .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
         .select-custom { width: 100%; background: var(--card); color: var(--text-dim); border: 1px solid var(--border); padding: 12px 35px 12px 16px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2polyline%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px center; background-size: 14px; }
 
-        /* Content UI */
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; width: 100%; }
         .card { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 35px; transition: 0.4s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
@@ -36,7 +34,6 @@
         .progress-track { background: rgba(255,255,255,0.03); height: 12px; border-radius: 20px; margin-top: 15px; overflow: hidden; }
         .progress-fill { background: linear-gradient(90deg, #10b981, #34d399); height: 100%; width: 0%; transition: 1.5s; box-shadow: 0 0 25px rgba(16,185,129,0.5); }
 
-        /* Table Spacing Fix - ဘေးမကပ်စေရန် Padding ညှိထားသည် */
         .table-wrap { overflow-x: auto; margin-top: 10px; border-radius: 25px; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th { text-align: left; color: var(--text-dim); padding: 15px 30px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
@@ -45,11 +42,10 @@
         tr:hover td { background: rgba(255,255,255,0.02); }
         .cat-badge { background: #1e252e; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; color: #888; }
 
-        /* Auth & Modals */
         #authSection { display: none; position: fixed; inset: 0; background: var(--bg); align-items: center; justify-content: center; z-index: 9999; }
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 50px; border-radius: 45px; width: 90%; max-width: 440px; border: 1px solid var(--border); }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 20px; cursor: pointer; font-weight: 800; width: 100%; transition: 0.2s; }
+        .modal-content { background: var(--card); padding: 50px; border-radius: 45px; width: 90%; max-width: 420px; border: 1px solid var(--border); }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 20px; cursor: pointer; font-weight: 800; width: 100%; transition: 0.2s; box-shadow: 0 5px 20px rgba(16,185,129,0.3); }
         .btn-icon { cursor: pointer; transition: 0.3s; margin: 0 10px; color: #444; }
         .btn-edit:hover { color: #3b82f6; }
         .btn-del:hover { color: var(--expense); }
@@ -99,24 +95,7 @@
                 <div class="card"><h4><i class="fa-solid fa-chart-line" style="color:var(--primary); margin-right:10px;"></i> <span id="headTrend"></span></h4><div style="height:250px; margin-top:20px;"><canvas id="lineChart"></canvas></div></div>
             </div>
 
-            <div class="card" style="padding: 10px 0;">
-                <h3 id="headRecent" style="margin: 25px 30px;">History</h3>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th id="thDate">Date</th>
-                                <th id="thItem">Item</th>
-                                <th id="thCat">Cat</th>
-                                <th id="thNote">Note</th>
-                                <th id="thAmt" style="text-align:right;">Amount</th>
-                                <th style="text-align:center;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="transactionList"></tbody>
-                    </table>
-                </div>
-            </div>
+            <div class="card" style="padding: 10px 0;"><h3 id="headRecent" style="margin: 20px 30px;">History</h3><div class="table-wrap"><table><thead><tr><th id="thDate">Date</th><th id="thItem">Item</th><th id="thCat">Cat</th><th id="thNote">Note</th><th id="thAmt" style="text-align:right;">Amount</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
         </div>
     </div>
 
@@ -128,7 +107,7 @@
         <div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" id="btnCan" style="flex:1; background:#1a1d21; color:white; border:none; border-radius:15px; padding:16px; cursor:pointer; font-weight:700;">Cancel</button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;">Save Record</button></div>
     </div></div>
 
-    <div id="settingsModal" class="modal-overlay"><div class="modal-content"><h2 id="setHead" style="margin-bottom:25px; font-weight:800;"><i class="fa-solid fa-bullseye"></i> Goal Settings</h2><input type="number" id="goalInput" placeholder="Target ($)"><div style="display:flex; gap:15px;"><button onclick="closeModal('settingsModal')" id="btnSetCan" style="flex:1; background:#1a1d21; border:none; border-radius:15px; padding:16px; color:white; font-weight:700;">Cancel</button><button onclick="updateGoal()" id="btnSetSav" class="btn-main" style="flex:1;">Update</button></div></div></div>
+    <div id="settingsModal" class="modal-overlay"><div class="modal-content"><h2 id="setHead" style="margin-bottom:25px; font-weight:800;"><i class="fa-solid fa-bullseye"></i> Goal Settings</h2><input type="number" id="goalInput" placeholder="Target ($)"><div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" id="btnSetCan" style="flex:1; background:#1a1d21; border:none; border-radius:15px; padding:16px; color:white; font-weight:700;">Cancel</button><button onclick="updateGoal()" id="btnSetSav" class="btn-main" style="flex:1;">Update</button></div></div></div>
 
     <div id="authSection"><div class="card" style="width:360px; text-align:center; padding:50px; border-radius:45px;"><h1 style="color:var(--primary); margin-bottom:35px; font-size:30px;"><i class="fa-solid fa-rocket"></i> Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button class="btn-main" onclick="handleLogin()">Sign In</button></div></div>
 
@@ -138,8 +117,8 @@
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const i18n = {
-            en: { headTitle:"Overview", navDash:"Overview", navAdd:"Add Record", navSet:"Settings", navOut:"Logout", lblInc:"INCOME", lblExp:"EXPENSES", lblNet:"BALANCE", headBreak:"Breakdown", headTrend:"Trend", headRecent:"History", thDate:"Date", thItem:"Item", thCat:"Category", thNote:"Note", thAmt:"Amount", mHead:"New Entry", btnSav:"Save", goalLabel:"Goal", remText:"Remaining", btnCan:"Cancel", upHead:"Edit Entry", conf:"Delete?", setHead:"Goal Settings", btnSetCan:"Cancel", btnSetSav:"Update" },
-            my: { headTitle:"ခြုံငုံသုံးသပ်ချက်", navDash:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navSet:"ပြင်ဆင်ချက်", navOut:"ထွက်ခွာရန်", lblInc:"ဝင်ငွေ", lblExp:"ထွက်ငွေ", lblNet:"လက်ကျန်", headBreak:"ခွဲခြားမှု", headTrend:"စီးဆင်းမှု", recent:"စာရင်းမှတ်တမ်း", thDate:"ရက်စွဲ", thItem:"အမည်", thCat:"အမျိုးအစား", thNote:"မှတ်စု", thAmt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", btnSav:"သိမ်းမည်", goalLabel:"ပန်းတိုင်", remText:"လိုအပ်ချက်", btnCan:"မလုပ်တော့ပါ", upHead:"စာရင်းပြင်ရန်", conf:"ဖျက်မှာလား?", setHead:"ပန်းတိုင်သတ်မှတ်ချက်", btnSetCan:"မလုပ်တော့ပါ", btnSetSav:"ပြင်ဆင်မည်" }
+            en: { headTitle:"Overview", navDash:"Overview", navAdd:"Add Record", navSet:"Settings", navOut:"Logout", lblInc:"INCOME", lblExp:"EXPENSES", lblNet:"BALANCE", headBreak:"Breakdown", headTrend:"Trend", headRecent:"History", thDate:"Date", thItem:"Item", thCat:"Category", thNote:"Note", thAmt:"Amount", mHead:"New Entry", sav:"Save", goalLabel:"Goal", remText:"Remaining", btnCan:"Cancel", upHead:"Edit Entry", conf:"Delete?", setHead:"Goal Settings", btnSetCan:"Cancel", btnSetSav:"Update" },
+            my: { headTitle:"ခြုံငုံသုံးသပ်ချက်", navDash:"ခြုံငုံသုံးသပ်ချက်", navAdd:"စာရင်းအသစ်", navSet:"ပြင်ဆင်ချက်", navOut:"ထွက်ခွာရန်", lblInc:"ဝင်ငွေ", lblExp:"ထွက်ငွေ", lblNet:"လက်ကျန်", headBreak:"ခွဲခြားမှု", headTrend:"စီးဆင်းမှု", headRecent:"စာရင်းမှတ်တမ်း", thDate:"ရက်စွဲ", thItem:"အမည်", thCat:"အမျိုးအစား", thNote:"မှတ်စု", thAmt:"ပမာဏ", mHead:"စာရင်းသွင်းရန်", btnSav:"သိမ်းမည်", goalLabel:"ပန်းတိုင်", remText:"လိုအပ်ချက်", btnCan:"မလုပ်တော့ပါ", upHead:"စာရင်းပြင်ရန်", conf:"ဖျက်မှာလား?", setHead:"ပန်းတိုင်သတ်မှတ်ချက်", btnSetCan:"မလုပ်တော့ပါ", btnSetSav:"ပြင်ဆင်မည်" }
         };
 
         let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en', cloudGoal = 50000;
@@ -180,7 +159,34 @@
             window.myDonut = new Chart(document.getElementById('donutChart').getContext('2d'), { type:'doughnut', data:{ labels:Object.keys(cats), datasets:[{ data:Object.values(cats), backgroundColor:['#10b981','#3b82f6','#f59e0b','#8b5cf6','#ef4444'], borderWidth:0, hoverOffset: 12 }] }, options:{ maintainAspectRatio:false, cutout: '78%', plugins:{ legend:{ position:'right', labels:{ color:'#94a3b8', font:{ size:10, weight:'600' } } } } } });
             const ctx = document.getElementById('lineChart').getContext('2d'); const grad = ctx.createLinearGradient(0, 0, 0, 400); grad.addColorStop(0, 'rgba(16,185,129,0.3)'); grad.addColorStop(1, 'rgba(16,185,129,0)');
             if(window.myLine) window.myLine.destroy();
-            window.myLine = new Chart(ctx, { type:'line', data:{ labels:data.map(d=>new Date(d.created_at).toLocaleDateString()).reverse(), datasets:[{ label:'Journey', data:data.map(d=>d.amount).reverse(), borderColor:'#10b981', borderWidth:3, tension:0.4, fill:true, backgroundColor:grad, pointRadius:0, pointHoverRadius:6 }] }, options:{ maintainAspectRatio:false, scales:{ y:{ display:false }, x:{ ticks:{ color:'#444', font:{ size:10 } }, grid:{ display:false } } }, plugins:{ legend:{ display:false } } } });
+            window.myLine = new Chart(ctx, { 
+                type:'line', 
+                data:{ labels:data.map(d=>new Date(d.created_at).toLocaleDateString()).reverse(), datasets:[{ label:'Journey', data:data.map(d=>d.amount).reverse(), borderColor:'#10b981', borderWidth:3, tension:0.4, fill:true, backgroundColor:grad, pointRadius:2, pointHoverRadius:6, pointBackgroundColor: '#10b981', pointHoverBackgroundColor: '#fff' }] }, 
+                options:{ 
+                    maintainAspectRatio:false, 
+                    plugins:{ 
+                        legend:{ display:false },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleColor: '#10b981',
+                            bodyColor: '#fff',
+                            borderColor: '#333',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return currs[curr] + " " + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    }, 
+                    scales:{ y:{ display:false }, x:{ ticks:{ color:'#444', font:{ size:10 } }, grid:{ display:false } } } 
+                } 
+            });
         }
         window.onload = checkUser;
     </script>
