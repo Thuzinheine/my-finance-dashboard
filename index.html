@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio Pro - f09 Soft Edition</title>
+    <title>Spendio Pro - f09 Final</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -28,7 +28,6 @@
             display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 12px; 
             color: var(--text-dim); cursor: pointer; transition: 0.2s ease; font-weight: 600; font-size: 14px; margin-bottom: 5px; 
         }
-        /* Soft Hover Effect - No transform */
         .nav-item:hover { background: var(--card); color: white; }
         .nav-item.active { background: var(--card); color: white; border-left: 3px solid var(--primary); }
 
@@ -45,10 +44,14 @@
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; width: 100%; }
         .card { 
             background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; 
-            transition: 0.3s ease; 
+            transition: 0.2s ease; 
         }
-        /* Soft Hover for Stats Cards - Minor Border Change Only */
-        .stat-card:hover { border-color: #333; background: #161a1f; }
+
+        /* Stats Cards Soft Hover Fix */
+        .stat-card:hover { 
+            border-color: #3b82f6; /* Primary color border only */
+            background: rgba(255,255,255,0.02);
+        }
 
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1.6fr; gap: 20px; }
@@ -61,20 +64,18 @@
         th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; text-transform: uppercase; }
         td { padding: 16px 12px; border-bottom: 1px solid #1a1d21; font-size: 14px; }
 
-        /* Action Icons Soft Hover */
         .btn-icon { cursor: pointer; transition: 0.2s; margin: 0 8px; color: #444; }
         .btn-edit:hover { color: var(--primary); }
         .btn-del:hover { color: var(--expense); }
 
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
         .modal-content { background: var(--card); padding: 40px; border-radius: 32px; width: 90%; max-width: 420px; border: 1px solid var(--border); }
-        
         .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; transition: 0.2s; }
-        .btn-main:hover { filter: brightness(1.1); }
 
         @media (max-width: 1024px) {
             .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
+            .mobile-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
             .main-content { padding: 20px; }
             .stat-grid, .charts-row { grid-template-columns: 1fr; }
         }
@@ -89,9 +90,9 @@
     <div id="appContainer" style="display:none; width: 100%;">
         <div class="sidebar" id="sidebar">
             <div class="logo"><i class="fa-solid fa-gem"></i> Spendio</div>
-            <div class="nav-item active"><i class="fa-solid fa-house"></i> <span id="navDash">Overview</span></div>
-            <div class="nav-item" onclick="openModal('entryModal')"><i class="fa-solid fa-circle-plus"></i> <span id="navAdd">Add Record</span></div>
-            <div class="nav-item" onclick="openModal('settingsModal')"><i class="fa-solid fa-gear"></i> <span id="navSet">Settings</span></div>
+            <div class="nav-item active" onclick="if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-house"></i> <span>Overview</span></div>
+            <div class="nav-item" onclick="openModal('entryModal'); if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-circle-plus"></i> <span>Add Record</span></div>
+            <div class="nav-item" onclick="openModal('settingsModal'); if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-gear"></i> <span>Settings</span></div>
             
             <div class="sidebar-footer">
                 <select class="select-custom" id="langSel" onchange="changeLanguage(this.value)">
@@ -105,6 +106,11 @@
         </div>
 
         <div class="main-content">
+            <div class="mobile-header" style="display: none;">
+                <div style="font-size:24px; cursor:pointer;" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div>
+                <div class="logo" style="margin:0; font-size:20px;">Spendio</div>
+            </div>
+
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h1 id="headTitle" style="font-weight: 800;">Dashboard</h1>
                 <div style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:13px; font-weight:700;" id="displayEmail"></div>
@@ -274,12 +280,12 @@
                 const net = inc - exp;
                 document.getElementById('totalIncome').innerText = currs[curr] + " " + inc.toLocaleString();
                 document.getElementById('totalExpense').innerText = currs[curr] + " " + exp.toLocaleString();
-                document.getElementById('netBalance').innerText = currs[curr] + " " + net.toLocaleString();
+                document.getElementById('netBalance').innerText = currs[curr] + " " + (inc-exp).toLocaleString();
                 const target = cloudGoal * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1);
                 const p = Math.min((net / target) * 100, 100);
                 document.getElementById('goalBar').style.width = Math.max(p, 0) + '%';
                 document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
-                document.getElementById('goalLabel').innerText = `Goal: $${cloudGoal.toLocaleString()} Journey`;
+                document.getElementById('goalLabel').innerText = `${i18n[lang].goal}: $${cloudGoal.toLocaleString()} Journey`;
                 document.getElementById('remainText').innerText = `${i18n[lang].rem}: ${currs[curr]} ${(target - net).toLocaleString()}`;
                 renderCharts(data);
             }
