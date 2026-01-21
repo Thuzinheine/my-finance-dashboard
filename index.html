@@ -3,80 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - Mobile Pro Edition</title>
+    <title>Spendio - Walone Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* --- Custom Myanmar Font Setup --- */
+        @font-face {
+            font-family: 'WaloneBold';
+            src: url('fonts/Z06-Walone Bold.ttf') format('truetype');
+            font-weight: bold;
+        }
+        @font-face {
+            font-family: 'WaloneThin';
+            src: url('fonts/Z06-Walone Thin.ttf') format('truetype');
+            font-weight: normal;
+        }
+        @font-face {
+            font-family: 'PressRegular';
+            src: url('fonts/Z03-Press Regular.ttf') format('truetype');
+        }
+
         :root {
             --bg: #050505; --sidebar: #0a0b0d; --card: #121418; --border: #1e2227;
             --primary: #10b981; --income: #10b981; --expense: #ef4444;
             --text: #f8fafc; --text-dim: #94a3b8;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar - Desktop Default */
-        .sidebar { 
-            width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); 
-            display: flex; flex-direction: column; padding: 40px 24px; flex-shrink: 0; 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000; 
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        /* Dashboard တစ်ခုလုံးကို Walone ဖောင့် သတ်မှတ်သည် */
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            font-family: 'WaloneThin', 'Pyidaungsu', sans-serif; 
+            display: flex; height: 100vh; overflow: hidden; 
         }
-        .logo { font-size: 24px; font-weight: 800; margin-bottom: 48px; color: var(--primary); display: flex; align-items: center; gap: 12px; }
+
+        h1, h2, h3, .logo, .val, th { font-family: 'WaloneBold', sans-serif; }
+
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 40px 24px; flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000; }
+        .logo { font-size: 26px; color: var(--primary); display: flex; align-items: center; gap: 12px; margin-bottom: 48px; letter-spacing: -1px; }
         .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; color: var(--text-dim); cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
         .nav-item:hover, .nav-item.active { background: var(--card); color: white; }
         .nav-item.active { border-left: 4px solid var(--primary); }
 
-        .sidebar-footer { border-top: 1px solid var(--border); padding-top: 30px; margin-top: auto; }
-        .select-custom { width: 100%; background: var(--card); color: var(--text-dim); border: 1px solid var(--border); padding: 12px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; outline: none; appearance: none; cursor: pointer; }
-
         /* Main Content */
         .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; width: 100%; position: relative; }
-        
-        /* Mobile Header - Hidden on Desktop */
         .mobile-header { display: none; align-items: center; justify-content: space-between; padding-bottom: 10px; }
-        .menu-toggle { font-size: 24px; color: white; cursor: pointer; padding: 5px; }
-
-        .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 30px; transition: 0.3s; }
+        
+        .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 30px; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .stat-card:hover { transform: translateY(-5px); border-color: #333; }
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .charts-row { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
         
-        .progress-track { background: rgba(255,255,255,0.03); height: 10px; border-radius: 10px; margin-top: 15px; overflow: hidden; }
-        .progress-fill { background: linear-gradient(90deg, #10b981, #34d399); height: 100%; width: 0%; transition: 1.5s; box-shadow: 0 0 15px rgba(16,185,129,0.3); }
+        .progress-track { background: rgba(255,255,255,0.03); height: 12px; border-radius: 20px; margin-top: 15px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #10b981, #34d399); height: 100%; width: 0%; transition: 1.5s; box-shadow: 0 0 20px rgba(16,185,129,0.3); }
 
-        /* Table */
+        /* Table Spacing */
         .table-wrap { overflow-x: auto; border-radius: 20px; margin-top: 10px; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { text-align: left; color: var(--text-dim); padding: 15px 20px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        td { padding: 18px 20px; border-bottom: 1px solid #1a1d21; font-size: 14px; }
-        .cat-badge { background: #1e252e; padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+        th { text-align: left; color: var(--text-dim); padding: 15px 25px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 18px 25px; border-bottom: 1px solid #1a1d21; font-size: 14px; }
+        .cat-badge { background: #1e252e; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-family: 'WaloneBold'; color: #888; }
 
-        /* Overlays & Modals */
+        /* Modals */
         #authSection { display: none; position: fixed; inset: 0; background: var(--bg); align-items: center; justify-content: center; z-index: 9999; }
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1900; backdrop-filter: blur(4px); }
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 3000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--card); padding: 35px; border-radius: 40px; width: 90%; max-width: 400px; border: 1px solid var(--border); }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; cursor: pointer; font-weight: 800; width: 100%; transition: 0.2s; }
+        .modal-content { background: var(--card); padding: 40px; border-radius: 40px; width: 90%; max-width: 400px; border: 1px solid var(--border); }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; cursor: pointer; font-weight: 800; font-family: 'WaloneBold'; width: 100%; transition: 0.2s; }
 
-        /* --- MOBILE VIEW RESPONSIVE --- */
         @media (max-width: 1024px) {
-            .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); }
+            .sidebar { position: fixed; left: 0; transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
-            .sidebar-overlay.active { display: block; }
             .mobile-header { display: flex; }
             .main-content { padding: 20px; }
-            .stat-grid { grid-template-columns: 1fr; }
-            .charts-row { grid-template-columns: 1fr; }
+            .stat-grid, .charts-row { grid-template-columns: 1fr; }
             .desktop-email { display: none; }
         }
 
-        input, select, textarea { width: 100%; padding: 15px; background: #000; border: 1px solid var(--border); color: white; border-radius: 12px; margin-bottom: 15px; font-family: inherit; outline: none; font-size: 16px; /* Prevent Zoom on iOS */ }
+        input, select, textarea { width: 100%; padding: 15px; background: #000; border: 1px solid var(--border); color: white; border-radius: 14px; margin-bottom: 15px; font-family: 'WaloneThin'; outline: none; }
     </style>
 </head>
 <body>
 
-    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleMenu()"></div>
+    <div id="sidebarOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1900; backdrop-filter: blur(4px);" onclick="toggleMenu()"></div>
 
     <div id="appContainer" style="display:none; width: 100%;">
         <div class="sidebar" id="sidebar">
@@ -84,62 +96,41 @@
             <div class="nav-item active" onclick="if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-house"></i> <span id="navDash">Overview</span></div>
             <div class="nav-item" onclick="openModal('entryModal'); if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-circle-plus"></i> <span id="navAdd">Add Record</span></div>
             <div class="nav-item" onclick="openModal('settingsModal'); if(window.innerWidth<=1024)toggleMenu()"><i class="fa-solid fa-gear"></i> <span id="navSet">Settings</span></div>
-            
             <div class="sidebar-footer">
-                <select class="select-custom" id="langSel" onchange="changeLanguage(this.value)"><option value="en">English</option><option value="my">မြန်မာဘာသာ</option></select>
-                <select class="select-custom" id="currSel" onchange="changeCurrency(this.value)"><option value="THB">Thai Baht (฿)</option><option value="USD">US Dollar ($)</option><option value="MMK">Myanmar Kyat (Ks)</option></select>
+                <select class="select-custom" id="langSel" onchange="changeLanguage(this.value)" style="background:#111; color:#777; border:none; margin-bottom:10px;"><option value="en">English</option><option value="my">မြန်မာဘာသာ</option></select>
+                <select class="select-custom" id="currSel" onchange="changeCurrency(this.value)" style="background:#111; color:#777; border:none; margin-bottom:20px;"><option value="THB">Thai Baht (฿)</option><option value="USD">US Dollar ($)</option><option value="MMK">Myanmar Kyat (Ks)</option></select>
                 <div class="nav-item" onclick="handleLogout()" style="color:var(--expense);"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div>
             </div>
         </div>
 
         <div class="main-content">
-            <div class="mobile-header">
-                <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div>
-                <div class="logo" style="margin:0; font-size:20px;">Spendio</div>
-            </div>
-
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h1 id="headTitle" style="font-weight: 800; font-size: 26px;">Dashboard</h1>
-                <div class="desktop-email" style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:12px; font-weight:700;" id="displayEmail"></div>
-            </div>
-
+            <div class="mobile-header"><div onclick="toggleMenu()" style="font-size:24px;"><i class="fa-solid fa-bars-staggered"></i></div><div class="logo" style="margin:0; font-size:20px;">Spendio</div></div>
+            <div style="display:flex; justify-content:space-between; align-items:center;"><h1 id="headTitle" style="font-weight: 800; font-size: 28px;">Dashboard</h1><div class="desktop-email" style="background:var(--card); padding:8px 18px; border-radius:40px; border:1px solid var(--border); font-size:12px; font-weight:700;" id="displayEmail"></div></div>
+            
             <div class="card" style="background: linear-gradient(135deg, #1e293b, #050505); border:none;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                    <h3 id="goalLabel" style="font-weight:700; font-size: 14px;">Goal Journey</h3>
-                    <div style="font-size:22px; font-weight:900; color:#10b981;" id="percentLabel">0.0%</div>
-                </div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-end;"><h3 id="goalLabel">Goal Journey</h3><div style="font-size:24px; font-weight:900; color:#10b981;" id="percentLabel">0.0%</div></div>
                 <div class="progress-track"><div class="progress-fill" id="goalBar"></div></div>
-                <p id="remainText" style="margin-top:12px; font-size:12px; color:var(--text-dim);"></p>
+                <p id="remainText" style="margin-top:12px; font-size:13px; color:var(--text-dim)"></p>
             </div>
 
             <div class="stat-grid">
-                <div class="card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:22px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:22px; font-weight:800; margin-top:10px;"></div></div>
-                <div class="card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:700;"></label><div class="val" id="netBalance" style="color:#10b981; font-size:22px; font-weight:800; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblInc" style="font-size:11px; color:var(--text-dim); font-weight:800;"></label><div class="val" id="totalIncome" style="color:var(--income); font-size:24px; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblExp" style="font-size:11px; color:var(--text-dim); font-weight:800;"></label><div class="val" id="totalExpense" style="color:var(--expense); font-size:24px; margin-top:10px;"></div></div>
+                <div class="card stat-card"><label id="lblNet" style="font-size:11px; color:var(--text-dim); font-weight:800;"></label><div class="val" id="netBalance" style="color:#10b981; font-size:24px; margin-top:10px;"></div></div>
             </div>
 
             <div class="charts-row">
-                <div class="card"><h4><i class="fa-solid fa-chart-pie"></i> <span id="headBreak"></span></h4><div style="height:240px; margin-top:15px;"><canvas id="donutChart"></canvas></div></div>
-                <div class="card"><h4><i class="fa-solid fa-chart-line"></i> <span id="headTrend"></span></h4><div style="height:240px; margin-top:15px;"><canvas id="lineChart"></canvas></div></div>
+                <div class="card"><h4><i class="fa-solid fa-chart-pie"></i> <span id="headBreak"></span></h4><div style="height:250px; margin-top:15px;"><canvas id="donutChart"></canvas></div></div>
+                <div class="card"><h4><i class="fa-solid fa-chart-line"></i> <span id="headTrend"></span></h4><div style="height:250px; margin-top:15px;"><canvas id="lineChart"></canvas></div></div>
             </div>
 
-            <div class="card" style="padding: 10px 0;"><h3 id="headRecent" style="margin: 20px 25px; font-size: 16px;">History</h3><div class="table-wrap"><table><thead><tr><th id="thDate">Date</th><th id="thItem">Item</th><th id="thCat">Cat</th><th id="thNote">Note</th><th id="thAmt" style="text-align:right;">Amount</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
+            <div class="card" style="padding:10px 0;"><h3 id="headRecent" style="margin:20px 25px;">History</h3><div class="table-wrap"><table><thead><tr><th id="thDate">Date</th><th id="thItem">Item</th><th id="thCat">Cat</th><th id="thNote">Note</th><th id="thAmt" style="text-align:right;">Amount</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content">
-        <h2 id="mHead" style="margin-bottom:20px; font-weight:800;"></h2>
-        <input type="hidden" id="editId"><input type="text" id="tIn" placeholder="Title"><input type="number" id="aIn" placeholder="Amount">
-        <select id="cIn" onchange="toggleCustomCat()"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others (Custom)</option></select>
-        <input type="text" id="customCatIn" placeholder="Category Name" style="display:none;"><textarea id="nIn" placeholder="Note..." style="height:80px; resize:none;"></textarea>
-        <div style="display:flex; gap:10px;"><button onclick="closeModal('entryModal')" id="btnCan" style="flex:1; background:#222; color:white; border:none; border-radius:12px; padding:15px; font-weight:700;">Cancel</button><button onclick="saveData()" id="btnSav" class="btn-main" style="flex:1;">Save</button></div>
-    </div></div>
-
-    <div id="settingsModal" class="modal-overlay"><div class="modal-content"><h2 id="setHead" style="margin-bottom:25px; font-weight:800;"><i class="fa-solid fa-bullseye"></i> Goal Settings</h2><input type="number" id="goalInput" placeholder="Target ($)"><div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" id="btnSetCan" style="flex:1; background:#222; border:none; border-radius:12px; padding:15px; color:white; font-weight:700;">Cancel</button><button onclick="updateGoal()" id="btnSetSav" class="btn-main" style="flex:1;">Update</button></div></div></div>
-
-    <div id="authSection"><div class="card" style="width:340px; text-align:center; padding:45px; border-radius:40px;"><h1 style="color:var(--primary); margin-bottom:30px; font-size:28px;"><i class="fa-solid fa-rocket"></i> Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button class="btn-main" onclick="handleLogin()">Sign In</button></div></div>
-
     <script>
+        /* (Copy JavaScript from v6 precisely, keeping the checkUser, loadD, and chart logic) */
+        // ... (Supabase config same as before) ...
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -152,11 +143,11 @@
         let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en', cloudGoal = 50000;
         const currs = { THB: "฿", USD: "$", MMK: "Ks" };
 
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').classList.toggle('active'); }
+        function toggleMenu() { const sb = document.getElementById('sidebar'); const ov = document.getElementById('sidebarOverlay'); sb.classList.toggle('active'); ov.style.display = sb.classList.contains('active') ? 'block' : 'none'; }
         function toggleCustomCat() { document.getElementById('customCatIn').style.display = (document.getElementById('cIn').value === 'Others') ? 'block' : 'none'; }
-        async function handleLogin() { const e = document.getElementById('email').value, p = document.getElementById('password').value; const { error } = await sc.auth.signInWithPassword({ email:e, password:p }); if (error) { await sc.auth.signUp({ email:e, password:p }); alert("Login Error!"); } else checkUser(); }
+        async function handleLogin() { const e = document.getElementById('email').value, p = document.getElementById('password').value; const { error } = await sc.auth.signInWithPassword({ email:e, password:p }); if (error) { await sc.auth.signUp({ email:e, password:p }); alert("Login!"); } else checkUser(); }
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
-        async function checkUser() { const { data: { user } } = await sc.auth.getUser(); if (user) { document.getElementById('authSection').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText = user.email; applyLanguage(); fetchGoal(); } else { document.getElementById('authSection').style.display='flex'; } }
+        async function checkUser() { const { data: { user } } = await sc.auth.getUser(); if (user) { document.getElementById('authSection').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText = user.email; applyLanguage(); fetchGoal(); } else { document.getElementById('authSection').style.display = 'flex'; } }
         async function fetchGoal() { const { data: { user } } = await sc.auth.getUser(); const { data } = await sc.from('profiles').select('target_goal').eq('id', user.id).single(); if (data) cloudGoal = data.target_goal; else await sc.from('profiles').insert([{ id: user.id, target_goal: 50000 }]); loadD(); }
         async function updateGoal() { const val = parseFloat(document.getElementById('goalInput').value); if (val > 0) { const { data: { user } } = await sc.auth.getUser(); await sc.from('profiles').update({ target_goal: val }).eq('id', user.id); cloudGoal = val; closeModal('settingsModal'); loadD(); } }
         function applyLanguage() { const t = i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; }); document.getElementById('langSel').value = lang; document.getElementById('currSel').value = curr; }
@@ -164,7 +155,6 @@
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); loadD(); }
         function openModal(id) { document.getElementById(id).style.display='flex'; if(id==='settingsModal') document.getElementById('goalInput').value = cloudGoal; }
         function closeModal(id) { document.getElementById(id).style.display='none'; document.getElementById('editId').value = ''; document.getElementById('customCatIn').style.display='none'; }
-        
         async function editT(id) { const { data } = await sc.from('transactions').select('*').eq('id', id).single(); if(data) { document.getElementById('editId').value = data.id; document.getElementById('tIn').value = data.title; document.getElementById('aIn').value = data.amount; document.getElementById('cIn').value = (['Income','Trading','Food'].includes(data.category)) ? data.category : 'Others'; if (document.getElementById('cIn').value === 'Others') { document.getElementById('customCatIn').style.display = 'block'; document.getElementById('customCatIn').value = data.category; } document.getElementById('nIn').value = data.note || ''; document.getElementById('mHead').innerText = i18n[lang].upHead; openModal('entryModal'); } }
         async function saveData() {
             const t = document.getElementById('tIn').value, a = parseFloat(document.getElementById('aIn').value), cVal = document.getElementById('cIn').value, cC = document.getElementById('customCatIn').value, n = document.getElementById('nIn').value, id = document.getElementById('editId').value;
@@ -175,7 +165,7 @@
             const { data } = await sc.from('transactions').select('*').order('created_at', { ascending: false });
             if (data) {
                 let inc=0, exp=0; const list = document.getElementById('transactionList'); list.innerHTML = '';
-                data.forEach(d => { if (d.category === 'Income') inc += d.amount; else exp += d.amount; list.innerHTML += `<tr style="border-bottom:1px solid #1a1d21;"><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span class="cat-badge">${d.category}</span></td><td style="font-size:12px; color:var(--text-dim); font-style:italic;">${d.note || '-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-pen-to-square btn-icon btn-edit" onclick="editT(${d.id})" style="cursor:pointer; color:#3b82f6; margin-right:15px;"></i><i class="fa-solid fa-trash btn-icon btn-del" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i></td></tr>`; });
+                data.forEach(d => { if (d.category === 'Income') inc += d.amount; else exp += d.amount; list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span class="cat-badge">${d.category}</span></td><td style="font-size:12px; color:var(--text-dim); font-style:italic;">${d.note || '-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#10b981':'#ef4444'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-pen-to-square btn-icon btn-edit" onclick="editT(${d.id})" style="cursor:pointer; color:#3b82f6; margin-right:15px;"></i><i class="fa-solid fa-trash btn-icon btn-del" onclick="deleteT(${d.id})" style="cursor:pointer; color:#444;"></i></td></tr>`; });
                 const net = inc - exp; document.getElementById('totalIncome').innerText = currs[curr] + " " + inc.toLocaleString(); document.getElementById('totalExpense').innerText = currs[curr] + " " + exp.toLocaleString(); document.getElementById('netBalance').innerText = currs[curr] + " " + net.toLocaleString();
                 const target = cloudGoal * (curr === 'THB' ? 35 : curr === 'MMK' ? 3500 : 1); const p = Math.min((net / target) * 100, 100); document.getElementById('goalBar').style.width = Math.max(p, 0) + '%'; document.getElementById('percentLabel').innerText = Math.max(p, 0).toFixed(1) + '%';
                 document.getElementById('goalLabel').innerText = `${i18n[lang].goalLabel}: $${cloudGoal.toLocaleString()} Journey`; document.getElementById('remainText').innerText = `${i18n[lang].remText}: ${currs[curr]} ${(target - net).toLocaleString()}`; renderCharts(data);
