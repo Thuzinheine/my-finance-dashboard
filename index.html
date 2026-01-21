@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio - Rasket Absolute Fix</title>
+    <title>Spendio - Verified Final Fix</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* Myanmar Font Loading */
         @font-face { font-family: 'WaloneBold'; src: url('fonts/Z06-Walone Bold.ttf') format('truetype'); font-display: swap; }
         @font-face { font-family: 'WaloneThin'; src: url('fonts/Z06-Walone Thin.ttf') format('truetype'); font-display: swap; }
 
@@ -20,45 +21,45 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* --- SIDEBAR FIXED --- */
+        /* --- SIDEBAR STRUCTURE --- */
         .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; z-index: 1000; }
         .logo-box { padding: 30px 25px; display: flex; align-items: center; gap: 10px; font-size: 24px; color: var(--primary); font-family: 'WaloneBold'; }
         
         .menu-label { font-size: 10px; font-weight: 800; color: var(--menu-head); padding: 25px 25px 10px; text-transform: uppercase; letter-spacing: 1.5px; }
-        .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 25px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 14px; font-weight: 500; }
+        .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 13px 25px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 14px; font-weight: 500; }
         .nav-item:hover, .nav-item.active { background: rgba(0, 210, 123, 0.05); color: var(--primary); }
         .nav-content { display: flex; align-items: center; gap: 15px; }
         .nav-content i { font-size: 18px; width: 20px; text-align: center; }
 
-        /* Submenu Fix */
-        .submenu { display: none; padding: 5px 15px 15px 55px; background: rgba(0,0,0,0.15); border-radius: 8px; margin: 5px 10px; }
+        /* Submenu Style */
+        .submenu { display: none; padding: 5px 15px 15px 55px; background: rgba(0,0,0,0.1); border-radius: 8px; margin: 0 10px; }
         .submenu.active { display: block; }
         .pill-group { display: flex; background: #0c0e12; padding: 3px; border-radius: 8px; border: 1px solid var(--border); gap: 3px; margin-bottom: 8px; }
-        .pill-btn { flex: 1; border: none; background: transparent; color: #5a6a85; font-size: 10px; padding: 7px; border-radius: 6px; cursor: pointer; font-family: 'WaloneBold'; }
+        .pill-btn { flex: 1; border: none; background: transparent; color: #5a6a85; font-size: 10px; padding: 6px; border-radius: 6px; cursor: pointer; font-family: 'WaloneBold'; }
         .pill-btn.active { background: var(--border); color: var(--primary); }
 
-        /* --- MAIN CONTENT AREA FIXED --- */
-        .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: #0c0e12; }
+        /* --- DASHBOARD CONTENT STRUCTURE --- */
+        .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
         .top-header { height: 70px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 35px; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
-        .content-body { padding: 30px 35px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; }
+        .content-body { padding: 30px 35px; display: flex; flex-direction: column; gap: 24px; }
 
-        /* Rasket Stats */
+        /* Cards and Grid */
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 12px; position: relative; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 12px; position: relative; }
         .stat-label { font-size: 12px; color: var(--menu-head); font-weight: 500; font-family: 'WaloneBold'; text-transform: uppercase; }
-        .stat-val { font-size: 20px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 8px; }
+        .stat-val { font-size: 22px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 10px; }
 
-        /* Charts Row */
+        /* Graphs */
         .charts-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; }
-        .chart-card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 15px; min-height: 350px; }
+        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 15px; min-height: 380px; }
 
-        /* Table UI */
+        /* History Table */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; }
         td { padding: 18px 25px; border-bottom: 1px solid var(--border); font-size: 14px; }
 
-        /* Modal Urbix Style */
+        /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 20px; width: 420px; }
@@ -66,8 +67,7 @@
         .my-font { font-family: 'WaloneBold' !important; }
         .btn-rasket { background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; width: 100%; font-family: 'WaloneBold'; }
 
-        @media (max-width: 1200px) { .grid-stats { grid-template-columns: repeat(2, 1fr); } .charts-row { grid-template-columns: 1fr; } }
-        @media (max-width: 768px) { .sidebar { position: fixed; left: -260px; z-index: 2000; transition: 0.3s; } .sidebar.active { left: 0; } }
+        @media (max-width: 1024px) { .grid-stats { grid-template-columns: repeat(2, 1fr); } .charts-row { grid-template-columns: 1fr; } .sidebar { position: fixed; left: -260px; z-index: 2000; } .sidebar.active { left: 0; } }
         input, select { width: 100%; padding: 12px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 10px; margin-bottom: 15px; outline: none; }
     </style>
 </head>
@@ -79,8 +79,8 @@
         <div class="sidebar" id="sidebar">
             <div class="logo-box my-font"><i class="fa-solid fa-bolt-lightning"></i> Spendio</div>
             
-            <div class="menu-label">Menu</div>
-            <div class="nav-item active"><div class="nav-content"><i class="fa-solid fa-house-chimney"></i> <span class="my-font" id="navDash">ခြုံငုံသုံးသပ်ချက်</span></div></div>
+            <div class="menu-label">Analytics</div>
+            <div class="nav-item active"><div class="nav-content"><i class="fa-solid fa-chart-line"></i> <span class="my-font" id="navDash">Dashboard</span></div></div>
             <div class="nav-item" onclick="openModal('entryModal')"><div class="nav-content"><i class="fa-solid fa-circle-plus"></i> <span class="my-font" id="navAdd">စာရင်းအသစ်</span></div></div>
 
             <div class="menu-label">Custom</div>
@@ -109,7 +109,7 @@
                 <div class="grid-stats">
                     <div class="stat-card">
                         <span class="stat-label" id="goalTitle"></span><i class="fa-solid fa-bullseye" style="position:absolute; right:20px; color:var(--warning); opacity:0.3;"></i>
-                        <div class="stat-val" id="goalVal"></div><div id="percentLabel" style="font-size:12px; color:var(--primary); font-weight:800; margin-top:5px;">0%</div>
+                        <div class="stat-val" id="goalVal"></div><div id="percentLabel" style="font-size:13px; color:var(--primary); font-weight:800; margin-top:5px;">0%</div>
                     </div>
                     <div class="stat-card"><div class="card-top"><span class="stat-label" id="incTitle"></span><i class="fa-solid fa-arrow-up" style="position:absolute; right:20px; color:var(--income); opacity:0.3;"></i></div><div class="stat-val" id="totalInc" style="color:var(--income);"></div></div>
                     <div class="stat-card"><div class="card-top"><span class="stat-label" id="expTitle"></span><i class="fa-solid fa-arrow-down" style="position:absolute; right:20px; color:var(--expense); opacity:0.3;"></i></div><div class="stat-val" id="totalExp" style="color:var(--expense);"></div></div>
@@ -117,21 +117,21 @@
                 </div>
 
                 <div class="charts-row">
-                    <div class="chart-card"><h3 class="my-font" style="font-size:14px; margin-bottom:20px; color:var(--menu-head);">Financial Trend</h3><div style="height:280px;"><canvas id="trendChart"></canvas></div></div>
-                    <div class="chart-card"><h3 class="my-font" style="font-size:14px; margin-bottom:20px; color:var(--menu-head);">Category Analysis</h3><div style="height:280px;"><canvas id="pieChart"></canvas></div></div>
+                    <div class="chart-box"><h3 class="my-font" style="font-size:14px; margin-bottom:20px; color:var(--menu-head);">Financial Trend</h3><div style="height:300px;"><canvas id="trendChart"></canvas></div></div>
+                    <div class="chart-box"><h3 class="my-font" style="font-size:14px; margin-bottom:20px; color:var(--menu-head);">Usage Breakdown</h3><div style="height:300px;"><canvas id="pieChart"></canvas></div></div>
                 </div>
 
                 <div class="table-card">
                     <h3 class="my-font" style="padding:25px; font-size:16px; border-bottom:1px solid var(--border);" id="histTitle"></h3>
-                    <div style="overflow-x:auto;"><table><thead><tr><th id="thDate"></th><th id="thItem"></th><th id="thCat"></th><th style="text-align:right;" id="thAmt"></th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div>
+                    <div style="overflow-x:auto;"><table id="mainTable"><thead><tr><th id="thDate"></th><th id="thItem"></th><th id="thCat"></th><th style="text-align:right;" id="thAmt"></th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" style="margin-bottom:25px; color:white;">စာရင်းသွင်းရန်</h2><input type="text" id="tIn" placeholder="Description"><input type="number" id="aIn" placeholder="Amount"><select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select><div style="display:flex; gap:10px;"><button onclick="closeModal('entryModal')" style="flex:1; background:#2a2e39; color:#fff; border:none; border-radius:10px; cursor:pointer;">Cancel</button><button onclick="saveData()" class="btn-rasket" style="flex:1;">Save</button></div></div></div>
-    <div id="settingsModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" style="margin-bottom:25px; color:white;">ပန်းတိုင်သတ်မှတ်ရန်</h2><input type="number" id="goalInput" placeholder="Target Amount"><div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" style="flex:1; background:#2a2e39; color:#fff; border:none; border-radius:10px; cursor:pointer;">Cancel</button><button onclick="updateGoal()" class="btn-rasket" style="flex:1;">Update</button></div></div></div>
-    <div id="authSection" style="display:none; position:fixed; inset:0; background:var(--bg); align-items:center; justify-content:center; z-index:9999;"><div class="stat-card" style="width:340px; padding:50px; border-radius:20px; align-items:center;"><h1 style="color:var(--primary); margin-bottom:30px; font-family:'WaloneBold'; font-size:35px;">Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button onclick="handleLogin()" class="btn-rasket">Sign In</button></div></div>
+    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" style="margin-bottom:25px; color:white;">စာရင်းသွင်းရန်</h2><input type="text" id="tIn" placeholder="Description"><input type="number" id="aIn" placeholder="Amount"><select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option><option value="Others">Others</option></select><div style="display:flex; gap:10px;"><button onclick="closeModal('entryModal')" style="flex:1; background:#2a2e39; color:#fff; border:none; border-radius:10px; cursor:pointer;">Cancel</button><button onclick="saveData()" class="btn-rasket">Save</button></div></div></div>
+    <div id="settingsModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" style="margin-bottom:25px; color:white;">ပန်းတိုင်သတ်မှတ်ရန်</h2><input type="number" id="goalInput" placeholder="Target Amount ($)"><div style="display:flex; gap:12px;"><button onclick="closeModal('settingsModal')" style="flex:1; background:#2a2e39; color:#fff; border:none; border-radius:10px; cursor:pointer;">Cancel</button><button onclick="updateGoal()" class="btn-rasket">Update</button></div></div></div>
+    <div id="authSection" style="display:none; position:fixed; inset:0; background:var(--bg); align-items:center; justify-content:center; z-index:9999;"><div class="stat-card" style="width:340px; padding:50px; border-radius:20px; align-items:center;"><h1 style="color:var(--primary); margin-bottom:30px;" class="my-font">Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button onclick="handleLogin()" class="btn-rasket">Sign In</button></div></div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
@@ -139,8 +139,8 @@
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const i18n = {
-            en: { headTitle: "Dashboard Overview", navDash: "Dashboard", navAdd: "Add Record", navGoal: "Set Goal", navLang: "Language", navCurr: "Currency", goalTitle: "GOAL", incTitle: "INCOME", expTitle: "EXPENSES", netTitle: "BALANCE", histTitle: "Recent History", thDate: "Date", thItem: "Description", thCat: "Category", thAmt: "Amount" },
-            my: { headTitle: "ခြုံုံသုံးသပ်ချက်", navDash: "ခြုံုံသုံးသပ်ချက်", navAdd: "စာရင်းအသစ်", navGoal: "ပန်းတိုင်ပြင်ရန်", navLang: "ဘာသာစကားပြောင်းရန်", navCurr: "Currency ပြောင်းရန်", goalTitle: "ပန်းတိုင်", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", netTitle: "လက်ကျန်", histTitle: "စာရင်းမှတ်တမ်း", thDate: "ရက်စွဲ", thItem: "အကြောင်းအရာ", thCat: "အမျိုးအစား", thAmt: "ပမာဏ" }
+            en: { headTitle: "Analytics Overview", navDash: "Dashboard", navAdd: "Add Record", navGoal: "Goal Plan", navLang: "Language", navCurr: "Currency", goalTitle: "GOAL", incTitle: "INCOME", expTitle: "EXPENSES", netTitle: "BALANCE", histTitle: "Recent History", thDate: "Date", thItem: "Item", thCat: "Category", thAmt: "Amount" },
+            my: { headTitle: "ခြုံုံသုံးသပ်ချက်", navDash: "ခြုံုံသုံးသပ်ချက်", navAdd: "စာရင်းအသစ်", navGoal: "ပန်းတိုင်ပြင်ရန်", navLang: "ဘာသာစကားပြောင်းရန်", navCurr: "Currency ပြောင်းရန်", goalTitle: "ပန်းတိုင်", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", netTitle: "လက်ကျန်", histTitle: "စာရင်းမှတ်တမ်း", thDate: "ရက်စွဲ", thItem: "အမည်", thCat: "အမျိုးအစား", thAmt: "ပမာဏ" }
         };
 
         let curr = localStorage.getItem('curr') || 'THB', lang = localStorage.getItem('lang') || 'en', cloudGoal = 100000;
@@ -155,12 +155,14 @@
         async function updateGoal() { const val=parseFloat(document.getElementById('goalInput').value); if(val>0){ const {data:{user}}=await sc.auth.getUser(); await sc.from('profiles').update({target_goal:val}).eq('id', user.id); cloudGoal=val; closeModal('settingsModal'); loadD(); } }
         function changeLanguage(v) { lang=v; localStorage.setItem('lang',v); updateUI(); loadD(); }
         function changeCurrency(v) { curr=v; localStorage.setItem('curr',v); updateUI(); loadD(); }
+        
         function updateUI() { 
             const t=i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; });
             document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('lang' + lang.charAt(0).toUpperCase() + lang.slice(1)).classList.add('active');
             document.getElementById('curr' + curr).classList.add('active');
         }
+
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         async function saveData() { const t=document.getElementById('tIn').value, a=parseFloat(document.getElementById('aIn').value), c=document.getElementById('cIn').value; const {data:{user}}=await sc.auth.getUser(); if(!t || isNaN(a)) return; await sc.from('transactions').insert([{title:t, amount:a, category:c, user_id:user.id}]); closeModal('entryModal'); loadD(); }
@@ -171,7 +173,7 @@
                 let inc=0, exp=0, cats={}; const list=document.getElementById('transactionList'); list.innerHTML='';
                 data.forEach(d => { 
                     if(d.category==='Income') inc+=d.amount; else { exp+=d.amount; cats[d.category]=(cats[d.category]||0)+d.amount; }
-                    list.innerHTML += `<tr style="border-bottom:1px solid var(--border);"><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="background:rgba(255,255,255,0.03); padding:4px 10px; border-radius:6px; font-size:11px;">${d.category}</span></td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00d27b':'#ff4d4d'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash-alt" onclick="deleteT(${d.id})" style="cursor:pointer; opacity:0.3; color:#ff4d4d;"></i></td></tr>`;
+                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="background:rgba(255,255,255,0.03); padding:4px 10px; border-radius:6px; font-size:11px;">${d.category}</span></td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00d27b':'#ff4d4d'}">${currs[curr]} ${d.amount.toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash-alt" onclick="deleteT(${d.id})" style="cursor:pointer; opacity:0.3; color:#ff4d4d;"></i></td></tr>`;
                 });
                 const net=inc-exp, rate = (curr==='MMK')?3500:(curr==='THB')?35:1, target=cloudGoal*rate;
                 document.getElementById('totalInc').innerText=currs[curr]+" "+inc.toLocaleString(); document.getElementById('totalExp').innerText=currs[curr]+" "+exp.toLocaleString(); document.getElementById('netBal').innerText=currs[curr]+" "+net.toLocaleString();
