@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio Master Pro v122</title>
+    <title>Spendio Master Pro v123</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,43 +15,38 @@
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; height: 100vh; width: 100vw; overflow: hidden; display: flex; font-size: var(--fs-base); }
         
-        /* MODERN LOGIN OVERLAY */
+        /* INTEGRATED LOGIN OVERLAY */
         #loginOverlay { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1f33, #0b0d14); display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .login-card { background: rgba(19, 22, 34, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 163, 0.2); padding: 50px 40px; border-radius: 35px; width: 420px; text-align: center; }
         .login-input { width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: #fff; border-radius: 16px; margin-bottom: 22px; outline: none; }
         .btn-login { width: 100%; height: 60px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-family: 'WaloneBold'; font-size: 18px; }
 
-        /* FIXED SIDEBAR & MAIN AREA */
+        /* FIXED SIDEBAR & LAYOUT */
         .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh; position: fixed; left: 0; top: 0; z-index: 2000; transition: 0.3s; }
         .main-container { flex: 1; height: 100vh; overflow-y: auto; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); margin-left: 260px; }
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: sticky; top: 0; z-index: 100; }
         
-        /* CONTENT SCALING */
+        /* GRID & CONTENT SCALING */
         .content-padding { padding: 30px; display: flex; flex-direction: column; gap: 25px; }
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
         .stat-val { font-size: 22px; font-weight: 700; font-family: 'WaloneBold'; margin-top: 10px; }
         
-        /* CHART BOX SYNC */
         .charts-triple-grid { display: grid; grid-template-columns: 1.4fr 1.4fr 0.9fr; gap: 20px; width: 100%; }
         .chart-box { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 24px; height: 380px; position: relative; }
-        .chart-box h4 { font-size: 12px; color: var(--menu-head); font-family: 'WaloneBold'; margin-bottom: 18px; }
 
-        /* MOBILE FIXES */
+        /* MOBILE FIXES (၂ ခုတစ်တန်း) */
         @media (max-width: 992px) {
             .sidebar { left: -260px; }
-            .sidebar.active { left: 0; }
+            .sidebar.active { left: 0; box-shadow: 15px 0 30px rgba(0,0,0,0.5); }
             .main-container { margin-left: 0; }
             .grid-stats { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .charts-triple-grid { grid-template-columns: 1fr; }
         }
 
-        /* MODAL & UI ACTION */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 480px; }
-        .btn-act { padding: 8px; cursor: pointer; opacity: 0.5; transition: 0.2s; }
-        .btn-act:hover { color: var(--primary); opacity: 1; }
         .my-font { font-family: 'WaloneBold' !important; }
     </style>
 </head>
@@ -71,7 +66,7 @@
         <div class="sidebar" id="sidebar">
             <div style="padding:30px 25px; display:flex; align-items:center; gap:12px; font-size:24px; color:var(--primary); font-family:'WaloneBold';"><i class="fa-solid fa-gem"></i> Spendio</div>
             <div style="padding:12px 25px; cursor:pointer;" onclick="location.reload()" class="my-font">ခြုံသုံးသပ်ချက်</div>
-            <div style="padding:12px 25px; cursor:pointer;" onclick="openModal('entryModal')" class="my-font">စာရင်းအသစ်</div>
+            <div style="padding:12px 25px; cursor:pointer;" onclick="openModal('entryModal')" class="my-font">စာရင်းသွင်းရန်</div>
             <div style="padding:12px 25px; cursor:pointer;" onclick="changeCurrency('MMK')" class="my-font">Myanmar (Ks)</div>
             <div style="padding:12px 25px; cursor:pointer;" onclick="changeCurrency('USD')" class="my-font">English ($)</div>
             <div style="margin-top:auto; padding:25px; color:var(--expense); cursor:pointer;" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Logout</div>
@@ -105,10 +100,9 @@
     <div id="entryModal" class="modal-overlay">
         <div class="modal-content">
             <h2 class="my-font" style="color:#fff; margin-bottom:20px; text-align:center;">စာရင်းသွင်းရန်</h2>
-            <input type="hidden" id="editId">
             <input type="text" id="tIn" class="login-input" placeholder="အကြောင်းအရာ">
             <input type="number" id="aIn" class="login-input" placeholder="ပမာဏ">
-            <select id="cIn" class="login-input"><option value="Income">Income (+)</option><option value="Expense">Expense (-)</option></select>
+            <select id="cIn" class="login-input"><option value="Income">Income (+)</option><option value="Expense">Expense (-)</option><option value="Trading">Trading Result</option></select>
             <div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-login" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData()" class="btn-login">Confirm</button></div>
         </div>
     </div>
@@ -131,38 +125,43 @@
 
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
         function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.getElementById('editId').value=''; }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function changeCurrency(v) { curr = v; loadD(); }
 
         async function saveData() {
             const {data:{user}} = await sc.auth.getUser();
-            const id = document.getElementById('editId').value;
-            const payload = {title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, user_id:user.id};
-            if(id) await sc.from('transactions').update(payload).eq('id', id); else await sc.from('transactions').insert([payload]);
+            await sc.from('transactions').insert([{title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, user_id:user.id}]);
             closeModal('entryModal'); loadD();
         }
 
         async function loadD() {
             const {data} = await sc.from('transactions').select('*').order('created_at',{ascending:false});
             if(!data) return;
-            let inc=0, exp=0; const list=document.getElementById('fullList'); list.innerHTML='';
+            let inc=0, exp=0, tp=0; const list=document.getElementById('fullList'); list.innerHTML='';
             const rate = curr==='MMK'?3500:1; const sym = curr==='MMK'?'Ks ':'$ ';
             data.forEach(d => {
-                if(d.category==='Income') inc+=d.amount; else exp+=d.amount;
+                if(d.category==='Income') inc+=d.amount; else if(d.category==='Trading') tp+=d.amount; else exp+=d.amount;
                 const acts = `<td style="text-align:center;"><i class="fa-solid fa-trash btn-act" onclick="deleteT(${d.id})"></i></td>`;
                 list.innerHTML += `<tr><td style="padding:14px 25px; border-bottom:1px solid rgba(255,255,255,0.02);">${new Date(d.created_at).toLocaleString()}</td><td>${d.title}</td><td>${d.category}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">${sym}${(d.amount*rate).toLocaleString()}</td>${acts}</tr>`;
             });
             document.getElementById('tInc').innerText = sym+(inc*rate).toLocaleString();
             document.getElementById('tExp').innerText = sym+(exp*rate).toLocaleString();
-            document.getElementById('tBal').innerText = sym+((inc-exp)*rate).toLocaleString();
-            renderCharts(data, inc, exp);
+            document.getElementById('tTrad').innerText = sym+(tp*rate).toLocaleString();
+            document.getElementById('tBal').innerText = sym+((inc-exp+tp)*rate).toLocaleString();
+            renderCharts(data, inc, exp, tp);
         }
 
-        function renderCharts(data, inc, exp) {
+        function renderCharts(data, inc, exp, tp) {
             const ctx1 = document.getElementById('cTrend').getContext('2d'); if(window.c1) window.c1.destroy();
-            window.c1 = new Chart(ctx1, { type:'line', data: { labels: data.slice(0,10).map(d=>''), datasets: [{ label:'Trend', data: data.slice(0,10).map(d=>d.amount), borderColor:'#00ffa3', tension:0.4, fill:true, backgroundColor:'rgba(0,255,163,0.05)' }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{grid:{color:'rgba(255,255,255,0.05)'}}, x:{display:false}} } });
+            const raw = data.slice(0,12).reverse();
+            window.c1 = new Chart(ctx1, { type:'line', data: { labels: raw.map(d=>''), datasets: [
+                { label:'Inc', data:raw.map(d=>d.category==='Income'?d.amount:null), borderColor:'#00ffa3', tension:0.4, spanGaps:true },
+                { label:'Exp', data:raw.map(d=>d.category==='Expense'?d.amount:null), borderColor:'#ff3d71', tension:0.4, spanGaps:true },
+                { label:'Trade', data:raw.map(d=>d.category==='Trading'?d.amount:null), borderColor:'#ffaa00', tension:0.4, borderDash:[4,4], spanGaps:true }
+            ]}, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{grid:{color:'rgba(255,255,255,0.05)'}}, x:{display:false}} } });
+            
             const ctx3 = document.getElementById('cPie').getContext('2d'); if(window.c3) window.c3.destroy();
-            window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp'], datasets: [{ data: [inc, exp], backgroundColor: ['#00ffa3','#ff3d71'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'75%' } });
+            window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(tp)], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'75%' } });
         }
         async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
         window.onload = checkUser;
