@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - F10L Gapless Master</title>
+    <title>Spendio - F10L Final Master</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,59 +13,62 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* Sidebar & Menu */
+        /* Sidebar & Navigation */
         .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; transition: 0.3s ease; z-index: 2000; }
         .logo-box { padding: 30px 25px; display: flex; align-items: center; gap: 12px; font-size: 26px; color: var(--primary); font-family: 'WaloneBold'; }
         .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 13px 25px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 14px; position: relative; }
         .nav-item:hover, .nav-item.active { color: #fff; background: linear-gradient(90deg, rgba(0, 255, 163, 0.08), transparent); }
         .nav-item.active { border-left: 3px solid var(--primary); }
-        .submenu { display: none; padding: 5px 15px 15px 55px; background: rgba(0,0,0,0.2); border-radius: 12px; margin: 5px 10px; }
-        .submenu.active { display: block !important; }
 
-        /* Main Area */
+        /* Updated Language UI */
+        .submenu { display: none; padding: 10px 15px 15px 50px; background: rgba(0,0,0,0.15); border-radius: 12px; margin: 0 10px; }
+        .submenu.active { display: block !important; }
+        
+        .lang-option { 
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s;
+            font-size: 11px; color: var(--text-dim); margin-bottom: 4px;
+        }
+        .lang-option:hover { background: rgba(255,255,255,0.03); color: #fff; }
+        .lang-option.active { color: var(--primary); }
+        
+        .radio-dot { 
+            width: 14px; height: 14px; border: 2px solid #3d4457; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .lang-option.active .radio-dot { border-color: var(--primary); }
+        .radio-inner { 
+            width: 6px; height: 6px; background: transparent; border-radius: 50%; transition: 0.3s;
+        }
+        .lang-option.active .radio-inner { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
+
+        /* Main Container Locked */
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); }
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
-        .mobile-toggle { display: none; font-size: 22px; color: var(--text-dim); cursor: pointer; }
         .content-body { padding: 30px; display: flex; flex-direction: column; gap: 25px; }
 
-        /* Grid & Stats */
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
         .stat-val { font-size: 22px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 10px; }
 
-        /* PERFECT TRIPLE GRAPH GRID - No Empty Spaces */
         .charts-triple-grid { display: grid; grid-template-columns: 1.4fr 1.4fr 0.9fr; gap: 20px; width: 100%; align-items: stretch; }
         .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; height: 340px; }
         .chart-container { position: relative; flex: 1; width: 100%; min-height: 0; }
 
-        /* Tables Locked */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px; }
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
         th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; }
-        td { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; vertical-align: middle; }
+        td { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; }
         .action-btns { display: flex; gap: 15px; justify-content: center; }
         .btn-act { background: transparent; border: none; cursor: pointer; font-size: 14px; opacity: 0.5; color: var(--text); }
         .btn-act:hover { opacity: 1; color: var(--primary); }
 
         #sidebarOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1500; backdrop-filter: blur(4px); }
-
-        @media (max-width: 1400px) { .charts-triple-grid { grid-template-columns: 1fr 1fr; } .chart-box:last-child { grid-column: span 2; height: 300px; } }
-        @media (max-width: 768px) {
-            .sidebar { position: fixed; left: -260px; }
-            .sidebar.active { left: 0; }
-            .mobile-toggle { display: block; }
-            #sidebarOverlay.active { display: block; }
-            .charts-triple-grid { grid-template-columns: 1fr; }
-            .chart-box:last-child { grid-column: auto; }
-            .grid-stats { grid-template-columns: 1fr 1fr; }
-        }
-
+        @media (max-width: 768px) { .sidebar { position: fixed; left: -260px; } .sidebar.active { left: 0; } #sidebarOverlay.active { display: block; } .charts-triple-grid { grid-template-columns: 1fr; } .grid-stats { grid-template-columns: 1fr 1fr; } }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 460px; }
-        input, select, textarea { width: 100%; padding: 16px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 12px; margin-bottom: 15px; outline: none; }
-        .btn-ui { height: 52px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; font-family: 'WaloneBold'; flex: 1; }
         .my-font { font-family: 'WaloneBold' !important; }
     </style>
 </head>
@@ -80,14 +83,21 @@
             <div class="menu-label" style="padding: 15px 25px 5px; font-size: 10px; color: var(--menu-head);">Analytics</div>
             <div class="nav-item active" onclick="location.reload()"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font" id="navDash">ခြုံသုံးသပ်ချက်</span></div></div>
             <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="recSub" class="submenu"><div class="pill-stack"><div style="padding:10px; cursor:pointer;" onclick="openModal('entryModal')">စာရင်းအသစ်</div><div style="padding:10px; cursor:pointer;" onclick="openModal('tradeModal')">Trading Record</div></div></div>
+            <div id="recSub" class="submenu"><div onclick="openModal('entryModal')" style="padding:8px 0; cursor:pointer;" class="my-font">စာရင်းအသစ်</div><div onclick="openModal('tradeModal')" style="padding:8px 0; cursor:pointer;" class="my-font">Trading Record</div></div>
             
             <div class="menu-label" style="padding: 15px 25px 5px; font-size: 10px; color: var(--menu-head);">Settings</div>
             <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="langSub" class="submenu"><div class="pill-stack"><div id="btnEn" style="padding:10px; cursor:pointer;" onclick="changeLanguage('en')">English</div><div id="btnMy" style="padding:10px; cursor:pointer;" onclick="changeLanguage('my')">မြန်မာဘာသာ</div></div></div>
+            <div id="langSub" class="submenu">
+                <div id="btnEn" class="lang-option" onclick="changeLanguage('en')">
+                    <span>English</span> <div class="radio-dot"><div class="radio-inner"></div></div>
+                </div>
+                <div id="btnMy" class="lang-option" onclick="changeLanguage('my')">
+                    <span class="my-font">မြန်မာဘာသာ</span> <div class="radio-dot"><div class="radio-inner"></div></div>
+                </div>
+            </div>
             
             <div class="nav-item" onclick="handleMenuToggle('currSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-coins"></i> <span class="my-font" id="navCurr">ကာရင်စီ</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="currSub" class="submenu"><div class="pill-stack"><div id="currMMK" style="padding:10px; cursor:pointer;" onclick="changeCurrency('MMK')">Myanmar (Ks)</div><div id="currUSD" style="padding:10px; cursor:pointer;" onclick="changeCurrency('USD')">English ($)</div></div></div>
+            <div id="currSub" class="submenu"><div id="currMMK" style="padding:8px 0; cursor:pointer;" onclick="changeCurrency('MMK')">Myanmar (Ks)</div><div id="currUSD" style="padding:8px 0; cursor:pointer;" onclick="changeCurrency('USD')">English ($)</div></div>
 
             <div style="margin-top: auto; padding-bottom: 25px;"><div class="nav-item" onclick="handleLogout()" style="color: var(--expense);"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div></div>
         </div>
@@ -106,9 +116,9 @@
                 </div>
 
                 <div class="charts-triple-grid">
-                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; margin-bottom:10px; color:var(--menu-head);">Zero Baseline Trend</h4><div class="chart-container"><canvas id="cashChart"></canvas></div></div>
-                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; margin-bottom:10px; color:var(--menu-head);">Trade Bars</h4><div class="chart-container"><canvas id="tradeChart"></canvas></div></div>
-                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; margin-bottom:10px; color:var(--menu-head);">Share Ratio</h4><div class="chart-container"><canvas id="pieChart"></canvas></div></div>
+                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">Zero Baseline Trend</h4><div class="chart-container"><canvas id="cashChart"></canvas></div></div>
+                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">Trade Bars</h4><div class="chart-container"><canvas id="tradeChart"></canvas></div></div>
+                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">Share Ratio</h4><div class="chart-container"><canvas id="pieChart"></canvas></div></div>
                 </div>
 
                 <div class="table-card" style="border-top:3px solid var(--primary);">
@@ -124,21 +134,23 @@
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">စာရင်းသွင်းရန်</h2><input type="hidden" id="editId"><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option></select><div style="display:flex; gap:15px; margin-top:20px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
-    <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">Trade Record</h2><input type="hidden" id="tEditId"><input type="text" id="trPair" placeholder="Pair"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><select id="trPos"><option value="Long">Long</option><option value="Short">Short</option></select><input type="text" id="trLev" placeholder="45x"></div><input type="number" id="trRes" placeholder="Result ($)"><div style="display:flex; gap:15px; margin-top:20px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div></div></div>
-
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const i18n = { en: { navDash: "Overview", navLang: "Language", navCurr: "Currency", headTitle: "Dashboard", incTitle: "INCOME", expTitle: "EXPENSES", netTitle: "BALANCE", histTitle: "History", thDate: "Date", thItem: "Description", thCat: "Category", thAmt: "Amount" }, my: { navDash: "ခြုံသုံးသပ်ချက်", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", headTitle: "ခြုံသုံးသပ်ချက်", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", netTitle: "လက်ကျန်", histTitle: "စာရင်းမှတ်တမ်း", thDate: "ရက်စွဲ", thItem: "အကြောင်းအရာ", thCat: "အမျိုးအစား", thAmt: "ပမာဏ" } };
-        const currs = { USD: "$", MMK: "Ks" };
+        const i18n = { en: { navDash: "Overview", navLang: "Language", headTitle: "Dashboard", incTitle: "INCOME", expTitle: "EXPENSES", netTitle: "BALANCE", histTitle: "History", thDate: "Date", thItem: "Description", thCat: "Category", thAmt: "Amount" }, my: { navDash: "ခြုံသုံးသပ်ချက်", navLang: "ဘာသာစကား", headTitle: "ခြုံသုံးသပ်ချက်", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", netTitle: "လက်ကျန်", histTitle: "စာရင်းမှတ်တမ်း", thDate: "ရက်စွဲ", thItem: "အကြောင်းအရာ", thCat: "အမျိုးအစား", thAmt: "ပမာဏ" } };
         let lang = localStorage.getItem('lang') || 'my', curr = localStorage.getItem('curr') || 'USD';
 
         function toggleMobileMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').classList.toggle('active'); }
         function handleMenuToggle(id) { const subs = document.querySelectorAll('.submenu'); subs.forEach(s => { if(s.id !== id) s.classList.remove('active'); }); document.getElementById(id).classList.toggle('active'); }
-        function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); location.reload(); }
-        function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); updateUI(); loadD(); }
-        function updateUI() { const t = i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; }); }
+        function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); updateUI(); location.reload(); }
+        function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); loadD(); }
+        
+        function updateUI() { 
+            const t = i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; });
+            document.querySelectorAll('.lang-option').forEach(el => el.classList.remove('active'));
+            if(lang === 'en') document.getElementById('btnEn').classList.add('active');
+            else document.getElementById('btnMy').classList.add('active');
+        }
 
         async function checkUser() { const {data:{user}}=await sc.auth.getUser(); if(user){ document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; updateUI(); loadD(); } else { window.location.href='login.html'; } }
         async function saveData(type) {
@@ -161,10 +173,10 @@
             const rate = (curr==='MMK')?3500:1;
             data.forEach(d => {
                 const acts = `<td style="text-align:center;"><div class="action-btns"><i class="fa-solid fa-pen btn-act" onclick='editT(${JSON.stringify(d)})'></i><i class="fa-solid fa-trash btn-act" onclick="deleteT(${d.id})"></i></div></td></tr>`;
-                if(d.category==='Trading') { tp += d.amount; const p = (d.note || '').split(' | '); tList.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td>${p[0]||'-'}</td><td>${p[1]||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">${currs[curr]} ${(Math.abs(d.amount)*rate).toLocaleString()}</td>` + acts; }
-                else { if(d.category==='Income') inc+=d.amount; else exp+=d.amount; list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="font-size:11px; opacity:0.6;">${d.category}</span></td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">${currs[curr]} ${(d.amount*rate).toLocaleString()}</td>` + acts; }
+                if(d.category==='Trading') { tp += d.amount; const p = (d.note || '').split(' | '); tList.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td>${p[0]||'-'}</td><td>${p[1]||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">${curr==='MMK'?'Ks':'$'} ${(Math.abs(d.amount)*rate).toLocaleString()}</td>` + acts; }
+                else { if(d.category==='Income') inc+=d.amount; else exp+=d.amount; list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="font-size:11px; opacity:0.6;">${d.category}</span></td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">${curr==='MMK'?'Ks':'$'} ${(d.amount*rate).toLocaleString()}</td>` + acts; }
             });
-            document.getElementById('totalInc').innerText=currs[curr]+" "+(inc*rate).toLocaleString(); document.getElementById('totalExp').innerText=currs[curr]+" "+(exp*rate).toLocaleString(); document.getElementById('tradeProfit').innerText=currs[curr]+" "+(tp*rate).toLocaleString(); document.getElementById('netBal').innerText=currs[curr]+" "+((inc-exp+tp)*rate).toLocaleString();
+            document.getElementById('totalInc').innerText=(curr==='MMK'?'Ks ':'$ ')+(inc*rate).toLocaleString(); document.getElementById('totalExp').innerText=(curr==='MMK'?'Ks ':'$ ')+(exp*rate).toLocaleString(); document.getElementById('tradeProfit').innerText=(curr==='MMK'?'Ks ':'$ ')+(tp*rate).toLocaleString(); document.getElementById('netBal').innerText=(curr==='MMK'?'Ks ':'$ ')+((inc-exp+tp)*rate).toLocaleString();
             renderCharts(data, inc, exp);
         }
 
@@ -176,19 +188,13 @@
                 { label: 'Exp', data: [0, ...raw.map(d=>d.category!=='Income'&&d.category!=='Trading'?d.amount:null)], borderColor:'#ff3d71', tension:0.4, fill:false, spanGaps:true, pointRadius: 4 },
                 { label: 'Trade', data: [0, ...raw.map(d=>d.category==='Trading'?d.amount:null)], borderColor:'#ffaa00', tension:0.4, fill:false, borderDash:[3,3], spanGaps:true, pointRadius: 4 }
             ]}, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'#262a3b'}}, x:{grid:{display:false}}} } });
-
             const ctx2 = document.getElementById('tradeChart').getContext('2d'); if(window.c2) window.c2.destroy();
             const tD = data.filter(d=>d.category==='Trading').slice(0,10).reverse();
             window.c2 = new Chart(ctx2, { type:'bar', data: { labels: tD.map(d=>d.title), datasets: [{ data: tD.map(d=>d.amount), backgroundColor: tD.map(d=>d.amount>0?'#00ffa3':'#ff3d71'), borderRadius:4 }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'#262a3b'}}} } });
-
             const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy();
             window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 10}}} } });
         }
-
-        function editT(d) {
-            if(d.category==='Trading') { document.getElementById('tEditId').value=d.id; document.getElementById('trPair').value=d.title; const p=(d.note||'').split(' | '); document.getElementById('trPos').value=p[0]; document.getElementById('trLev').value=p[1]; document.getElementById('trRes').value=d.amount; openModal('tradeModal'); }
-            else { document.getElementById('editId').value=d.id; document.getElementById('tIn').value=d.title; document.getElementById('aIn').value=d.amount; document.getElementById('cIn').value=d.category; openModal('entryModal'); }
-        }
+        function editT(d) { if(d.category==='Trading') { document.getElementById('tEditId').value=d.id; document.getElementById('trPair').value=d.title; const p=(d.note||'').split(' | '); document.getElementById('trPos').value=p[0]; document.getElementById('trLev').value=p[1]; document.getElementById('trRes').value=d.amount; openModal('tradeModal'); } else { document.getElementById('editId').value=d.id; document.getElementById('tIn').value=d.title; document.getElementById('aIn').value=d.amount; document.getElementById('cIn').value=d.category; openModal('entryModal'); } }
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); document.getElementById('editId').value=''; document.getElementById('tEditId').value=''; }
         async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
