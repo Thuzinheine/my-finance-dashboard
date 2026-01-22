@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spendio - Complete Dashboard</title>
+    <title>Spendio - Glow & Hover Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Myanmar Font Integration */
         @font-face { font-family: 'WaloneBold'; src: url('fonts/Z06-Walone Bold.ttf') format('truetype'); font-display: swap; }
         @font-face { font-family: 'WaloneThin'; src: url('fonts/Z06-Walone Thin.ttf') format('truetype'); font-display: swap; }
 
@@ -21,12 +20,17 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; height: 100vh; overflow: hidden; }
 
-        /* --- SIDEBAR --- */
+        /* --- SIDEBAR HOVER EFFECTS --- */
         .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; z-index: 1000; }
         .logo-box { padding: 35px 25px; display: flex; align-items: center; gap: 12px; font-size: 26px; color: var(--primary); font-family: 'WaloneBold'; }
+        
         .menu-label { font-size: 10px; font-weight: 800; color: var(--menu-head); padding: 25px 25px 12px; text-transform: uppercase; letter-spacing: 1.5px; }
-        .nav-item { display: flex; align-items: center; gap: 15px; padding: 13px 25px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 14px; }
-        .nav-item:hover, .nav-item.active { background: rgba(0, 255, 163, 0.05); color: var(--primary); }
+        .nav-item { display: flex; align-items: center; gap: 15px; padding: 13px 25px; color: var(--text-dim); cursor: pointer; transition: all 0.3s ease; font-size: 14px; position: relative; }
+        
+        .nav-item:hover { color: #fff; background: linear-gradient(90deg, rgba(0, 255, 163, 0.08), transparent); }
+        .nav-item:hover::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        .nav-item.active { background: rgba(0, 255, 163, 0.05); color: var(--primary); }
+        .nav-item.active::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--primary); }
         .nav-item i { font-size: 18px; width: 20px; text-align: center; }
 
         /* --- MAIN AREA --- */
@@ -34,40 +38,49 @@
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 35px; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
         .content-body { padding: 35px 40px; display: flex; flex-direction: column; gap: 30px; }
 
-        /* Stats Cards */
+        /* --- STAT CARDS GLOW HOVER --- */
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 18px; }
-        .icon-box { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 15px; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 20px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+        
+        .stat-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 15px 35px rgba(0, 255, 163, 0.15); }
+        .icon-box { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 15px; transition: 0.3s; }
+        .stat-card:hover .icon-box { transform: scale(1.1); box-shadow: 0 0 15px currentColor; }
+        
         .stat-label { font-size: 12px; color: var(--menu-head); font-family: 'WaloneBold'; text-transform: uppercase; }
         .stat-val { font-size: 24px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 10px; }
 
-        /* Charts Section */
+        /* --- CHARTS ROW --- */
         .charts-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; }
-        .chart-card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 20px; min-height: 380px; }
+        .chart-card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; min-height: 380px; transition: 0.3s; }
+        .chart-card:hover { border-color: rgba(255,255,255,0.1); }
 
-        /* History Table UI */
+        /* --- TABLE ROW HOVER --- */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; }
-        td { padding: 18px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; }
+        th { text-align: left; padding: 20px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; }
+        td { padding: 18px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; transition: 0.2s; }
+        tr:hover td { background: rgba(255,255,255,0.02); color: #fff; }
         .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; background: rgba(255,255,255,0.03); }
 
-        /* Modal Symmetrical Fix */
+        /* Modal symmetrical fix */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 45px; border-radius: 30px; width: 450px; }
         .modal-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .btn-ui { height: 52px; border-radius: 12px; font-weight: 800; cursor: pointer; font-family: 'WaloneBold'; border: none; font-size: 15px; }
+        .btn-ui { height: 52px; border-radius: 12px; font-weight: 800; cursor: pointer; font-family: 'WaloneBold'; border: none; font-size: 15px; transition: 0.3s; }
         .btn-confirm { background: var(--primary); color: #000; }
+        .btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,255,163,0.3); }
         .btn-cancel { background: #2a2e39; color: #fff; }
+        .btn-cancel:hover { background: #353c4d; }
 
         input, select { width: 100%; padding: 16px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 12px; margin-bottom: 20px; outline: none; }
         .my-font { font-family: 'WaloneBold' !important; }
-
         @media (max-width: 1200px) { .grid-stats, .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
+
+    <div id="sidebarOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:900;" onclick="toggleMenu()"></div>
 
     <div id="appContainer" style="display:none; width: 100%; height: 100%;">
         <div class="sidebar">
@@ -80,7 +93,7 @@
 
         <div class="main-container">
             <div class="top-header">
-                <h2 class="my-font" style="font-size: 18px; padding-left: 35px; color: var(--text-dim);">Dashboard Overview</h2>
+                <h2 class="my-font" style="font-size: 18px; padding-left: 35px; color: var(--text-dim);">Analytics Hub</h2>
                 <div id="displayEmail" style="font-size:12px; color:var(--menu-head); padding-right: 35px;"></div>
             </div>
 
@@ -93,20 +106,13 @@
                 </div>
 
                 <div class="charts-row">
-                    <div class="chart-card"><h3 class="my-font" style="font-size:14px; margin-bottom:20px; color:var(--menu-head);">Flow Trend</h3><div style="height:320px;"><canvas id="trendChart"></canvas></div></div>
-                    <div class="chart-card"><h3 class="my-font" style="font-size:14px; margin-bottom:20px; color:var(--menu-head);">Allocation</h3><div style="height:320px;"><canvas id="pieChart"></canvas></div></div>
+                    <div class="chart-card"><h3 class="my-font" style="font-size:14px; margin-bottom:20px; color:var(--menu-head);">Trend Analytics</h3><div style="height:320px;"><canvas id="trendChart"></canvas></div></div>
+                    <div class="chart-card"><h3 class="my-font" style="font-size:14px; margin-bottom:20px; color:var(--menu-head);">Category Share</h3><div style="height:320px;"><canvas id="pieChart"></canvas></div></div>
                 </div>
 
                 <div class="table-card">
                     <h3 class="my-font" style="padding:22px 25px; font-size:16px; border-bottom:1px solid var(--border);">စာရင်းမှတ်တမ်း</h3>
-                    <div style="overflow-x:auto;">
-                        <table>
-                            <thead>
-                                <tr><th>ရက်စွဲ</th><th>အကြောင်းအရာ</th><th>အမျိုးအစား</th><th style="text-align:right;">ပမာဏ</th><th style="text-align:center;">Action</th></tr>
-                            </thead>
-                            <tbody id="transactionList"></tbody>
-                        </table>
-                    </div>
+                    <div style="overflow-x:auto;"><table><thead><tr><th>ရက်စွဲ</th><th>အကြောင်းအရာ</th><th>အမျိုးအစား</th><th style="text-align:right;">ပမာဏ</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div>
                 </div>
             </div>
         </div>
@@ -114,7 +120,7 @@
 
     <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" style="color:white; margin-bottom:30px;">စာရင်းသွင်းရန်</h2><input type="text" id="tIn" placeholder="Description"><input type="number" id="aIn" placeholder="Amount"><select id="cIn"><option value="Income">Income (+)</option><option value="Trading">Trading</option><option value="Food">Food</option></select><div class="modal-btn-row"><button onclick="closeModal('entryModal')" class="btn-ui btn-cancel">Cancel</button><button onclick="saveData()" class="btn-ui btn-confirm">Save</button></div></div></div>
 
-    <div id="authSection" style="display:none; position:fixed; inset:0; background:var(--bg); align-items:center; justify-content:center; z-index:9999;"><div class="stat-card" style="width:360px; padding:50px; text-align:center;"><h1>Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button onclick="handleLogin()" class="btn-ui btn-confirm" style="width:100%;">Sign In</button></div></div>
+    <div id="authSection" style="display:none; position:fixed; inset:0; background:var(--bg); align-items:center; justify-content:center; z-index:9999;"><div class="stat-card" style="width:360px; padding:50px; text-align:center; border-radius:30px;"><h1>Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button onclick="handleLogin()" class="btn-ui btn-confirm" style="width:100%;">Sign In</button></div></div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
@@ -143,9 +149,9 @@
         function renderCharts(data, cats) {
             const tCtx = document.getElementById('trendChart').getContext('2d'); if(window.ch1) window.ch1.destroy();
             const last10 = data.slice(0,10).reverse();
-            window.ch1 = new Chart(tCtx, { type:'line', data: { labels: last10.map(d=>new Date(d.created_at).toLocaleDateString()), datasets: [{ data: last10.map(d=>d.amount), borderColor:'#00ffa3', tension:0.4, fill:true, backgroundColor:'rgba(0, 255, 163, 0.05)', pointRadius:5 }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ grid:{color:'#262a3b'} }, x:{ grid:{display:false} } } } });
+            window.ch1 = new Chart(tCtx, { type:'line', data: { labels: last10.map(d=>new Date(d.created_at).toLocaleDateString()), datasets: [{ data: last10.map(d=>d.amount), borderColor:'#00ffa3', tension:0.4, fill:true, backgroundColor:'rgba(0, 255, 163, 0.05)', pointRadius:5, pointHoverRadius:8 }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ grid:{color:'#262a3b'} }, x:{ grid:{display:false} } } } });
             const pCtx = document.getElementById('pieChart').getContext('2d'); if(window.ch2) window.ch2.destroy();
-            window.ch2 = new Chart(pCtx, { type:'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#00ffa3','#ff3d71','#ffaa00','#4facfe'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'80%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:11}, padding:20}}} } });
+            window.ch2 = new Chart(pCtx, { type:'doughnut', data: { labels: Object.keys(cats), datasets: [{ data: Object.values(cats), backgroundColor: ['#00ffa3','#ff3d71','#ffaa00','#4facfe'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'82%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:11}, padding:20}}} } });
         }
         async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
         window.onload = checkUser;
