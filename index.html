@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - F10L Optimized Layout</title>
+    <title>Spendio - F10L Gapless Master</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,7 +13,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* Sidebar & Navigation */
+        /* Sidebar & Menu */
         .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; transition: 0.3s ease; z-index: 2000; }
         .logo-box { padding: 30px 25px; display: flex; align-items: center; gap: 12px; font-size: 26px; color: var(--primary); font-family: 'WaloneBold'; }
         .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 13px 25px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 14px; position: relative; }
@@ -22,7 +22,7 @@
         .submenu { display: none; padding: 5px 15px 15px 55px; background: rgba(0,0,0,0.2); border-radius: 12px; margin: 5px 10px; }
         .submenu.active { display: block !important; }
 
-        /* Main Container Layout */
+        /* Main Area */
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); }
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
         .mobile-toggle { display: none; font-size: 22px; color: var(--text-dim); cursor: pointer; }
@@ -33,24 +33,24 @@
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
         .stat-val { font-size: 22px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 10px; }
 
-        /* Optimized Triple Graph Grid */
-        .charts-triple-grid { display: grid; grid-template-columns: 1.2fr 1.2fr 0.8fr; gap: 20px; width: 100%; }
-        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; height: 320px; }
+        /* PERFECT TRIPLE GRAPH GRID - No Empty Spaces */
+        .charts-triple-grid { display: grid; grid-template-columns: 1.4fr 1.4fr 0.9fr; gap: 20px; width: 100%; align-items: stretch; }
+        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; height: 340px; }
         .chart-container { position: relative; flex: 1; width: 100%; min-height: 0; }
 
-        /* Tables */
+        /* Tables Locked */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px; }
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
         th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; }
-        td { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; }
+        td { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; vertical-align: middle; }
         .action-btns { display: flex; gap: 15px; justify-content: center; }
         .btn-act { background: transparent; border: none; cursor: pointer; font-size: 14px; opacity: 0.5; color: var(--text); }
         .btn-act:hover { opacity: 1; color: var(--primary); }
 
         #sidebarOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1500; backdrop-filter: blur(4px); }
 
-        @media (max-width: 1400px) { .charts-triple-grid { grid-template-columns: 1fr 1fr; } .chart-box:last-child { grid-column: span 2; height: 280px; } }
+        @media (max-width: 1400px) { .charts-triple-grid { grid-template-columns: 1fr 1fr; } .chart-box:last-child { grid-column: span 2; height: 300px; } }
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: -260px; }
             .sidebar.active { left: 0; }
@@ -61,7 +61,6 @@
             .grid-stats { grid-template-columns: 1fr 1fr; }
         }
 
-        /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 460px; }
@@ -85,7 +84,7 @@
             
             <div class="menu-label" style="padding: 15px 25px 5px; font-size: 10px; color: var(--menu-head);">Settings</div>
             <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="langSub" class="submenu"><div class="pill-stack"><div style="padding:10px; cursor:pointer;" onclick="changeLanguage('en')">English</div><div style="padding:10px; cursor:pointer;" onclick="changeLanguage('my')">မြန်မာဘာသာ</div></div></div>
+            <div id="langSub" class="submenu"><div class="pill-stack"><div id="btnEn" style="padding:10px; cursor:pointer;" onclick="changeLanguage('en')">English</div><div id="btnMy" style="padding:10px; cursor:pointer;" onclick="changeLanguage('my')">မြန်မာဘာသာ</div></div></div>
             
             <div class="nav-item" onclick="handleMenuToggle('currSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-coins"></i> <span class="my-font" id="navCurr">ကာရင်စီ</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="currSub" class="submenu"><div class="pill-stack"><div id="currMMK" style="padding:10px; cursor:pointer;" onclick="changeCurrency('MMK')">Myanmar (Ks)</div><div id="currUSD" style="padding:10px; cursor:pointer;" onclick="changeCurrency('USD')">English ($)</div></div></div>
@@ -95,7 +94,7 @@
 
         <div class="main-container">
             <div class="top-header">
-                <div style="display:flex; align-items:center;"><i class="fa-solid fa-bars mobile-toggle" onclick="toggleMobileMenu()"></i><h2 class="my-font" style="font-size: 18px; color:var(--text-dim);" id="headTitle">F10L Master Pro</h2></div>
+                <div style="display:flex; align-items:center;"><i class="fa-solid fa-bars mobile-toggle" onclick="toggleMobileMenu()"></i><h2 class="my-font" style="font-size: 18px; color:var(--text-dim);" id="headTitle">Dashboard Pro</h2></div>
                 <div id="displayEmail" style="font-size:11px; color:var(--menu-head);"></div>
             </div>
             <div class="content-body">
@@ -113,7 +112,7 @@
                 </div>
 
                 <div class="table-card" style="border-top:3px solid var(--primary);">
-                    <h3 class="my-font" style="padding:20px 25px; font-size:15px; border-bottom:1px solid var(--border);">Trading Journal</h3>
+                    <h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);">Trading Journal</h3>
                     <div class="table-wrap"><table><thead><tr><th>Date</th><th>Asset</th><th>Pos</th><th>Lev</th><th style="text-align:right;">Result</th><th style="text-align:center; width:120px;">Action</th></tr></thead><tbody id="tradingList"></tbody></table></div>
                 </div>
 
