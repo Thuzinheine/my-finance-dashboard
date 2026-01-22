@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - F10L Final Master</title>
+    <title>Spendio - Modern F10L Master</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -17,12 +17,34 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; height: 100vh; width: 100vw; overflow: hidden; font-size: var(--fs-base); }
         
-        /* AUTH UI */
-        #loginOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .login-card { background: var(--card); border: 1px solid var(--border); padding: 45px; border-radius: 30px; width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .login-card h2 { margin-bottom: 30px; font-family: 'WaloneBold'; color: var(--primary); font-size: 24px; }
-        .login-card input { width: 100%; padding: 16px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 15px; margin-bottom: 20px; outline: none; }
+        /* MODERN LOGIN UI */
+        #loginOverlay { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1f33, #0b0d14); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .login-card { 
+            background: rgba(19, 22, 34, 0.8); 
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 163, 0.2); 
+            padding: 50px 40px; 
+            border-radius: 35px; 
+            width: 420px; 
+            text-align: center; 
+            box-shadow: 0 0 40px rgba(0, 255, 163, 0.05);
+        }
+        .login-card h2 { margin-bottom: 35px; font-family: 'WaloneBold'; color: #fff; font-size: 26px; letter-spacing: 1px; }
+        .login-card input { 
+            width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); 
+            color: #fff; border-radius: 16px; margin-bottom: 22px; outline: none; transition: 0.3s;
+        }
+        .login-card input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 255, 163, 0.1); }
         
+        /* BIG MODERN LOGIN BUTTON */
+        .btn-login { 
+            width: 100%; height: 60px; background: var(--primary); color: #000; 
+            border: none; border-radius: 18px; font-weight: 800; cursor: pointer; 
+            font-family: 'WaloneBold'; font-size: 18px; transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(0, 255, 163, 0.2);
+        }
+        .btn-login:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 255, 163, 0.3); }
+
         /* APP LAYOUT */
         #appContainer { display: none; width: 100%; height: 100%; }
         #backToTop { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--primary); color: #000; border-radius: 14px; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 5000; box-shadow: 0 10px 25px rgba(0, 255, 163, 0.3); }
@@ -32,16 +54,10 @@
         .nav-item.active { border-left: 3px solid var(--primary); color: #fff; background: linear-gradient(90deg, rgba(0, 255, 163, 0.08), transparent); }
         .submenu { display: none; padding: 5px 15px 15px 50px; background: rgba(0,0,0,0.15); border-radius: 12px; margin: 0 10px; }
         .submenu.active { display: block !important; }
-        .custom-option { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: var(--fs-sub); color: var(--text-dim); }
-        .custom-option.active { color: var(--primary); font-weight: 500; }
-        .radio-dot { width: 14px; height: 14px; border: 2px solid #3d4457; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .custom-option.active .radio-inner { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
-
-        /* LOGOUT ALIGNMENT */
         .logout-box { margin-top: auto; padding-bottom: 25px; }
-        .logout-btn { display: flex; align-items: center; gap: 15px; padding: 12px 25px; color: var(--expense); cursor: pointer; font-weight: 600; }
+        .logout-btn { display: flex; align-items: center; gap: 15px; padding: 12px 25px; color: var(--expense); cursor: pointer; font-weight: 600; font-size: var(--fs-base); }
 
-        /* MAIN CONTENT */
+        /* CONTENT */
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); position: relative; }
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: sticky; top: 0; z-index: 100; }
         .content-body { padding: 30px; display: flex; flex-direction: column; gap: 25px; }
@@ -53,19 +69,17 @@
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px; }
         .table-wrap { overflow-x: auto; max-height: 450px; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-        th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; position: sticky; top: 0; background: var(--card); }
+        th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; position: sticky; top: 0; background: var(--card); }
         td { padding: 14px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13.5px; vertical-align: middle; }
         .td-date { font-weight: 600; white-space: nowrap; }
         .td-time { color: var(--text-dim); font-size: 11px; margin-left: 10px; font-weight: 400; }
         .td-note { color: var(--text-dim); font-size: 12.5px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* MODAL FIX */
+        /* MODAL */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 460px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .modal-content h2 { margin-bottom: 20px; font-size: 22px; font-family: 'WaloneBold'; }
-        input, select, textarea { width: 100%; padding: 16px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 15px; margin-bottom: 15px; outline: none; }
-        .btn-ui { height: 55px; border-radius: 18px; font-weight: 800; cursor: pointer; border: none; font-family: 'WaloneBold'; flex: 1; font-size: 15px; transition: 0.2s; }
+        .btn-ui { height: 55px; border-radius: 18px; font-weight: 800; cursor: pointer; border: none; font-family: 'WaloneBold'; flex: 1; font-size: 15px; }
 
         @media (max-width: 768px) { .charts-triple-grid { grid-template-columns: 1fr; } .sidebar { position: fixed; left: -260px; } }
         .my-font { font-family: 'WaloneBold' !important; }
@@ -75,11 +89,11 @@
 
     <div id="loginOverlay">
         <div class="login-card">
-            <h2 class="my-font">အကောင့်ဝင်ရန်</h2>
-            <input type="email" id="lEmail" placeholder="Email">
+            <h2>အကောင့်ဝင်ရန်</h2>
+            <input type="email" id="lEmail" placeholder="Email Address">
             <input type="password" id="lPass" placeholder="Password">
-            <button class="btn-login my-font" onclick="handleLogin()">Login</button>
-            <p id="loginErr" style="color:#ff3d71; font-size:12px; margin-top:15px; display:none;">Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။</p>
+            <button class="btn-login" onclick="handleLogin()">Login</button>
+            <p id="loginErr" style="color:#ff3d71; font-size:12px; margin-top:18px; display:none;">Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။</p>
         </div>
     </div>
 
@@ -88,27 +102,25 @@
     <div id="appContainer">
         <div class="sidebar">
             <div class="logo-box my-font"><i class="fa-solid fa-gem"></i> Spendio</div>
-            <div class="nav-item active" onclick="location.reload()"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font" id="navDash">ခြုံသုံးသပ်ချက်</span></div></div>
-            <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font" id="navAdd">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
+            <div class="nav-item active" onclick="location.reload()"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font">ခြုံသုံးသပ်ချက်</span></div></div>
+            <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="recSub" class="submenu"><div class="custom-option" onclick="openModal('entryModal')">စာရင်းအသစ်</div><div class="custom-option" onclick="openModal('tradeModal')">Trading Record</div></div>
-            <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="langSub" class="submenu"><div id="btnEn" class="custom-option" onclick="changeLanguage('en')"><span>English</span> <div class="radio-dot"><div class="radio-inner"></div></div></div><div id="btnMy" class="custom-option" onclick="changeLanguage('my')"><span class="my-font">မြန်မာဘာသာ</span> <div class="radio-dot"><div class="radio-inner"></div></div></div></div>
-            <div class="nav-item" onclick="handleMenuToggle('currSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-coins"></i> <span class="my-font" id="navCurr">ကာရင်စီ</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="currSub" class="submenu"><div id="currMMK" class="custom-option" onclick="changeCurrency('MMK')"><span>Myanmar (Ks)</span> <div class="radio-dot"><div class="radio-inner"></div></div></div><div id="currUSD" class="custom-option" onclick="changeCurrency('USD')"><span>English ($)</span> <div class="radio-dot"><div class="radio-inner"></div></div></div></div>
+            <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
+            <div id="langSub" class="submenu"><div id="btnEn" class="custom-option" onclick="changeLanguage('en')"><span>English</span></div><div id="btnMy" class="custom-option" onclick="changeLanguage('my')"><span class="my-font">မြန်မာဘာသာ</span></div></div>
             <div class="logout-box"><div class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div></div>
         </div>
         <div class="main-container" id="scrollArea">
-            <div class="top-header"><h2 class="my-font" style="font-size: var(--fs-header); color:var(--text-dim);" id="headTitle">Dashboard Pro</h2><div id="displayEmail" style="font-size:11px; color:var(--menu-head);"></div></div>
+            <div class="top-header"><h2 class="my-font" style="font-size: var(--fs-header); color:var(--text-dim);">Dashboard Pro</h2><div id="displayEmail" style="font-size:11px; color:var(--menu-head);"></div></div>
             <div class="content-body">
                 <div class="grid-stats">
-                    <div class="stat-card"><span class="my-font" id="incTitle">ဝင်ငွေ</span><div class="stat-val" id="totalInc" style="color:var(--income);"></div></div>
-                    <div class="stat-card"><span class="my-font" id="expTitle">ထွက်ငွေ</span><div class="stat-val" id="totalExp" style="color:var(--expense);"></div></div>
-                    <div class="stat-card"><span class="my-font" id="statTrade">Trading Balance</span><div class="stat-val" id="tradeProfit" style="color:var(--warning);"></div></div>
-                    <div class="stat-card"><span class="my-font" id="netTitle">လက်ကျန်</span><div class="stat-val" id="netBal" style="color:var(--primary);"></div></div>
+                    <div class="stat-card"><span class="my-font">ဝင်ငွေ</span><div class="stat-val" id="totalInc" style="color:var(--income);"></div></div>
+                    <div class="stat-card"><span class="my-font">ထွက်ငွေ</span><div class="stat-val" id="totalExp" style="color:var(--expense);"></div></div>
+                    <div class="stat-card"><span class="my-font">Trading Balance</span><div class="stat-val" id="tradeProfit" style="color:var(--warning);"></div></div>
+                    <div class="stat-card"><span class="my-font">လက်ကျန်</span><div class="stat-val" id="netBal" style="color:var(--primary);"></div></div>
                 </div>
-                <div class="charts-triple-grid"><div class="chart-box"><h4 class="my-font" id="chart1Title" style="font-size:12px; color:var(--menu-head);">History Trend</h4><div class="chart-container"><canvas id="cashChart"></canvas></div></div><div class="chart-box"><h4 class="my-font" id="chart2Title" style="font-size:12px; color:var(--menu-head);">Trade Bars</h4><div class="chart-container"><canvas id="tradeChart"></canvas></div></div><div class="chart-box"><h4 class="my-font" id="chart3Title" style="font-size:12px; color:var(--menu-head);">Share Ratio</h4><div class="chart-container"><canvas id="pieChart"></canvas></div></div></div>
-                <div class="table-card" style="border-top:3px solid var(--primary);"><h3 class="my-font" id="histTradeTitle" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);">Trading Journal</h3><div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Asset</th><th>Pos</th><th>Lev</th><th>Trade Note</th><th style="text-align:right;">Result</th><th style="text-align:center;">Action</th></tr></thead><tbody id="tradingList"></tbody></table></div></div>
-                <div class="table-card"><h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);" id="histTitle">စာရင်းမှတ်တမ်း</h3><div class="table-wrap"><table><thead><tr><th>ရက်စွဲ & အချိန်</th><th>အကြောင်းအရာ</th><th>အမျိုးအစား</th><th>Notes</th><th style="text-align:right;">ပမာဏ</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
+                <div class="charts-triple-grid"><div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">History Trend</h4><div class="chart-container"><canvas id="cashChart"></canvas></div></div><div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">Trade Bars</h4><div class="chart-container"><canvas id="tradeChart"></canvas></div></div><div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">Share Ratio</h4><div class="chart-container"><canvas id="pieChart"></canvas></div></div></div>
+                <div class="table-card" style="border-top:3px solid var(--primary);"><h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);">Trading Journal</h3><div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Asset</th><th>Pos</th><th>Lev</th><th>Trade Note</th><th style="text-align:right;">Result</th><th style="text-align:center;">Action</th></tr></thead><tbody id="tradingList"></tbody></table></div></div>
+                <div class="table-card"><h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);">စာရင်းမှတ်တမ်း</h3><div class="table-wrap"><table><thead><tr><th>ရက်စွဲ & အချိန်</th><th>အကြောင်းအရာ</th><th>အမျိုးအစား</th><th>Notes</th><th style="text-align:right;">ပမာဏ</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
             </div>
         </div>
     </div>
@@ -122,22 +134,24 @@
         const scrollArea = document.getElementById('scrollArea');
         scrollArea.onscroll = function() { if (scrollArea.scrollTop > 300) { document.getElementById("backToTop").style.display = "flex"; } else { document.getElementById("backToTop").style.display = "none"; } };
         function scrollToTop() { scrollArea.scrollTo({ top: 0, behavior: 'smooth' }); }
-        const i18n = { en: { navDash: "Overview", navAdd: "Add Record", navLang: "Language", navCurr: "Currency", headTitle: "Dashboard Pro", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "Recent History" }, my: { navDash: "ခြုံသုံးသပ်ချက်", navAdd: "စာရင်းသွင်းရန်", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", headTitle: "Dashboard Pro", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "စာရင်းမှတ်တမ်း" } };
-        let lang = localStorage.getItem('lang') || 'my', curr = localStorage.getItem('curr') || 'USD';
-        function handleMenuToggle(id) { const subs = document.querySelectorAll('.submenu'); subs.forEach(s => { if(s.id !== id) s.classList.remove('active'); }); document.getElementById(id).classList.toggle('active'); }
-        function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); updateUI(); loadD(); }
-        function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); updateUI(); loadD(); }
-        function updateUI() { const t = i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; }); document.querySelectorAll('.custom-option').forEach(el => el.classList.remove('active')); if(lang === 'en') document.getElementById('btnEn').classList.add('active'); else document.getElementById('btnMy').classList.add('active'); if(document.getElementById('curr' + curr)) document.getElementById('curr' + curr).classList.add('active'); }
         
-        async function checkUser() { const {data:{user}}=await sc.auth.getUser(); if(user){ document.getElementById('loginOverlay').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; updateUI(); loadD(); } else { document.getElementById('appContainer').style.display='none'; document.getElementById('loginOverlay').style.display='flex'; } }
-        async function handleLogin() { const {error}=await sc.auth.signInWithPassword({ email:document.getElementById('lEmail').value, password:document.getElementById('lPass').value }); if(error) document.getElementById('loginErr').style.display='block'; else checkUser(); }
+        async function checkUser() { 
+            const {data:{user}}=await sc.auth.getUser(); 
+            if(user){ document.getElementById('loginOverlay').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; loadD(); } 
+            else { document.getElementById('appContainer').style.display='none'; document.getElementById('loginOverlay').style.display='flex'; } 
+        }
+        async function handleLogin() { 
+            const {error}=await sc.auth.signInWithPassword({ email:document.getElementById('lEmail').value, password:document.getElementById('lPass').value }); 
+            if(error) document.getElementById('loginErr').style.display='block'; else checkUser(); 
+        }
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
-
-        async function saveData(type) { const {data:{user}}=await sc.auth.getUser(); if(type==='standard') { await sc.from('transactions').insert([{title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, note:document.getElementById('nIn').value, user_id:user.id}]); closeModal('entryModal'); } else { const note = document.getElementById('trPos').value+' | '+document.getElementById('trLev').value+' | '+document.getElementById('trNote').value; await sc.from('transactions').insert([{title:document.getElementById('trPair').value, amount:parseFloat(document.getElementById('trRes').value), category:'Trading', note:note, user_id:user.id}]); closeModal('tradeModal'); } loadD(); }
-        async function loadD() { const {data}=await sc.from('transactions').select('*').order('created_at',{ascending:false}); if(!data) return; let inc=0, exp=0, tp=0; const list=document.getElementById('transactionList'), tList=document.getElementById('tradingList'); list.innerHTML=''; tList.innerHTML=''; const rate = 3500; data.forEach(d => { const dt = new Date(d.created_at); const dtStr = `<div class="td-date">${dt.toLocaleDateString()} <span class="td-time">${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`; if(d.category==='Trading') { tp += d.amount; const p = (d.note || '').split('|'); tList.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700;">${d.title}</td><td>${p[0]||'-'}</td><td>${p[1]||'-'}</td><td class="td-note">${p[2]||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">$ ${(Math.abs(d.amount)).toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash" style="opacity:0.5; cursor:pointer;" onclick="deleteT(${d.id})"></i></td></tr>`; } else { if(d.category==='Income') inc+=d.amount; else exp+=d.amount; list.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700;">${d.title}</td><td><span style="font-size:11px; opacity:0.6;">${d.category}</span></td><td class="td-note">${d.note||'-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">$ ${(d.amount).toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash" style="opacity:0.5; cursor:pointer;" onclick="deleteT(${d.id})"></i></td></tr>`; } }); document.getElementById('totalInc').innerText="$ "+inc.toLocaleString(); document.getElementById('totalExp').innerText="$ "+exp.toLocaleString(); document.getElementById('tradeProfit').innerText="$ "+tp.toLocaleString(); document.getElementById('netBal').innerText="$ "+(inc-exp+tp).toLocaleString(); renderCharts(data, inc, exp); }
-        function renderCharts(data, inc, exp) { const ctx1 = document.getElementById('cashChart').getContext('2d'); if(window.c1) window.c1.destroy(); const raw = data.slice(0,15).reverse(); window.c1 = new Chart(ctx1, { type:'line', data: { labels: ['0', ...raw.map(d=>'')], datasets: [{ label: 'Inc', data: [0, ...raw.map(d=>d.category==='Income'?d.amount:null)], borderColor:'#00ffa3', tension:0.4, fill:false, spanGaps:true, pointRadius: 4 }, { label: 'Exp', data: [0, ...raw.map(d=>d.category!=='Income'&&d.category!=='Trading'?d.amount:null)], borderColor:'#ff3d71', tension:0.4, fill:false, spanGaps:true, pointRadius: 4 }, { label: 'Trade', data: [0, ...raw.map(d=>d.category==='Trading'?d.amount:null)], borderColor:'#ffaa00', tension:0.4, fill:false, borderDash:[3,3], spanGaps:true, pointRadius: 4 }]}, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'#262a3b'}}, x:{grid:{display:false}}} } }); const ctx2 = document.getElementById('tradeChart').getContext('2d'); if(window.c2) window.c2.destroy(); const tD = data.filter(d=>d.category==='Trading').slice(0,10).reverse(); window.c2 = new Chart(ctx2, { type:'bar', data: { labels: tD.map(d=>d.title), datasets: [{ data: tD.map(d=>d.amount), backgroundColor: tD.map(d=>d.amount>0?'#00ffa3':'#ff3d71'), borderRadius:4 }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'#262a3b'}}} } }); const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy(); window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 10}}} } }); }
+        function handleMenuToggle(id) { const subs = document.querySelectorAll('.submenu'); subs.forEach(s => { if(s.id !== id) s.classList.remove('active'); }); document.getElementById(id).classList.toggle('active'); }
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        async function saveData(type) { const {data:{user}}=await sc.auth.getUser(); if(type==='standard') { await sc.from('transactions').insert([{title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, note:document.getElementById('nIn').value, user_id:user.id}]); closeModal('entryModal'); } else { const note = document.getElementById('trPos').value+' | '+document.getElementById('trLev').value+' | '+document.getElementById('trNote').value; await sc.from('transactions').insert([{title:document.getElementById('trPair').value, amount:parseFloat(document.getElementById('trRes').value), category:'Trading', note:note, user_id:user.id}]); closeModal('tradeModal'); } loadD(); }
+        async function loadD() { const {data}=await sc.from('transactions').select('*').order('created_at',{ascending:false}); if(!data) return; let inc=0, exp=0, tp=0; const list=document.getElementById('transactionList'), tList=document.getElementById('tradingList'); list.innerHTML=''; tList.innerHTML=''; data.forEach(d => { const dt = new Date(d.created_at); const dtStr = `<div class="td-date">${dt.toLocaleDateString()} <span class="td-time">${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`; if(d.category==='Trading') { tp += d.amount; const p = (d.note || '').split('|'); tList.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700;">${d.title}</td><td>${p[0]||'-'}</td><td>${p[1]||'-'}</td><td class="td-note">${p[2]||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">$ ${(Math.abs(d.amount)).toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash" style="opacity:0.5; cursor:pointer;" onclick="deleteT(${d.id})"></i></td></tr>`; } else { if(d.category==='Income') inc+=d.amount; else exp+=d.amount; list.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700;">${d.title}</td><td><span style="font-size:11px; opacity:0.6;">${d.category}</span></td><td class="td-note">${d.note||'-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">$ ${(d.amount).toLocaleString()}</td><td style="text-align:center;"><i class="fa-solid fa-trash" style="opacity:0.5; cursor:pointer;" onclick="deleteT(${d.id})"></i></td></tr>`; } }); document.getElementById('totalInc').innerText="$ "+inc.toLocaleString(); document.getElementById('totalExp').innerText="$ "+exp.toLocaleString(); document.getElementById('tradeProfit').innerText="$ "+tp.toLocaleString(); document.getElementById('netBal').innerText="$ "+(inc-exp+tp).toLocaleString(); renderCharts(data, inc, exp); }
+        function renderCharts(data, inc, exp) { const ctx1 = document.getElementById('cashChart').getContext('2d'); if(window.c1) window.c1.destroy(); const raw = data.slice(0,15).reverse(); window.c1 = new Chart(ctx1, { type:'line', data: { labels: ['0', ...raw.map(d=>'')], datasets: [{ label: 'Inc', data: [0, ...raw.map(d=>d.category==='Income'?d.amount:null)], borderColor:'#00ffa3', tension:0.4, fill:false, spanGaps:true, pointRadius: 4 }, { label: 'Exp', data: [0, ...raw.map(d=>d.category!=='Income'&&d.category!=='Trading'?d.amount:null)], borderColor:'#ff3d71', tension:0.4, fill:false, spanGaps:true, pointRadius: 4 }, { label: 'Trade', data: [0, ...raw.map(d=>d.category==='Trading'?d.amount:null)], borderColor:'#ffaa00', tension:0.4, fill:false, borderDash:[3,3], spanGaps:true, pointRadius: 4 }]}, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'#262a3b'}}, x:{grid:{display:false}}} } }); const ctx2 = document.getElementById('tradeChart').getContext('2d'); if(window.c2) window.c2.destroy(); const tD = data.filter(d=>d.category==='Trading').slice(0,10).reverse(); window.c2 = new Chart(ctx2, { type:'bar', data: { labels: tD.map(d=>d.title), datasets: [{ data: tD.map(d=>d.amount), backgroundColor: tD.map(d=>d.amount>0?'#00ffa3':'#ff3d71'), borderRadius:4 }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'#262a3b'}}} } }); const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy(); window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 10}}} } }); }
         async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
         window.onload = checkUser;
     </script>
