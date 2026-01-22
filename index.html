@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - Mobile & Edit Sync</title>
+    <title>Spendio - Master v108</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,23 +15,23 @@
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; height: 100vh; width: 100vw; overflow: hidden; font-size: var(--fs-base); }
         
-        /* MODERN LOGIN */
+        /* MODERN LOGIN UI */
         #loginOverlay { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1f33, #0b0d14); display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .login-card { background: rgba(19, 22, 34, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 163, 0.2); padding: 50px 40px; border-radius: 35px; width: 420px; text-align: center; }
+        .login-card h2 { margin-bottom: 35px; font-family: 'WaloneBold'; color: #fff; font-size: 26px; }
         .login-card input { width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: #fff; border-radius: 16px; margin-bottom: 22px; outline: none; }
-        .btn-login { width: 100%; height: 60px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-family: 'WaloneBold'; font-size: 18px; }
+        .btn-login { width: 100%; height: 60px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-family: 'WaloneBold'; font-size: 18px; box-shadow: 0 10px 25px rgba(0, 255, 163, 0.2); }
 
-        /* APP LAYOUT */
+        /* APP LAYOUT & MOBILE */
         #appContainer { display: none; width: 100%; height: 100%; position: relative; }
         .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; transition: 0.3s ease; z-index: 2000; }
-        .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); position: relative; }
+        .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); }
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: sticky; top: 0; z-index: 100; }
         
-        /* MOBILE VIEW UI */
         .menu-toggle { display: none; font-size: 22px; color: #fff; cursor: pointer; }
         @media (max-width: 992px) {
             .menu-toggle { display: block; }
-            .sidebar { position: absolute; left: -260px; box-shadow: 20px 0 50px rgba(0,0,0,0.5); }
+            .sidebar { position: absolute; left: -260px; }
             .sidebar.active { left: 0; }
             .charts-triple-grid { grid-template-columns: 1fr !important; }
             .grid-stats { grid-template-columns: repeat(2, 1fr) !important; }
@@ -39,16 +39,18 @@
 
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
-        .stat-val { font-size: 22px; font-weight: 700; font-family: 'WaloneBold'; margin-top: 10px; }
+        .stat-val { font-size: 20px; font-weight: 700; font-family: 'WaloneBold'; margin-top: 10px; }
         .charts-triple-grid { display: grid; grid-template-columns: 1.4fr 1.4fr 0.9fr; gap: 20px; }
         .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; height: 340px; }
         
-        /* TABLE & BUTTONS */
+        /* TABLE */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px; }
-        .table-wrap { overflow-x: auto; max-height: 450px; }
+        .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; position: sticky; top: 0; background: var(--card); }
-        td { padding: 14px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13.5px; }
+        th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; position: sticky; top: 0; background: var(--card); }
+        td { padding: 14px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13.5px; vertical-align: middle; }
+        .td-date { font-weight: 600; white-space: nowrap; }
+        .td-time { color: var(--text-dim); font-size: 11px; margin-left: 10px; }
         .btn-act { padding: 8px; cursor: pointer; opacity: 0.6; transition: 0.2s; }
         .btn-act:hover { opacity: 1; color: var(--primary); }
 
@@ -56,6 +58,7 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 460px; }
+        input, select { width: 100%; padding: 16px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 15px; margin-bottom: 15px; outline: none; }
         .btn-ui { height: 55px; border-radius: 18px; font-weight: 800; cursor: pointer; border: none; font-family: 'WaloneBold'; flex: 1; font-size: 15px; }
         
         .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 25px; color: var(--text-dim); cursor: pointer; }
@@ -70,7 +73,7 @@
     <div id="loginOverlay">
         <div class="login-card">
             <h2 class="my-font">အကောင့်ဝင်ရန်</h2>
-            <input type="email" id="lEmail" placeholder="Email">
+            <input type="email" id="lEmail" placeholder="Email Address">
             <input type="password" id="lPass" placeholder="Password">
             <button class="btn-login" onclick="handleLogin()">Login</button>
             <p id="loginErr" style="color:#ff3d71; font-size:12px; margin-top:18px; display:none;">Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။</p>
@@ -83,13 +86,13 @@
             <div class="nav-item active" onclick="location.reload()"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font">ခြုံသုံးသပ်ချက်</span></div></div>
             <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="recSub" class="submenu"><div style="padding:10px 0; cursor:pointer;" onclick="openModal('entryModal')">စာရင်းအသစ်</div><div style="padding:10px 0; cursor:pointer;" onclick="openModal('tradeModal')">Trading Record</div></div>
-            <div class="logout-box" style="margin-top:auto;"><div class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div></div>
+            <div class="logout-box" style="margin-top:auto; padding-bottom:25px;"><div class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div></div>
         </div>
 
         <div class="main-container" id="scrollArea">
             <div class="top-header">
                 <i class="fa-solid fa-bars menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
-                <h2 class="my-font" style="font-size: 18px;">Dashboard Pro</h2>
+                <h2 class="my-font" style="font-size: 18px; color:var(--text-dim);">Dashboard Pro</h2>
                 <div id="displayEmail" style="font-size:11px; color:var(--menu-head);"></div>
             </div>
             <div style="padding:30px;">
@@ -107,28 +110,32 @@
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" id="modalTitle">စာရင်းသွင်းရန်</h2><input type="hidden" id="editId"><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><input type="text" id="nIn" placeholder="မှတ်စု"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select><div style="display:flex; gap:15px; margin-top:10px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
-
-    <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">Trade Record</h2><input type="hidden" id="tEditId"><input type="text" id="trPair" placeholder="Pair"><input type="number" id="trRes" placeholder="Result ($)"><input type="text" id="trNote" placeholder="Trade Note"><div style="display:flex; gap:15px; margin-top:10px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div></div></div>
+    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">စာရင်းသွင်းရန်</h2><input type="hidden" id="editId"><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><input type="text" id="nIn" placeholder="မှတ်စု"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select><div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
+    <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">Trade Record</h2><input type="hidden" id="tEditId"><input type="text" id="trPair" placeholder="XRP/USDT"><input type="number" id="trRes" placeholder="Result ($)"><input type="text" id="trNote" placeholder="Trade Note"><div style="display:flex; gap:15px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div></div></div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        async function checkUser() { const {data:{user}}=await sc.auth.getUser(); if(user){ document.getElementById('loginOverlay').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; loadD(); } else { document.getElementById('loginOverlay').style.display='flex'; } }
-        async function handleLogin() { const {error}=await sc.auth.signInWithPassword({ email:document.getElementById('lEmail').value, password:document.getElementById('lPass').value }); if(error) document.getElementById('loginErr').style.display='block'; else checkUser(); }
+        async function checkUser() { 
+            const {data:{user}}=await sc.auth.getUser(); 
+            if(user){ document.getElementById('loginOverlay').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; loadD(); } 
+            else { document.getElementById('loginOverlay').style.display='flex'; document.getElementById('appContainer').style.display='none'; } 
+        }
+        async function handleLogin() { 
+            const {error}=await sc.auth.signInWithPassword({ email:document.getElementById('lEmail').value, password:document.getElementById('lPass').value }); 
+            if(error) document.getElementById('loginErr').style.display='block'; else checkUser(); 
+        }
         async function handleLogout() { await sc.auth.signOut(); location.reload(); }
         function handleMenuToggle(id) { document.getElementById(id).classList.toggle('active'); }
-        function openModal(id) { document.getElementById(id).classList.add('active'); document.getElementById('editId').value=''; document.getElementById('tEditId').value=''; }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.getElementById('editId').value=''; document.getElementById('tEditId').value=''; }
 
         async function saveData(type) { 
             const {data:{user}}=await sc.auth.getUser();
             const id = type === 'standard' ? document.getElementById('editId').value : document.getElementById('tEditId').value;
             const payload = type === 'standard' ? {title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, note:document.getElementById('nIn').value, user_id:user.id} : {title:document.getElementById('trPair').value, amount:parseFloat(document.getElementById('trRes').value), category:'Trading', note:document.getElementById('trNote').value, user_id:user.id};
-            
-            if(id) await sc.from('transactions').update(payload).eq('id', id);
-            else await sc.from('transactions').insert([payload]);
+            if(id) await sc.from('transactions').update(payload).eq('id', id); else await sc.from('transactions').insert([payload]);
             closeModal(type === 'standard' ? 'entryModal' : 'tradeModal'); loadD();
         }
 
@@ -139,27 +146,27 @@
             list.innerHTML=''; tList.innerHTML='';
             data.forEach(d => {
                 const dt = new Date(d.created_at);
-                const dtStr = `<td>${dt.toLocaleDateString()} <span style="font-size:11px; color:var(--text-dim)">${dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></td>`;
+                const dtStr = `<td>${dt.toLocaleDateString()} <span class="td-time">${dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span></td>`;
                 const acts = `<td style="text-align:center;"><i class="fa-solid fa-pen btn-act" onclick='editT(${JSON.stringify(d)})'></i> <i class="fa-solid fa-trash btn-act" onclick="deleteT(${d.id})"></i></td>`;
-                if(d.category==='Trading') { tp+=d.amount; tList.innerHTML += `<tr>${dtStr}<td>${d.title}</td><td>-</td><td>-</td><td>${d.note||'-'}</td><td style="text-align:right; color:${d.amount>0?var(--income):var(--expense)}">$ ${d.amount}</td>${acts}</tr>`; }
-                else { if(d.category==='Income') inc+=d.amount; else exp+=d.amount; list.innerHTML += `<tr>${dtStr}<td>${d.title}</td><td>${d.category}</td><td>${d.note||'-'}</td><td style="text-align:right;">$ ${d.amount}</td>${acts}</tr>`; }
+                if(d.category==='Trading') { tp+=d.amount; tList.innerHTML += `<tr>${dtStr}<td>${d.title}</td><td>-</td><td>-</td><td>${d.note||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">$ ${d.amount}</td>${acts}</tr>`; }
+                else { if(d.category==='Income') inc+=d.amount; else exp+=d.amount; list.innerHTML += `<tr>${dtStr}<td>${d.title}</td><td>${d.category}</td><td>${d.note||'-'}</td><td style="text-align:right; font-weight:800;">$ ${d.amount}</td>${acts}</tr>`; }
             });
             document.getElementById('totalInc').innerText="$ "+inc.toLocaleString(); document.getElementById('totalExp').innerText="$ "+exp.toLocaleString(); document.getElementById('tradeProfit').innerText="$ "+tp.toLocaleString(); document.getElementById('netBal').innerText="$ "+(inc-exp+tp).toLocaleString();
             renderCharts(data, inc, exp);
         }
 
         function editT(d) {
-            if(d.category === 'Trading') { openModal('tradeModal'); document.getElementById('tEditId').value=d.id; document.getElementById('trPair').value=d.title; document.getElementById('trRes').value=d.amount; document.getElementById('trNote').value=d.note; }
+            if(d.category==='Trading') { openModal('tradeModal'); document.getElementById('tEditId').value=d.id; document.getElementById('trPair').value=d.title; document.getElementById('trRes').value=d.amount; document.getElementById('trNote').value=d.note; }
             else { openModal('entryModal'); document.getElementById('editId').value=d.id; document.getElementById('tIn').value=d.title; document.getElementById('aIn').value=d.amount; document.getElementById('cIn').value=d.category; document.getElementById('nIn').value=d.note; }
         }
 
         function renderCharts(data, inc, exp) {
             const ctx1 = document.getElementById('cashChart').getContext('2d'); if(window.c1) window.c1.destroy();
-            window.c1 = new Chart(ctx1, { type:'line', data: { labels: data.slice(0,10).map(d=>''), datasets: [{ label:'Trend', data: data.slice(0,10).map(d=>d.amount), borderColor:'#00ffa3', tension:0.4 }] }, options: { maintainAspectRatio:false } });
+            window.c1 = new Chart(ctx1, { type:'line', data: { labels: data.slice(0,10).map(d=>''), datasets: [{ label:'Trend', data: data.slice(0,10).map(d=>d.amount), borderColor:'#00ffa3', tension:0.4, fill:false }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}} } });
             const ctx2 = document.getElementById('tradeChart').getContext('2d'); if(window.c2) window.c2.destroy();
-            window.c2 = new Chart(ctx2, { type:'bar', data: { labels: ['Trade'], datasets: [{ data: [inc, exp], backgroundColor: ['#00ffa3','#ff3d71'] }] }, options: { maintainAspectRatio:false } });
+            window.c2 = new Chart(ctx2, { type:'bar', data: { labels: ['Inc','Exp'], datasets: [{ data: [inc, exp], backgroundColor: ['#00ffa3','#ff3d71'] }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}} } });
             const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy();
-            window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp'], datasets: [{ data: [inc, exp], backgroundColor: ['#00ffa3','#ff3d71'] }] }, options: { maintainAspectRatio:false } });
+            window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp'], datasets: [{ data: [inc, exp], backgroundColor: ['#00ffa3','#ff3d71'] }] }, options: { maintainAspectRatio:false, cutout:'70%' } });
         }
         async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
         window.onload = checkUser;
