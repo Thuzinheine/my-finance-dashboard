@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - F10L Master Pro v101</title>
+    <title>Spendio - F10L Master Pro v124</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -17,6 +17,12 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
         body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; height: 100vh; width: 100vw; overflow: hidden; font-size: var(--fs-base); }
         
+        /* MODERN LOGIN OVERLAY */
+        #loginOverlay { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1f33, #0b0d14); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .login-card { background: rgba(19, 22, 34, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 163, 0.2); padding: 50px 40px; border-radius: 35px; width: 420px; text-align: center; }
+        .login-input { width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: #fff; border-radius: 16px; margin-bottom: 22px; outline: none; }
+        .btn-login { width: 100%; height: 60px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-family: 'WaloneBold'; font-size: 18px; box-shadow: 0 10px 25px rgba(0, 255, 163, 0.2); }
+
         /* SIDEBAR */
         .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; transition: 0.3s ease; z-index: 2000; }
         .logo-box { padding: 30px 25px; display: flex; align-items: center; gap: 12px; font-size: 24px; color: var(--primary); font-family: 'WaloneBold'; }
@@ -37,7 +43,7 @@
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
         .content-body { padding: 30px; display: flex; flex-direction: column; gap: 25px; }
         
-        /* DESKTOP GRID */
+        /* STATS GRID (MOBILE FIX INCLUDED) */
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
         .stat-val { font-size: 22px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 10px; }
@@ -45,17 +51,6 @@
         .charts-triple-grid { display: grid; grid-template-columns: 1.4fr 1.4fr 0.9fr; gap: 20px; width: 100%; align-items: stretch; }
         .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; height: 340px; }
         .chart-container { position: relative; flex: 1; width: 100%; }
-
-        /* MOBILE GRID FIX */
-        @media (max-width: 992px) {
-            .grid-stats { 
-                grid-template-columns: repeat(2, 1fr) !important; /* ၂ ခုတစ်တန်းစီ စနစ် */
-                gap: 15px; 
-            }
-            .charts-triple-grid { grid-template-columns: 1fr; }
-            .content-body { padding: 15px; }
-            .stat-val { font-size: 18px; }
-        }
 
         /* TABLES STYLING */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px; }
@@ -70,43 +65,50 @@
         .btn-act:hover { opacity: 1; color: var(--primary); }
 
         /* MODALS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 460px; }
         input, select, textarea { width: 100%; padding: 16px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 12px; margin-bottom: 15px; outline: none; }
         .btn-ui { height: 52px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; font-family: 'WaloneBold'; flex: 1; }
 
+        @media (max-width: 992px) { 
+            .grid-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 15px; } 
+            .charts-triple-grid { grid-template-columns: 1fr; }
+            .sidebar { position: fixed; left: -260px; }
+            .sidebar.active { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.5); }
+        }
         .my-font { font-family: 'WaloneBold' !important; }
     </style>
 </head>
 <body>
+
+    <div id="loginOverlay">
+        <div class="login-card">
+            <h2 class="my-font" style="color:#fff; margin-bottom:30px;">အကောင့်ဝင်ရန်</h2>
+            <input type="email" id="lEmail" placeholder="Email Address" class="login-input">
+            <input type="password" id="lPass" placeholder="Password" class="login-input">
+            <button class="btn-login" onclick="handleLogin()">Login</button>
+            <p id="loginErr" style="color:var(--expense); font-size:12px; margin-top:18px; display:none;">Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။</p>
+        </div>
+    </div>
 
     <div id="appContainer" style="display:none; width: 100%; height: 100%;">
         <div class="sidebar" id="sidebar">
             <div class="logo-box my-font"><i class="fa-solid fa-gem"></i> Spendio</div>
             <div class="nav-item active" onclick="location.reload()"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font" id="navDash">ခြုံသုံးသပ်ချက်</span></div></div>
             <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font" id="navAdd">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="recSub" class="submenu">
-                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openModal('entryModal')">စာရင်းအသစ်</div>
-                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openModal('tradeModal')">Trading Record</div>
-            </div>
+            <div id="recSub" class="submenu"><div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openModal('entryModal')">စာရင်းအသစ်</div><div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openModal('tradeModal')">Trading Record</div></div>
             <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="langSub" class="submenu">
-                <div id="btnEn" class="custom-option" onclick="changeLanguage('en')"><span>English</span> <div class="radio-dot"><div class="radio-inner"></div></div></div>
-                <div id="btnMy" class="custom-option" onclick="changeLanguage('my')"><span class="my-font">မြန်မာဘာသာ</span> <div class="radio-dot"><div class="radio-inner"></div></div></div>
-            </div>
+            <div id="langSub" class="submenu"><div id="btnEn" class="custom-option" onclick="changeLanguage('en')"><span>English</span> <div class="radio-dot"><div class="radio-inner"></div></div></div><div id="btnMy" class="custom-option" onclick="changeLanguage('my')"><span class="my-font">မြန်မာဘာသာ</span> <div class="radio-dot"><div class="radio-inner"></div></div></div></div>
             <div class="nav-item" onclick="handleMenuToggle('currSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-coins"></i> <span class="my-font" id="navCurr">ကာရင်စီ</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="currSub" class="submenu">
-                <div id="currMMK" class="custom-option" onclick="changeCurrency('MMK')"><span>Myanmar (Ks)</span> <div class="radio-dot"><div class="radio-inner"></div></div></div>
-                <div id="currUSD" class="custom-option" onclick="changeCurrency('USD')"><span>English ($)</span> <div class="radio-dot"><div class="radio-inner"></div></div></div>
-            </div>
+            <div id="currSub" class="submenu"><div id="currMMK" class="custom-option" onclick="changeCurrency('MMK')"><span>Myanmar (Ks)</span> <div class="radio-dot"><div class="radio-inner"></div></div></div><div id="currUSD" class="custom-option" onclick="changeCurrency('USD')"><span>English ($)</span> <div class="radio-dot"><div class="radio-inner"></div></div></div></div>
             <div class="logout-box"><div class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div></div>
         </div>
 
         <div class="main-container" id="scrollArea">
             <div class="top-header">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-bars" style="color:#fff; margin-right:20px; cursor:pointer; font-size:20px; display:none;" id="mobileBars"></i>
+                    <i class="fa-solid fa-bars" style="color:#fff; margin-right:20px; cursor:pointer; font-size:20px;" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
                     <h2 class="my-font" style="font-size: var(--fs-header); color:var(--text-dim);" id="headTitle">Dashboard Pro</h2>
                 </div>
                 <div id="displayEmail" style="font-size:11px; color:var(--menu-head);"></div>
@@ -129,7 +131,7 @@
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">စာရင်းသွင်းရန်</h2><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><input type="text" id="nIn" placeholder="မှတ်စု (Note)"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select><div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
+    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">စာရင်းသွင်းရန်</h2><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><input type="text" id="nIn" placeholder="မှတ်စု"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select><div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
     <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">Trade Record</h2><input type="text" id="trPair" placeholder="Pair"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><select id="trPos"><option value="Long">Long</option><option value="Short">Short</option></select><input type="text" id="trLev" placeholder="Leverage"></div><input type="number" id="trRes" placeholder="Result ($)"><input type="text" id="trNote" placeholder="Trade Note"><div style="display:flex; gap:15px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div></div></div>
 
     <script>
@@ -138,13 +140,28 @@
         const i18n = { en: { navDash: "Overview", navAdd: "Add Record", navLang: "Language", navCurr: "Currency", headTitle: "Dashboard Pro", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "Recent History" }, my: { navDash: "ခြုံသုံးသပ်ချက်", navAdd: "စာရင်းသွင်းရန်", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", headTitle: "Dashboard Pro", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", chart1Title: "Zero Baseline Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "စာရင်းမှတ်တမ်း" } };
         let lang = localStorage.getItem('lang') || 'my', curr = localStorage.getItem('curr') || 'USD';
 
+        async function checkUser() { 
+            const {data:{user}} = await sc.auth.getUser(); 
+            if(user) { document.getElementById('loginOverlay').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; updateUI(); loadD(); } 
+            else { document.getElementById('loginOverlay').style.display='flex'; document.getElementById('appContainer').style.display='none'; }
+        }
+
+        async function handleLogin() { 
+            const {error} = await sc.auth.signInWithPassword({ email: document.getElementById('lEmail').value, password: document.getElementById('lPass').value });
+            if(error) document.getElementById('loginErr').style.display='block'; else checkUser();
+        }
+
         function handleMenuToggle(id) { const subs = document.querySelectorAll('.submenu'); subs.forEach(s => { if(s.id !== id) s.classList.remove('active'); }); document.getElementById(id).classList.toggle('active'); }
         function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); updateUI(); loadD(); }
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); updateUI(); loadD(); }
         function updateUI() { const t = i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; }); document.querySelectorAll('.custom-option').forEach(el => el.classList.remove('active')); if(lang === 'en') document.getElementById('btnEn').classList.add('active'); else document.getElementById('btnMy').classList.add('active'); if(document.getElementById('curr' + curr)) document.getElementById('curr' + curr).classList.add('active'); }
 
-        async function checkUser() { const {data:{user}}=await sc.auth.getUser(); if(user){ document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; updateUI(); loadD(); } else { window.location.href='login.html'; } }
-        async function saveData(type) { const {data:{user}}=await sc.auth.getUser(); if(type==='standard') { await sc.from('transactions').insert([{title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, note:document.getElementById('nIn').value, user_id:user.id}]); closeModal('entryModal'); } else { const note = document.getElementById('trPos').value+' | '+document.getElementById('trLev').value+' | '+document.getElementById('trNote').value; await sc.from('transactions').insert([{title:document.getElementById('trPair').value, amount:parseFloat(document.getElementById('trRes').value), category:'Trading', note:note, user_id:user.id}]); closeModal('tradeModal'); } loadD(); }
+        async function saveData(type) {
+            const {data:{user}}=await sc.auth.getUser();
+            if(type==='standard') { await sc.from('transactions').insert([{title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, note:document.getElementById('nIn').value, user_id:user.id}]); closeModal('entryModal'); }
+            else { const note = document.getElementById('trPos').value+' | '+document.getElementById('trLev').value+' | '+document.getElementById('trNote').value; await sc.from('transactions').insert([{title:document.getElementById('trPair').value, amount:parseFloat(document.getElementById('trRes').value), category:'Trading', note:note, user_id:user.id}]); closeModal('tradeModal'); }
+            loadD();
+        }
 
         async function loadD() {
             const {data}=await sc.from('transactions').select('*').order('created_at',{ascending:false});
@@ -177,7 +194,7 @@
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
-        async function handleLogout() { await sc.auth.signOut(); window.location.reload(); }
+        async function handleLogout() { await sc.auth.signOut(); location.reload(); }
         window.onload = checkUser;
     </script>
 </body>
