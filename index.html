@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - F10L Full Sync Master</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Spendio - F10L Final Master</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -20,34 +20,36 @@
         .nav-item:hover, .nav-item.active { color: #fff; background: linear-gradient(90deg, rgba(0, 255, 163, 0.08), transparent); }
         .nav-item.active { border-left: 3px solid var(--primary); }
 
-        /* Submenu UI */
+        /* Submenu UI Refined */
         .submenu { display: none; padding: 10px 15px 15px 50px; background: rgba(0,0,0,0.15); border-radius: 12px; margin: 0 10px; }
         .submenu.active { display: block !important; }
         .custom-option { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
         .custom-option:hover { background: rgba(255,255,255,0.03); color: #fff; }
         .custom-option.active { color: var(--primary); }
+        
+        /* Smaller font for sub-links */
+        .sub-link { padding: 8px 12px; cursor: pointer; font-size: 11px; color: var(--text-dim); transition: 0.2s; border-radius: 8px; }
+        .sub-link:hover { color: #fff; background: rgba(255,255,255,0.03); }
+
         .radio-dot { width: 14px; height: 14px; border: 2px solid #3d4457; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .custom-option.active .radio-dot { border-color: var(--primary); }
         .radio-inner { width: 6px; height: 6px; background: transparent; border-radius: 50%; transition: 0.3s; }
         .custom-option.active .radio-inner { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
 
-        /* Main Container */
+        /* Main Container Locked */
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); }
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
         .mobile-toggle { display: none; font-size: 22px; color: var(--text-dim); cursor: pointer; }
         .content-body { padding: 30px; display: flex; flex-direction: column; gap: 25px; }
 
-        /* Triple Graph Layout */
         .charts-triple-grid { display: grid; grid-template-columns: 1.4fr 1.4fr 0.9fr; gap: 20px; width: 100%; align-items: stretch; }
         .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; height: 340px; }
         .chart-container { position: relative; flex: 1; width: 100%; min-height: 0; }
 
-        /* Grid & Stats */
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
         .stat-val { font-size: 22px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 10px; }
 
-        /* Tables */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px; }
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
@@ -79,12 +81,11 @@
             
             <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font" id="navAdd">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="recSub" class="submenu">
-                <div id="subRecNew" class="my-font" style="padding:8px 0; cursor:pointer;" onclick="openModal('entryModal')">စာရင်းအသစ်</div>
-                <div id="subRecTrade" class="my-font" style="padding:8px 0; cursor:pointer;" onclick="openModal('tradeModal')">Trading Record</div>
+                <div id="subRecNew" class="sub-link my-font" onclick="openModal('entryModal')">စာရင်းအသစ်</div>
+                <div id="subRecTrade" class="sub-link my-font" onclick="openModal('tradeModal')">Trading Record</div>
             </div>
             
             <div class="menu-label" style="padding: 15px 25px 5px; font-size: 10px; color: var(--menu-head);">Settings</div>
-            
             <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="langSub" class="submenu">
                 <div id="btnEn" class="custom-option" onclick="changeLanguage('en')"><span>English</span> <div class="radio-dot"><div class="radio-inner"></div></div></div>
@@ -121,7 +122,7 @@
                 </div>
 
                 <div class="table-card" style="border-top:3px solid var(--primary);"><h3 class="my-font" id="histTradeTitle" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);">Trading Journal</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Asset</th><th>Pos</th><th>Lev</th><th style="text-align:right;">Result</th><th style="text-align:center; width:120px;">Action</th></tr></thead><tbody id="tradingList"></tbody></table></div></div>
-                <div class="table-card"><h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);" id="histTitle">စာရင်းမှတ်တမ်း</h3><div class="table-wrap"><table><thead><tr><th id="thDate">ရက်စွဲ</th><th id="thItem">အကြောင်းအရာ</th><th id="thCat">အမျိုးအစား</th><th style="text-align:right;" id="thAmt">ပမာဏ</th><th style="text-align:center; width:120px;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
+                <div class="table-card"><h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);" id="histTitle">စာရင်းမှတ်တမ်း</h3><div class="table-wrap"><table><thead><tr><th id="thDate">ရက်စွဲ</th><th id="thItem">အကြောင်းအရာ</th><th id="thCat">အမျိုးအစား</th><th style="text-align:right;">ပမာဏ</th><th style="text-align:center; width:120px;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
             </div>
         </div>
     </div>
@@ -132,18 +133,15 @@
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
         const i18n = { 
             en: { navDash: "Overview", navAdd: "Add Record", subRecNew: "New Record", subRecTrade: "Trading Record", navLang: "Language", navCurr: "Currency", headTitle: "Dashboard Pro", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "Recent History", thDate: "Date", thItem: "Description", thCat: "Category", thAmt: "Amount", modEntryTitle: "Add Record", modTradeTitle: "Trade Record" },
             my: { navDash: "ခြုံသုံးသပ်ချက်", navAdd: "စာရင်းသွင်းရန်", subRecNew: "စာရင်းအသစ်", subRecTrade: "Trading Record", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", headTitle: "Dashboard Pro", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", chart1Title: "Zero Baseline Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "စာရင်းမှတ်တမ်း", thDate: "ရက်စွဲ", thItem: "အကြောင်းအရာ", thCat: "အမျိုးအစား", thAmt: "ပမာဏ", modEntryTitle: "စာရင်းသွင်းရန်", modTradeTitle: "Trade Record" } 
         };
-        
         const currs = { USD: "$", MMK: "Ks", THB: "฿" };
         let lang = localStorage.getItem('lang') || 'my', curr = localStorage.getItem('curr') || 'USD';
 
         function toggleMobileMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').classList.toggle('active'); }
         function handleMenuToggle(id) { const subs = document.querySelectorAll('.submenu'); subs.forEach(s => { if(s.id !== id) s.classList.remove('active'); }); document.getElementById(id).classList.toggle('active'); }
-        
         function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); updateUI(); loadD(); }
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); updateUI(); loadD(); }
         
@@ -159,10 +157,10 @@
             const {data:{user}}=await sc.auth.getUser();
             if(type==='standard') {
                 const id=document.getElementById('editId').value, t=document.getElementById('tIn').value, a=parseFloat(document.getElementById('aIn').value), c=document.getElementById('cIn').value;
-                if(id) await sc.from('transactions').update({title:t, amount:a, category:c}).eq('id', id); else await sc.from('transactions').insert([{title:t, amount:a, category:c, user_id:user.id}]); closeModal('entryModal');
+                if(id) await sc.from('transactions').update({title:t, amount:a, category:c}).eq(id, id); else await sc.from('transactions').insert([{title:t, amount:a, category:c, user_id:user.id}]); closeModal('entryModal');
             } else {
                 const id=document.getElementById('tEditId').value, p=document.getElementById('trPair').value, pos=document.getElementById('trPos').value, lev=document.getElementById('trLev').value, res=parseFloat(document.getElementById('trRes').value);
-                if(id) await sc.from('transactions').update({title:p, amount:res, note:pos+' | '+lev}).eq('id', id); else await sc.from('transactions').insert([{title:p, amount:res, category:'Trading', note:pos+' | '+lev, user_id:user.id}]); closeModal('tradeModal');
+                if(id) await sc.from('transactions').update({title:p, amount:res, note:pos+' | '+lev}).eq(id, id); else await sc.from('transactions').insert([{title:p, amount:res, category:'Trading', note:pos+' | '+lev, user_id:user.id}]); closeModal('tradeModal');
             }
             loadD();
         }
@@ -194,7 +192,6 @@
             const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy();
             window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 10}}} } });
         }
-
         function editT(d) { if(d.category==='Trading') { document.getElementById('tEditId').value=d.id; document.getElementById('trPair').value=d.title; const p=(d.note||'').split(' | '); document.getElementById('trPos').value=p[0]; document.getElementById('trLev').value=p[1]; document.getElementById('trRes').value=d.amount; openModal('tradeModal'); } else { document.getElementById('editId').value=d.id; document.getElementById('tIn').value=d.title; document.getElementById('aIn').value=d.amount; document.getElementById('cIn').value=d.category; openModal('entryModal'); } }
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); document.getElementById('editId').value=''; document.getElementById('tEditId').value=''; }
