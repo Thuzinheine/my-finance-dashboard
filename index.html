@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - F10L Absolute Zero</title>
+    <title>Spendio - F10L Optimized Layout</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -22,23 +22,23 @@
         .submenu { display: none; padding: 5px 15px 15px 55px; background: rgba(0,0,0,0.2); border-radius: 12px; margin: 5px 10px; }
         .submenu.active { display: block !important; }
 
-        /* Main Container */
+        /* Main Container Layout */
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); }
         .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
         .mobile-toggle { display: none; font-size: 22px; color: var(--text-dim); cursor: pointer; }
         .content-body { padding: 30px; display: flex; flex-direction: column; gap: 25px; }
 
-        /* Grid Layout Fix */
+        /* Grid & Stats */
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
         .stat-val { font-size: 22px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 10px; }
 
-        /* Triple Graph Symmetry */
-        .charts-triple-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; width: 100%; align-items: stretch; }
-        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; }
-        .chart-container { position: relative; height: 260px; width: 100%; margin-top: auto; }
+        /* Optimized Triple Graph Grid */
+        .charts-triple-grid { display: grid; grid-template-columns: 1.2fr 1.2fr 0.8fr; gap: 20px; width: 100%; }
+        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; height: 320px; }
+        .chart-container { position: relative; flex: 1; width: 100%; min-height: 0; }
 
-        /* Table */
+        /* Tables */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px; }
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
@@ -50,16 +50,18 @@
 
         #sidebarOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1500; backdrop-filter: blur(4px); }
 
-        @media (max-width: 1200px) { .charts-triple-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 1400px) { .charts-triple-grid { grid-template-columns: 1fr 1fr; } .chart-box:last-child { grid-column: span 2; height: 280px; } }
         @media (max-width: 768px) {
             .sidebar { position: fixed; left: -260px; }
             .sidebar.active { left: 0; }
             .mobile-toggle { display: block; }
             #sidebarOverlay.active { display: block; }
             .charts-triple-grid { grid-template-columns: 1fr; }
+            .chart-box:last-child { grid-column: auto; }
             .grid-stats { grid-template-columns: 1fr 1fr; }
         }
 
+        /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 460px; }
@@ -93,7 +95,7 @@
 
         <div class="main-container">
             <div class="top-header">
-                <div style="display:flex; align-items:center;"><i class="fa-solid fa-bars mobile-toggle" onclick="toggleMobileMenu()"></i><h2 class="my-font" style="font-size: 18px; color:var(--text-dim);" id="headTitle">Dashboard</h2></div>
+                <div style="display:flex; align-items:center;"><i class="fa-solid fa-bars mobile-toggle" onclick="toggleMobileMenu()"></i><h2 class="my-font" style="font-size: 18px; color:var(--text-dim);" id="headTitle">F10L Master Pro</h2></div>
                 <div id="displayEmail" style="font-size:11px; color:var(--menu-head);"></div>
             </div>
             <div class="content-body">
@@ -105,9 +107,9 @@
                 </div>
 
                 <div class="charts-triple-grid">
-                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">Zero Baseline Trend</h4><div class="chart-container"><canvas id="cashChart"></canvas></div></div>
-                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">Trade Bars</h4><div class="chart-container"><canvas id="tradeChart"></canvas></div></div>
-                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; color:var(--menu-head);">Share Ratio</h4><div class="chart-container"><canvas id="pieChart"></canvas></div></div>
+                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; margin-bottom:10px; color:var(--menu-head);">Zero Baseline Trend</h4><div class="chart-container"><canvas id="cashChart"></canvas></div></div>
+                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; margin-bottom:10px; color:var(--menu-head);">Trade Bars</h4><div class="chart-container"><canvas id="tradeChart"></canvas></div></div>
+                    <div class="chart-box"><h4 class="my-font" style="font-size:12px; margin-bottom:10px; color:var(--menu-head);">Share Ratio</h4><div class="chart-container"><canvas id="pieChart"></canvas></div></div>
                 </div>
 
                 <div class="table-card" style="border-top:3px solid var(--primary);">
@@ -116,14 +118,14 @@
                 </div>
 
                 <div class="table-card">
-                    <h3 class="my-font" style="padding:20px 25px; font-size:15px; border-bottom:1px solid var(--border);" id="histTitle">စာရင်းမှတ်တမ်း</h3>
+                    <h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);" id="histTitle">စာရင်းမှတ်တမ်း</h3>
                     <div class="table-wrap"><table><thead><tr><th id="thDate">ရက်စွဲ</th><th id="thItem">အကြောင်းအရာ</th><th id="thCat">အမျိုးအစား</th><th style="text-align:right;" id="thAmt">ပမာဏ</th><th style="text-align:center; width:120px;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">စာရင်းအသစ်</h2><input type="hidden" id="editId"><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option></select><div style="display:flex; gap:15px; margin-top:20px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
+    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">စာရင်းသွင်းရန်</h2><input type="hidden" id="editId"><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option></select><div style="display:flex; gap:15px; margin-top:20px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
     <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">Trade Record</h2><input type="hidden" id="tEditId"><input type="text" id="trPair" placeholder="Pair"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><select id="trPos"><option value="Long">Long</option><option value="Short">Short</option></select><input type="text" id="trLev" placeholder="45x"></div><input type="number" id="trRes" placeholder="Result ($)"><div style="display:flex; gap:15px; margin-top:20px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div></div></div>
 
     <script>
@@ -170,7 +172,6 @@
         function renderCharts(data, inc, exp) {
             const ctx1 = document.getElementById('cashChart').getContext('2d'); if(window.c1) window.c1.destroy();
             const raw = data.slice(0,15).reverse();
-            // Fixed Absolute Zero Baseline Logic
             window.c1 = new Chart(ctx1, { type:'line', data: { labels: ['0', ...raw.map(d=>'')], datasets: [
                 { label: 'Inc', data: [0, ...raw.map(d=>d.category==='Income'?d.amount:null)], borderColor:'#00ffa3', tension:0.4, fill:false, spanGaps:true, pointRadius: 4 },
                 { label: 'Exp', data: [0, ...raw.map(d=>d.category!=='Income'&&d.category!=='Trading'?d.amount:null)], borderColor:'#ff3d71', tension:0.4, fill:false, spanGaps:true, pointRadius: 4 },
@@ -182,7 +183,7 @@
             window.c2 = new Chart(ctx2, { type:'bar', data: { labels: tD.map(d=>d.title), datasets: [{ data: tD.map(d=>d.amount), backgroundColor: tD.map(d=>d.amount>0?'#00ffa3':'#ff3d71'), borderRadius:4 }] }, options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'#262a3b'}}} } });
 
             const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy();
-            window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'75%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 20}}} } });
+            window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 10}}} } });
         }
 
         function editT(d) {
