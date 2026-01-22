@@ -3,179 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - Perfect Responsive Graphs</title>
+    <title>Spendio - F10L Final Edit Fix</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @font-face { font-family: 'WaloneBold'; src: url('fonts/Z06-Walone Bold.ttf') format('truetype'); font-display: swap; }
         @font-face { font-family: 'WaloneThin'; src: url('fonts/Z06-Walone Thin.ttf') format('truetype'); font-display: swap; }
-
-        :root {
-            --bg: #0b0d14; --sidebar: #131622; --card: #191c29; --border: #262a3b;
-            --primary: #00ffa3; --income: #00ffa3; --expense: #ff3d71; --warning: #ffaa00;
-            --text: #ffffff; --text-dim: #8f9bb3; --menu-head: #5a6a85;
-        }
-
+        :root { --bg: #0b0d14; --sidebar: #131622; --card: #191c29; --border: #262a3b; --primary: #00ffa3; --income: #00ffa3; --expense: #ff3d71; --warning: #ffaa00; --text: #ffffff; --text-dim: #8f9bb3; --menu-head: #5a6a85; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; min-height: 100vh; width: 100vw; overflow-x: hidden; }
-
-        /* Sidebar Fix */
-        .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; position: sticky; top: 0; z-index: 2000; transition: 0.3s; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; transition: 0.3s; z-index: 2000; }
         .logo-box { padding: 30px 25px; display: flex; align-items: center; gap: 12px; font-size: 26px; color: var(--primary); font-family: 'WaloneBold'; }
         .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 13px 25px; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 14px; }
         .nav-item:hover, .nav-item.active { color: #fff; background: linear-gradient(90deg, rgba(0, 255, 163, 0.08), transparent); }
         .nav-item.active { border-left: 3px solid var(--primary); }
-        .submenu { display: none; padding: 5px 15px 15px 55px; background: rgba(0,0,0,0.2); border-radius: 12px; margin: 5px 10px; }
-        .submenu.active { display: block; }
-
-        /* Main Container Responsive */
-        .main-container { flex: 1; min-width: 0; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); }
-        .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; position: sticky; top: 0; z-index: 100; }
-        .content-body { padding: 30px; display: flex; flex-direction: column; gap: 25px; max-width: 1600px; margin: 0 auto; width: 100%; }
-
-        /* Grid & Cards */
-        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .submenu { display: none; padding: 10px 15px 20px 55px; background: rgba(0,0,0,0.2); border-radius: 12px; margin: 5px 10px; }
+        .submenu.active { display: block !important; }
+        .curr-pill { display: flex; align-items: center; gap: 12px; padding: 10px 15px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 12px; font-family: 'WaloneBold'; margin-bottom: 8px; }
+        .curr-pill.active { background: rgba(0, 255, 163, 0.1); color: var(--primary); border-color: var(--primary); }
+        .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); }
+        .top-header { height: 75px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 35px; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
+        .content-body { padding: 35px 40px; display: flex; flex-direction: column; gap: 30px; }
+        .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
-        .stat-val { font-size: 22px; font-weight: 700; font-family: 'WaloneBold'; margin-top: 10px; }
-
-        /* Graph Scaling Fix */
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
-        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 20px; position: relative; min-height: 350px; }
-        canvas { width: 100% !important; height: 100% !important; }
-
-        /* Professional Tables Alignment */
-        .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 20px; }
-        .table-wrap { overflow-x: auto; width: 100%; }
+        .stat-val { font-size: 22px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 8px; }
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .chart-box { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 20px; min-height: 320px; position: relative; }
+        .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 30px; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
         th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; }
-        td { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; vertical-align: middle; }
-        .action-btns { display: flex; gap: 15px; align-items: center; justify-content: center; }
+        td { padding: 16px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; }
+        .action-btns { display: flex; gap: 15px; justify-content: center; }
         .btn-act { background: transparent; border: none; cursor: pointer; font-size: 14px; opacity: 0.5; transition: 0.2s; }
         .btn-act:hover { opacity: 1; transform: scale(1.15); color: var(--primary); }
-
-        /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
-        .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 440px; }
-        input, select, textarea { width: 100%; padding: 15px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 12px; margin-bottom: 15px; outline: none; }
-        .btn-ui { height: 52px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; font-family: 'WaloneBold'; }
-
-        @media (max-width: 768px) {
-            .sidebar { position: fixed; left: -260px; height: 100vh; }
-            .sidebar.active { left: 0; }
-            .charts-grid { grid-template-columns: 1fr; }
-            .chart-box { min-height: 300px; }
-            .content-body { padding: 15px; }
-        }
+        .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 45px; border-radius: 30px; width: 460px; }
+        input, select, textarea { width: 100%; padding: 16px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 12px; margin-bottom: 15px; outline: none; }
+        .btn-ui { height: 52px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; font-family: 'WaloneBold'; flex: 1; }
+        @media (max-width: 1024px) { .grid-stats, .charts-grid { grid-template-columns: 1fr; } }
         .my-font { font-family: 'WaloneBold' !important; }
     </style>
 </head>
 <body>
-
-    <div id="appContainer" style="display:none; width: 100%; height: 100%; display: flex;">
-        <div class="sidebar" id="sidebar">
+    <div id="appContainer" style="display:none; width: 100%; height: 100%;">
+        <div class="sidebar">
             <div class="logo-box my-font"><i class="fa-solid fa-gem"></i> Spendio</div>
             <div class="nav-item active"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font">ခြုံသုံးသပ်ချက်</span></div></div>
-            <div class="nav-item" onclick="document.getElementById('recSub').classList.toggle('active')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
-            <div id="recSub" class="submenu">
-                <div onclick="openModal('entryModal')" style="padding:10px; cursor:pointer; color:var(--text-dim);" class="my-font">စာရင်းအသစ်</div>
-                <div onclick="openModal('tradeModal')" style="padding:10px; cursor:pointer; color:var(--text-dim);" class="my-font">Trading Record</div>
-            </div>
+            <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
+            <div id="recSub" class="submenu"><div class="pill-stack"><div class="curr-pill" onclick="openModal('entryModal')">စာရင်းအသစ်</div><div class="curr-pill" onclick="openModal('tradeModal')">Trading Record</div></div></div>
+            <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
+            <div id="langSub" class="submenu"><div class="pill-stack"><div id="btnEn" class="curr-pill" onclick="changeLanguage('en')">English</div><div id="btnMy" class="curr-pill" onclick="changeLanguage('my')">မြန်မာဘာသာ</div></div></div>
+            <div class="nav-item" onclick="handleMenuToggle('currSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-coins"></i> <span class="my-font">ကာရင်စီပြောင်းမယ်</span></div><i class="fa-solid fa-chevron-down"></i></div>
+            <div id="currSub" class="submenu"><div class="pill-stack"><div id="currMMK" class="curr-pill" onclick="changeCurrency('MMK')">Myanmar (Ks)</div><div id="currUSD" class="curr-pill" onclick="changeCurrency('USD')">English ($)</div><div id="currTHB" class="curr-pill" onclick="changeCurrency('THB')">Thailand (฿)</div></div></div>
             <div style="margin-top: auto; padding-bottom: 25px;"><div class="nav-item" onclick="handleLogout()" style="color: var(--expense);"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-power-off"></i> <span>Logout</span></div></div></div>
         </div>
-
         <div class="main-container">
-            <div class="top-header">
-                <h2 class="my-font" style="font-size: 18px; color:var(--text-dim);">Financial & Trading Hub</h2>
-                <div id="displayEmail" style="font-size:12px; color:var(--menu-head);"></div>
-            </div>
-
+            <div class="top-header"><h2 class="my-font" style="font-size: 18px; color:var(--text-dim);">F10L Master Dashboard</h2><div id="displayEmail" style="font-size:12px; color:var(--menu-head);"></div></div>
             <div class="content-body">
                 <div class="grid-stats">
-                    <div class="stat-card"><span class="my-font" style="font-size:11px; color:var(--menu-head);">ဝင်ငွေစုစုပေါင်း</span><div class="stat-val" id="totalInc" style="color:var(--income);"></div></div>
-                    <div class="stat-card"><span class="my-font" style="font-size:11px; color:var(--menu-head);">ထွက်ငွေစုစုပေါင်း</span><div class="stat-val" id="totalExp" style="color:var(--expense);"></div></div>
-                    <div class="stat-card"><span class="my-font" style="font-size:11px; color:var(--menu-head);">Trading အမြတ်</span><div class="stat-val" id="tradeProfit" style="color:var(--primary);"></div></div>
-                    <div class="stat-card"><span class="my-font" style="font-size:11px; color:var(--menu-head);">လက်ကျန်</span><div class="stat-val" id="netBal" style="color:var(--primary);"></div></div>
+                    <div class="stat-card"><span class="my-font" style="font-size:11px;">ဝင်ငွေ</span><div class="stat-val" id="totalInc" style="color:var(--income);"></div></div>
+                    <div class="stat-card"><span class="my-font" style="font-size:11px;">ထွက်ငွေ</span><div class="stat-val" id="totalExp" style="color:var(--expense);"></div></div>
+                    <div class="stat-card"><span class="my-font" style="font-size:11px;">Trading</span><div class="stat-val" id="tradeProfit" style="color:var(--primary);"></div></div>
+                    <div class="stat-card"><span class="my-font" style="font-size:11px;">လက်ကျန်</span><div class="stat-val" id="netBal" style="color:var(--primary);"></div></div>
                 </div>
-
                 <div class="charts-grid">
-                    <div class="chart-box"><h4 class="my-font" style="font-size:13px; margin-bottom:15px; color:var(--menu-head);">Cash Flow Trend</h4><div style="height:250px;"><canvas id="cashChart"></canvas></div></div>
-                    <div class="chart-box"><h4 class="my-font" style="font-size:13px; margin-bottom:15px; color:var(--menu-head);">Trading Results</h4><div style="height:250px;"><canvas id="tradeChart"></canvas></div></div>
+                    <div class="chart-box"><canvas id="cashChart"></canvas></div>
+                    <div class="chart-box"><canvas id="tradeChart"></canvas></div>
                 </div>
-
-                <div class="table-card" style="border-top: 3px solid var(--primary);">
-                    <h3 class="my-font" style="padding:22px 25px; font-size:16px; border-bottom:1px solid var(--border); color:var(--primary);">Trading Journal</h3>
-                    <div class="table-wrap">
-                        <table><thead><tr><th>Date</th><th>Asset</th><th>Pos</th><th>Lev</th><th style="text-align:right;">Result</th><th style="text-align:center; width:120px;">Action</th></tr></thead>
-                        <tbody id="tradingList"></tbody></table>
-                    </div>
-                </div>
-
-                <div class="table-card">
-                    <h3 class="my-font" style="padding:22px 25px; font-size:16px; border-bottom:1px solid var(--border);">စာရင်းမှတ်တမ်း</h3>
-                    <div class="table-wrap">
-                        <table><thead><tr><th>ရက်စွဲ</th><th>အကြောင်းအရာ</th><th>အမျိုးအစား</th><th style="text-align:right;">ပမာဏ</th><th style="text-align:center; width:120px;">Action</th></tr></thead>
-                        <tbody id="transactionList"></tbody></table>
-                    </div>
-                </div>
+                <div class="table-card"><h3 class="my-font" style="padding:22px 25px; font-size:16px; border-bottom:1px solid var(--border);">Trading Journal</h3><div style="overflow-x:auto;"><table><thead><tr><th>Date</th><th>Asset</th><th>Pos</th><th>Lev</th><th style="text-align:right;">Result</th><th style="text-align:center; width:120px;">Action</th></tr></thead><tbody id="tradingList"></tbody></table></div></div>
+                <div class="table-card"><h3 class="my-font" style="padding:22px 25px; font-size:16px; border-bottom:1px solid var(--border);">စာရင်းမှတ်တမ်း</h3><div style="overflow-x:auto;"><table><thead><tr><th>ရက်စွဲ</th><th>အကြောင်းအရာ</th><th>အမျိုးအစား</th><th style="text-align:right;">ပမာဏ</th><th style="text-align:center; width:120px;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
             </div>
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" style="color:white; margin-bottom:25px;">စာရင်းအသစ်</h2>
-        <input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ">
-        <select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option></select>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div>
-    </div></div>
-
-    <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" style="color:var(--primary); margin-bottom:25px;">Trading Record</h2>
-        <input type="text" id="trPair" placeholder="Asset Pair (e.g. XRP/USDT)">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><select id="trPos"><option value="Long">Long ↗</option><option value="Short">Short ↘</option></select><input type="text" id="trLev" placeholder="Leverage 45x"></div>
-        <input type="number" id="trRes" placeholder="Profit/Loss ($)">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save Trade</button></div>
-    </div></div>
-
-    <div id="authSection" style="display:none; position:fixed; inset:0; background:var(--bg); align-items:center; justify-content:center; z-index:9999;"><div class="stat-card" style="width:340px; padding:50px; text-align:center; border-radius:30px;"><h1>Spendio</h1><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Password"><button onclick="handleLogin()" class="btn-ui" style="background:var(--primary); width:100%;">Sign In</button></div></div>
+    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">စာရင်းအသစ်</h2><input type="hidden" id="editId"><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option></select><div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" id="btnSave" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
+    <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">Trade Record</h2><input type="hidden" id="tEditId"><input type="text" id="trPair" placeholder="XRP/USDT"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><select id="trPos"><option value="Long">Long ↗</option><option value="Short">Short ↘</option></select><input type="text" id="trLev" placeholder="Leverage"></div><input type="number" id="trRes" placeholder="Result ($)"><div style="display:flex; gap:15px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" id="btnTradeSave" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div></div></div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let lang = 'my', cur = 'USD';
 
+        function handleMenuToggle(id) { const subs = document.querySelectorAll('.submenu'); subs.forEach(s => { if(s.id !== id) s.classList.remove('active'); }); document.getElementById(id).classList.toggle('active'); }
         function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        async function handleLogin() { await sc.auth.signInWithPassword({email:document.getElementById('email').value, password:document.getElementById('password').value}); checkUser(); }
-        async function handleLogout() { await sc.auth.signOut(); location.reload(); }
-        async function checkUser() { const {data:{user}}=await sc.auth.getUser(); if(user){ document.getElementById('authSection').style.display='none'; document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; loadD(); } else { document.getElementById('authSection').style.display='flex'; } }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.getElementById('editId').value=''; document.getElementById('tEditId').value=''; }
         
-        async function saveData(type) { 
+        async function checkUser() { const {data:{user}}=await sc.auth.getUser(); if(user){ document.getElementById('appContainer').style.display='flex'; document.getElementById('displayEmail').innerText=user.email; loadD(); } else { window.location.href='login.html'; } }
+
+        async function saveData(type) {
             const {data:{user}}=await sc.auth.getUser();
-            if(type === 'standard') {
-                await sc.from('transactions').insert([{title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, user_id:user.id}]); closeModal('entryModal');
+            if(type==='standard') {
+                const id=document.getElementById('editId').value, t=document.getElementById('tIn').value, a=parseFloat(document.getElementById('aIn').value), c=document.getElementById('cIn').value;
+                if(id) await sc.from('transactions').update({title:t, amount:a, category:c}).eq('id', id);
+                else await sc.from('transactions').insert([{title:t, amount:a, category:c, user_id:user.id}]);
+                closeModal('entryModal');
             } else {
-                const note = document.getElementById('trPos').value + ' | ' + document.getElementById('trLev').value;
-                await sc.from('transactions').insert([{title:document.getElementById('trPair').value, amount:parseFloat(document.getElementById('trRes').value), category:'Trading', note:note, user_id:user.id}]); closeModal('tradeModal');
+                const id=document.getElementById('tEditId').value, p=document.getElementById('trPair').value, pos=document.getElementById('trPos').value, lev=document.getElementById('trLev').value, res=parseFloat(document.getElementById('trRes').value);
+                if(id) await sc.from('transactions').update({title:p, amount:res, note:pos+' | '+lev}).eq('id', id);
+                else await sc.from('transactions').insert([{title:p, amount:res, category:'Trading', note:pos+' | '+lev, user_id:user.id}]);
+                closeModal('tradeModal');
             }
-            loadD(); 
+            loadD();
         }
 
         async function loadD() {
             const {data}=await sc.from('transactions').select('*').order('created_at',{ascending:false});
-            if(data){
-                let inc=0, exp=0, tp=0; const list=document.getElementById('transactionList'), tList=document.getElementById('tradingList'); list.innerHTML=''; tList.innerHTML='';
-                data.forEach(d => { 
-                    const row = `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td>`;
-                    const acts = `<td style="text-align:center;"><div class="action-btns"><i class="fa-solid fa-pen btn-act"></i><i class="fa-solid fa-trash btn-act" onclick="deleteT(${d.id})"></i></div></td></tr>`;
-                    if(d.category === 'Trading') {
-                        tp += d.amount; const p = (d.note || '').split(' | ');
-                        tList.innerHTML += row + `<td><span class="badge-trading">${p[0]||'-'}</span></td><td>${p[1]||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">$ ${Math.abs(d.amount).toLocaleString()}</td>` + acts;
-                    } else {
-                        if(d.category==='Income') inc+=d.amount; else exp+=d.amount;
-                        list.innerHTML += row + `<td><span class="badge-cat">${d.category}</span></td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">$ ${d.amount.toLocaleString()}</td>` + acts;
-                    }
-                });
-                document.getElementById('totalInc').innerText="$ "+inc.toLocaleString(); document.getElementById('totalExp').innerText="$ "+exp.toLocaleString(); document.getElementById('tradeProfit').innerText="$ "+tp.toLocaleString(); document.getElementById('netBal').innerText="$ "+(inc-exp+tp).toLocaleString();
-                renderCharts(data);
+            let inc=0, exp=0, tp=0; const list=document.getElementById('transactionList'), tList=document.getElementById('tradingList');
+            list.innerHTML=''; tList.innerHTML='';
+            data.forEach(d => {
+                const acts = `<td style="text-align:center;"><div class="action-btns"><i class="fa-solid fa-pen btn-act" onclick="editT(${JSON.stringify(d).replace(/"/g, '&quot;')})"></i><i class="fa-solid fa-trash btn-act" onclick="deleteT(${d.id})"></i></div></td></tr>`;
+                if(d.category==='Trading') {
+                    tp += d.amount; const p = (d.note || '').split(' | ');
+                    tList.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td>${p[0]||'-'}</td><td>${p[1]||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">$ ${d.amount.toLocaleString()}</td>` + acts;
+                } else {
+                    if(d.category==='Income') inc+=d.amount; else exp+=d.amount;
+                    list.innerHTML += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td style="font-weight:700;">${d.title}</td><td><span style="font-size:11px; opacity:0.6;">${d.category}</span></td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">$ ${d.amount.toLocaleString()}</td>` + acts;
+                }
+            });
+            document.getElementById('totalInc').innerText="$ "+inc.toLocaleString(); document.getElementById('totalExp').innerText="$ "+exp.toLocaleString(); document.getElementById('tradeProfit').innerText="$ "+tp.toLocaleString(); document.getElementById('netBal').innerText="$ "+(inc-exp+tp).toLocaleString();
+            renderCharts(data);
+        }
+
+        function editT(d) {
+            if(d.category==='Trading') {
+                document.getElementById('tEditId').value=d.id; document.getElementById('trPair').value=d.title; 
+                const p = (d.note || '').split(' | '); document.getElementById('trPos').value=p[0]; document.getElementById('trLev').value=p[1];
+                document.getElementById('trRes').value=d.amount; openModal('tradeModal');
+            } else {
+                document.getElementById('editId').value=d.id; document.getElementById('tIn').value=d.title;
+                document.getElementById('aIn').value=d.amount; document.getElementById('cIn').value=d.category; openModal('entryModal');
             }
         }
 
