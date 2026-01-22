@@ -3,43 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - F10L Original Modal Lock</title>
+    <title>Spendio - F10L UI Global Font Master</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @font-face { font-family: 'WaloneBold'; src: url('fonts/Z06-Walone Bold.ttf') format('truetype'); font-display: swap; }
-        :root { --bg: #0b0d14; --sidebar: #131622; --card: #191c29; --border: #262a3b; --primary: #00ffa3; --income: #00ffa3; --expense: #ff3d71; --warning: #ffaa00; --text: #ffffff; --text-dim: #8f9bb3; --menu-head: #5a6a85; }
+        
+        :root { 
+            --bg: #0b0d14; --sidebar: #131622; --card: #191c29; --border: #262a3b; 
+            --primary: #00ffa3; --income: #00ffa3; --expense: #ff3d71; --warning: #ffaa00; 
+            --text: #ffffff; --text-dim: #8f9bb3; --menu-head: #5a6a85;
+            /* GLOBAL FONT STANDARDS */
+            --fs-base: 14px; 
+            --fs-sub: 13px; 
+            --fs-header: 18px;
+            --fs-logo: 24px;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
-        /* HIDE DEFAULT SCROLLBAR */
+        /* INVISIBLE SCROLLBAR */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        body { 
+            background-color: var(--bg); color: var(--text); 
+            font-family: 'Inter', sans-serif; display: flex; 
+            height: 100vh; width: 100vw; overflow: hidden; font-size: var(--fs-base);
+        }
 
-        /* BACK TO TOP */
         #backToTop { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background: var(--primary); color: #000; border-radius: 12px; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 5000; transition: 0.3s; }
 
-        /* SIDEBAR */
+        /* SIDEBAR SYNC */
         .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; transition: 0.3s ease; z-index: 2000; }
-        .logo-box { padding: 30px 25px; display: flex; align-items: center; gap: 12px; font-size: 24px; color: var(--primary); font-family: 'WaloneBold'; }
-        .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 25px; color: var(--text-dim); cursor: pointer; transition: 0.2s; font-size: 14px; }
+        .logo-box { padding: 30px 25px; display: flex; align-items: center; gap: 12px; font-size: var(--fs-logo); color: var(--primary); font-family: 'WaloneBold'; }
+        
+        .nav-item { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 12px 25px; color: var(--text-dim); cursor: pointer; 
+            transition: 0.2s; font-size: var(--fs-base);
+        }
         .nav-item:hover, .nav-item.active { color: #fff; background: linear-gradient(90deg, rgba(0, 255, 163, 0.08), transparent); }
         .nav-item.active { border-left: 3px solid var(--primary); }
 
         .submenu { display: none; padding: 5px 15px 15px 50px; background: rgba(0,0,0,0.15); border-radius: 12px; margin: 0 10px; }
         .submenu.active { display: block !important; }
-        .custom-option { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 13px; color: var(--text-dim); margin-bottom: 2px; }
+
+        /* SUBMENU UI STANDARD */
+        .custom-option, .sub-link { 
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s;
+            font-size: var(--fs-sub); color: var(--text-dim); margin-bottom: 2px;
+        }
+        .custom-option:hover, .sub-link:hover { background: rgba(255,255,255,0.03); color: #fff; }
         .custom-option.active { color: var(--primary); font-weight: 500; }
+        
         .radio-dot { width: 14px; height: 14px; border: 2px solid #3d4457; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .custom-option.active .radio-inner { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 8px var(--primary); }
 
         /* LOGOUT ALIGNMENT */
         .logout-box { margin-top: auto; padding-bottom: 25px; }
-        .logout-btn { display: flex; align-items: center; gap: 15px; padding: 12px 25px; color: var(--expense); cursor: pointer; transition: 0.3s; font-weight: 600; }
+        .logout-btn { display: flex; align-items: center; gap: 15px; padding: 12px 25px; color: var(--expense); cursor: pointer; transition: 0.3s; font-weight: 600; font-size: var(--fs-base); }
 
         /* MAIN CONTAINER */
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); position: relative; }
@@ -58,10 +85,10 @@
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 850px; }
         th { text-align: left; padding: 18px 25px; font-size: 11px; color: var(--menu-head); border-bottom: 1px solid var(--border); font-family: 'WaloneBold'; text-transform: uppercase; }
-        td { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 14px; }
+        td { padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: var(--fs-base); }
         .btn-act { background: transparent; border: none; cursor: pointer; font-size: 14px; opacity: 0.5; color: var(--text); margin-left: 10px; }
 
-        /* MODAL - UNTOUCHED ORIGINAL LOCK */
+        /* MODAL - ORIGINAL UNTOUCHED LOCK */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 460px; }
@@ -79,14 +106,17 @@
     <div id="appContainer" style="display:none; width: 100%; height: 100%;">
         <div class="sidebar" id="sidebar">
             <div class="logo-box my-font"><i class="fa-solid fa-gem"></i> Spendio</div>
+            
+            <div class="menu-label" style="padding: 15px 25px 5px; font-size: 10px; color: var(--menu-head);">Analytics</div>
             <div class="nav-item active" onclick="location.reload()"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font" id="navDash">ခြုံသုံးသပ်ချက်</span></div></div>
             
             <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font" id="navAdd">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="recSub" class="submenu">
-                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openModal('entryModal')">စာရင်းအသစ်</div>
-                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openModal('tradeModal')">Trading Record</div>
+                <div class="sub-link my-font" onclick="openModal('entryModal')">စာရင်းအသစ်</div>
+                <div class="sub-link my-font" onclick="openModal('tradeModal')">Trading Record</div>
             </div>
             
+            <div class="menu-label" style="padding: 15px 25px 5px; font-size: 10px; color: var(--menu-head);">Settings</div>
             <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="langSub" class="submenu">
                 <div id="btnEn" class="custom-option" onclick="changeLanguage('en')"><span>English</span> <div class="radio-dot"><div class="radio-inner"></div></div></div>
@@ -104,7 +134,7 @@
 
         <div class="main-container" id="scrollArea">
             <div class="top-header">
-                <div style="display:flex; align-items:center;"><h2 class="my-font" style="font-size: 18px; color:var(--text-dim);" id="headTitle">Dashboard Pro</h2></div>
+                <div style="display:flex; align-items:center;"><h2 class="my-font" style="font-size: var(--fs-header); color:var(--text-dim);" id="headTitle">Dashboard Pro</h2></div>
                 <div id="displayEmail" style="font-size:11px; color:var(--menu-head);"></div>
             </div>
             <div class="content-body">
@@ -125,20 +155,8 @@
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content">
-        <h2 class="my-font">စာရင်းသွင်းရန်</h2>
-        <input type="hidden" id="editId"><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ">
-        <select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select>
-        <div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div>
-    </div></div>
-
-    <div id="tradeModal" class="modal-overlay"><div class="modal-content">
-        <h2 class="my-font">Trade Record</h2>
-        <input type="hidden" id="tEditId"><input type="text" id="trPair" placeholder="XRP/USDT">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><select id="trPos"><option value="Long">Long</option><option value="Short">Short</option></select><input type="text" id="trLev" placeholder="45x"></div>
-        <input type="number" id="trRes" placeholder="Profit/Loss">
-        <div style="display:flex; gap:15px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div>
-    </div></div>
+    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" id="modEntryTitle">စာရင်းသွင်းရန်</h2><input type="hidden" id="editId"><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select><div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
+    <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font" id="modTradeTitle">Trade Record</h2><input type="hidden" id="tEditId"><input type="text" id="trPair" placeholder="Pair"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><select id="trPos"><option value="Long">Long</option><option value="Short">Short</option></select><input type="text" id="trLev" placeholder="45x"></div><input type="number" id="trRes" placeholder="Result ($)"><div style="display:flex; gap:15px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div></div></div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
@@ -152,8 +170,8 @@
         function scrollToTop() { scrollArea.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         const i18n = { 
-            en: { navDash: "Overview", navAdd: "Add Record", navLang: "Language", navCurr: "Currency", headTitle: "Dashboard Pro", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "Recent History", thDate: "Date", thItem: "Description", thCat: "Category", thAmt: "Amount" },
-            my: { navDash: "ခြုံသုံးသပ်ချက်", navAdd: "စာရင်းသွင်းရန်", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", headTitle: "Dashboard Pro", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", chart1Title: "Zero Baseline Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "စာရင်းမှတ်တမ်း", thDate: "ရက်စွဲ", thItem: "အကြောင်းအရာ", thCat: "အမျိုးအစား", thAmt: "ပမာဏ" } 
+            en: { navDash: "Overview", navAdd: "Add Record", navLang: "Language", navCurr: "Currency", headTitle: "Dashboard Pro", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "Recent History", thDate: "Date", thItem: "Description", thCat: "Category", thAmt: "Amount", modEntryTitle: "Add Record", modTradeTitle: "Trade Record" },
+            my: { navDash: "ခြုံသုံးသပ်ချက်", navAdd: "စာရင်းသွင်းရန်", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", headTitle: "Dashboard Pro", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", chart1Title: "Zero Baseline Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "စာရင်းမှတ်တမ်း", thDate: "ရက်စွဲ", thItem: "အကြောင်းအရာ", thCat: "အမျိုးအစား", thAmt: "ပမာဏ", modEntryTitle: "စာရင်းသွင်းရန်", modTradeTitle: "Trade Record" } 
         };
         let lang = localStorage.getItem('lang') || 'my', curr = localStorage.getItem('curr') || 'USD';
 
