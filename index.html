@@ -30,15 +30,11 @@
         .radio-dot { width: 14px; height: 14px; border: 2px solid #3d4457; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .custom-option.active .radio-inner { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 8px var(--primary); }
         
-        /* LOGOUT ALIGNMENT FIX */
         .logout-box { margin-top: auto; padding-bottom: 25px; }
         .logout-btn { display: flex; align-items: center; gap: 15px; padding: 12px 25px; color: var(--expense); cursor: pointer; transition: 0.3s; font-weight: 600; font-size: var(--fs-base); }
         .logout-btn i { width: 20px; text-align: center; font-size: 16px; }
 
-        /* MAIN AREA & GLASS HEADER */
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); position: relative; }
-        
-        /* GLASS EFFECT HEADER */
         .top-header { 
             height: 75px; 
             background: rgba(19, 22, 34, 0.7); 
@@ -57,12 +53,10 @@
 
         .content-body { padding: 30px; display: flex; flex-direction: column; gap: 25px; }
         
-        /* GRID STATS */
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 22px; border-radius: 18px; }
         .stat-val { font-size: 22px; font-weight: 700; color: white; font-family: 'WaloneBold'; margin-top: 10px; }
         
-        /* MOBILE VIEW GRID FIX */
         @media (max-width: 992px) {
             .grid-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 15px; }
             .charts-triple-grid { grid-template-columns: 1fr !important; }
@@ -76,7 +70,6 @@
         .chart-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; height: 340px; }
         .chart-container { position: relative; flex: 1; width: 100%; }
 
-        /* TABLES STYLING */
         .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 25px; }
         .table-wrap { overflow-x: auto; max-height: 450px; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; }
@@ -88,14 +81,12 @@
         .btn-act { background: transparent; border: none; cursor: pointer; font-size: 14px; opacity: 0.5; color: var(--text); margin-left: 10px; }
         .btn-act:hover { opacity: 1; color: var(--primary); }
 
-        /* MODALS */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex !important; }
         .modal-content { background: var(--sidebar); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 460px; }
         input, select, textarea { width: 100%; padding: 16px; background: #0c0e12; border: 1px solid var(--border); color: #fff; border-radius: 12px; margin-bottom: 15px; outline: none; }
         .btn-ui { height: 52px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; font-family: 'WaloneBold'; flex: 1; }
 
-        /* LOGIN OVERLAY */
         #loginOverlay { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1f33, #0b0d14); display: flex; align-items: center; justify-content: center; z-index: 10000; display: none; }
         .login-card { background: rgba(19, 22, 34, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 163, 0.2); padding: 50px 40px; border-radius: 35px; width: 420px; text-align: center; }
         .btn-login { width: 100%; height: 60px; background: var(--primary); color: #000; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-family: 'WaloneBold'; font-size: 18px; }
@@ -201,6 +192,22 @@
         </div>
     </div>
 
+    <div id="customDelModal" class="modal-overlay">
+        <div class="modal-content" style="text-align: center; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <div style="font-size: 60px; color: var(--expense); margin-bottom: 20px;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h2 class="my-font" style="color: #fff; margin-bottom: 15px; font-size: 22px;">သေချာပါသလား?</h2>
+            <p style="color: var(--text-dim); margin-bottom: 30px; font-size: 14px; line-height: 1.6;">
+                ဤမှတ်တမ်းကို ဖျက်လိုက်ပါက ပြန်ယူ၍ရတော့မည် မဟုတ်ပါ။<br>သေချာပေါက် ဖျက်လိုပါသလား?
+            </p>
+            <div style="display: flex; gap: 15px;">
+                <button id="closeDelBtn" class="btn-ui" style="background: #2a2e39; color: #fff;">မဖျက်တော့ပါ</button>
+                <button id="confirmDelBtn" class="btn-ui" style="background: var(--expense); color: #fff;">ဖျက်မည်</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -223,7 +230,6 @@
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); updateUI(); loadD(); }
         function updateUI() { const t = i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; }); document.querySelectorAll('.custom-option').forEach(el => el.classList.remove('active')); if(lang === 'en') document.getElementById('btnEn').classList.add('active'); else document.getElementById('btnMy').classList.add('active'); if(document.getElementById('curr' + curr)) document.getElementById('curr' + curr).classList.add('active'); }
 
-        // Modal Helpers
         function openEntryModal() { 
             document.getElementById('editId').value = ""; 
             document.getElementById('modalEntryTitle').innerText = "စာရင်းသွင်းရန်";
@@ -269,7 +275,6 @@
                 const dt = new Date(d.created_at);
                 const dtStr = `<div class="td-date">${dt.toLocaleDateString()}<span class="td-time">${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`;
                 
-                // Action Buttons
                 const acts = `<td style="text-align:center;">
                     <i class="fa-solid fa-pen-to-square btn-act" onclick='editT(${JSON.stringify(d)})'></i>
                     <i class="fa-solid fa-trash btn-act" onclick="deleteT(${d.id})"></i>
@@ -321,7 +326,35 @@
             const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy();
             window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 10}}} } });
         }
-        async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
+
+        /* --- CUSTOM DELETE LOGIC (OVERWRITING ORIGINAL) --- */
+        let deleteTargetId = null;
+
+        // မူရင်း deleteT function ကို overwrite လုပ်ပြီး custom modal ထဲကနေ confirm ယူခိုင်းခြင်း
+        window.deleteT = function(id) {
+            deleteTargetId = id;
+            document.getElementById('customDelModal').classList.add('active');
+        };
+
+        // Cancel ခလုတ်
+        document.getElementById('closeDelBtn').onclick = function() {
+            document.getElementById('customDelModal').classList.remove('active');
+            deleteTargetId = null;
+        };
+
+        // တကယ်ဖျက်မယ့် Confirm ခလုတ်
+        document.getElementById('confirmDelBtn').onclick = async function() {
+            if (deleteTargetId) {
+                const { error } = await sc.from('transactions').delete().eq('id', deleteTargetId);
+                if (!error) {
+                    document.getElementById('customDelModal').classList.remove('active');
+                    deleteTargetId = null;
+                    loadD();
+                } else {
+                    alert("Error: " + error.message);
+                }
+            }
+        };
 
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
