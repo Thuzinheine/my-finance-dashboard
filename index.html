@@ -33,7 +33,7 @@
         /* LOGOUT ALIGNMENT FIX */
         .logout-box { margin-top: auto; padding-bottom: 25px; }
         .logout-btn { display: flex; align-items: center; gap: 15px; padding: 12px 25px; color: var(--expense); cursor: pointer; transition: 0.3s; font-weight: 600; font-size: var(--fs-base); }
-        .logout-btn i { width: 20px; text-align: center; font-size: 16px; } /* Icon width ကို fix လုပ်ပြီး text နဲ့ ညှိတာ */
+        .logout-btn i { width: 20px; text-align: center; font-size: 16px; }
 
         /* MAIN AREA & GLASS HEADER */
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1f33, #0b0d14); position: relative; }
@@ -41,8 +41,8 @@
         /* GLASS EFFECT HEADER */
         .top-header { 
             height: 75px; 
-            background: rgba(19, 22, 34, 0.7); /* Transparent background */
-            backdrop-filter: blur(12px); /* Blur effect */
+            background: rgba(19, 22, 34, 0.7); 
+            backdrop-filter: blur(12px); 
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
             display: flex; 
@@ -121,8 +121,8 @@
             <div class="nav-item active" onclick="location.reload()"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font" id="navDash">ခြုံသုံးသပ်ချက်</span></div></div>
             <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font" id="navAdd">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="recSub" class="submenu">
-                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openModal('entryModal')">စာရင်းအသစ်</div>
-                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openModal('tradeModal')">Trading Record</div>
+                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openEntryModal()">စာရင်းအသစ်</div>
+                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openTradeModal()">Trading Record</div>
             </div>
             <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="langSub" class="submenu">
@@ -168,8 +168,38 @@
         </div>
     </div>
 
-    <div id="entryModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">စာရင်းသွင်းရန်</h2><input type="text" id="tIn" placeholder="အကြောင်းအရာ"><input type="number" id="aIn" placeholder="ပမာဏ"><input type="text" id="nIn" placeholder="မှတ်စု"><select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select><div style="display:flex; gap:15px;"><button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button></div></div></div>
-    <div id="tradeModal" class="modal-overlay"><div class="modal-content"><h2 class="my-font">Trade Record</h2><input type="text" id="trPair" placeholder="Pair"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><select id="trPos"><option value="Long">Long</option><option value="Short">Short</option></select><input type="text" id="trLev" placeholder="Leverage"></div><input type="number" id="trRes" placeholder="Result ($)"><input type="text" id="trNote" placeholder="Trade Note"><div style="display:flex; gap:15px;"><button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button><button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button></div></div></div>
+    <div id="entryModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="my-font" id="modalEntryTitle">စာရင်းသွင်းရန်</h2><br>
+            <input type="hidden" id="editId">
+            <input type="text" id="tIn" placeholder="အကြောင်းအရာ">
+            <input type="number" id="aIn" placeholder="ပမာဏ">
+            <input type="text" id="nIn" placeholder="မှတ်စု">
+            <select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select>
+            <div style="display:flex; gap:15px;">
+                <button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button>
+                <button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tradeModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="my-font" id="modalTradeTitle">Trade Record</h2><br>
+            <input type="hidden" id="editTradeId">
+            <input type="text" id="trPair" placeholder="Pair">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <select id="trPos"><option value="Long">Long</option><option value="Short">Short</option></select>
+                <input type="text" id="trLev" placeholder="Leverage">
+            </div>
+            <input type="number" id="trRes" placeholder="Result ($)">
+            <input type="text" id="trNote" placeholder="Trade Note">
+            <div style="display:flex; gap:15px;">
+                <button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button>
+                <button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
@@ -193,10 +223,38 @@
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); updateUI(); loadD(); }
         function updateUI() { const t = i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; }); document.querySelectorAll('.custom-option').forEach(el => el.classList.remove('active')); if(lang === 'en') document.getElementById('btnEn').classList.add('active'); else document.getElementById('btnMy').classList.add('active'); if(document.getElementById('curr' + curr)) document.getElementById('curr' + curr).classList.add('active'); }
 
+        // Modal Helpers
+        function openEntryModal() { 
+            document.getElementById('editId').value = ""; 
+            document.getElementById('modalEntryTitle').innerText = "စာရင်းသွင်းရန်";
+            document.getElementById('tIn').value = ""; document.getElementById('aIn').value = ""; document.getElementById('nIn').value = "";
+            openModal('entryModal'); 
+        }
+        function openTradeModal() { 
+            document.getElementById('editTradeId').value = "";
+            document.getElementById('modalTradeTitle').innerText = "Trade Record";
+            document.getElementById('trPair').value = ""; document.getElementById('trRes').value = ""; document.getElementById('trNote').value = "";
+            openModal('tradeModal'); 
+        }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
         async function saveData(type) {
             const {data:{user}}=await sc.auth.getUser();
-            if(type==='standard') { await sc.from('transactions').insert([{title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, note:document.getElementById('nIn').value, user_id:user.id}]); closeModal('entryModal'); }
-            else { const note = document.getElementById('trPos').value+' | '+document.getElementById('trLev').value+' | '+document.getElementById('trNote').value; await sc.from('transactions').insert([{title:document.getElementById('trPair').value, amount:parseFloat(document.getElementById('trRes').value), category:'Trading', note:note, user_id:user.id}]); closeModal('tradeModal'); }
+            if(type==='standard') {
+                const id = document.getElementById('editId').value;
+                const payload = {title:document.getElementById('tIn').value, amount:parseFloat(document.getElementById('aIn').value), category:document.getElementById('cIn').value, note:document.getElementById('nIn').value, user_id:user.id};
+                if(id) await sc.from('transactions').update(payload).eq('id', id);
+                else await sc.from('transactions').insert([payload]);
+                closeModal('entryModal');
+            } else {
+                const id = document.getElementById('editTradeId').value;
+                const note = document.getElementById('trPos').value+' | '+document.getElementById('trLev').value+' | '+document.getElementById('trNote').value;
+                const payload = {title:document.getElementById('trPair').value, amount:parseFloat(document.getElementById('trRes').value), category:'Trading', note:note, user_id:user.id};
+                if(id) await sc.from('transactions').update(payload).eq('id', id);
+                else await sc.from('transactions').insert([payload]);
+                closeModal('tradeModal');
+            }
             loadD();
         }
 
@@ -205,17 +263,52 @@
             if(!data) return;
             let inc=0, exp=0, tp=0; const list=document.getElementById('transactionList'), tList=document.getElementById('tradingList'); list.innerHTML=''; tList.innerHTML='';
             const rate = curr==='MMK'?3500:1;
+            const sym = curr==='MMK'?'Ks':'$';
+
             data.forEach(d => {
                 const dt = new Date(d.created_at);
                 const dtStr = `<div class="td-date">${dt.toLocaleDateString()}<span class="td-time">${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`;
-                const acts = `<td style="text-align:center;"><i class="fa-solid fa-trash btn-act" onclick="deleteT(${d.id})"></i></td></tr>`;
-                const sym = curr==='MMK'?'Ks':'$';
-                if(d.category==='Trading') { tp += d.amount; const p = (d.note || '').split('|'); tList.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700;">${d.title}</td><td>${p[0]||'-'}</td><td>${p[1]||'-'}</td><td class="td-note">${p[2]||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">${sym} ${(Math.abs(d.amount)*rate).toLocaleString()}</td>` + acts; }
-                else { if(d.category==='Income') inc+=d.amount; else exp+=d.amount; list.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700;">${d.title}</td><td><span style="font-size:11px; opacity:0.6;">${d.category}</span></td><td class="td-note">${d.note||'-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">${sym} ${(d.amount*rate).toLocaleString()}</td>` + acts; }
+                
+                // Action Buttons
+                const acts = `<td style="text-align:center;">
+                    <i class="fa-solid fa-pen-to-square btn-act" onclick='editT(${JSON.stringify(d)})'></i>
+                    <i class="fa-solid fa-trash btn-act" onclick="deleteT(${d.id})"></i>
+                </td></tr>`;
+
+                if(d.category==='Trading') { 
+                    tp += d.amount; const p = (d.note || '').split('|'); 
+                    tList.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700;">${d.title}</td><td>${p[0]||'-'}</td><td>${p[1]||'-'}</td><td class="td-note">${p[2]||'-'}</td><td style="text-align:right; font-weight:800; color:${d.amount>0?'#00ffa3':'#ff3d71'}">${sym} ${(Math.abs(d.amount)*rate).toLocaleString()}</td>` + acts; 
+                }
+                else { 
+                    if(d.category==='Income') inc+=d.amount; else exp+=d.amount; 
+                    list.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700;">${d.title}</td><td><span style="font-size:11px; opacity:0.6;">${d.category}</span></td><td class="td-note">${d.note||'-'}</td><td style="text-align:right; font-weight:800; color:${d.category==='Income'?'#00ffa3':'#ff3d71'}">${sym} ${(d.amount*rate).toLocaleString()}</td>` + acts; 
+                }
             });
-            const sym = curr==='MMK'?'Ks ':'$ ';
-            document.getElementById('totalInc').innerText=sym+(inc*rate).toLocaleString(); document.getElementById('totalExp').innerText=sym+(exp*rate).toLocaleString(); document.getElementById('tradeProfit').innerText=sym+(tp*rate).toLocaleString(); document.getElementById('netBal').innerText=sym+((inc-exp+tp)*rate).toLocaleString();
+            const symHead = curr==='MMK'?'Ks ':'$ ';
+            document.getElementById('totalInc').innerText=symHead+(inc*rate).toLocaleString(); document.getElementById('totalExp').innerText=symHead+(exp*rate).toLocaleString(); document.getElementById('tradeProfit').innerText=symHead+(tp*rate).toLocaleString(); document.getElementById('netBal').innerText=symHead+((inc-exp+tp)*rate).toLocaleString();
             renderCharts(data, inc, exp);
+        }
+
+        function editT(data) {
+            if(data.category === 'Trading') {
+                document.getElementById('editTradeId').value = data.id;
+                document.getElementById('modalTradeTitle').innerText = "စာရင်းပြင်ဆင်ရန် (Trade)";
+                document.getElementById('trPair').value = data.title;
+                document.getElementById('trRes').value = data.amount;
+                const p = (data.note || '').split(' | ');
+                document.getElementById('trPos').value = p[0] || 'Long';
+                document.getElementById('trLev').value = p[1] || '';
+                document.getElementById('trNote').value = p[2] || '';
+                openModal('tradeModal');
+            } else {
+                document.getElementById('editId').value = data.id;
+                document.getElementById('modalEntryTitle').innerText = "စာရင်းပြင်ဆင်ရန်";
+                document.getElementById('tIn').value = data.title;
+                document.getElementById('aIn').value = data.amount;
+                document.getElementById('nIn').value = data.note || "";
+                document.getElementById('cIn').value = data.category;
+                openModal('entryModal');
+            }
         }
 
         function renderCharts(data, inc, exp) {
@@ -228,11 +321,8 @@
             const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy();
             window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 10}}} } });
         }
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         async function deleteT(id){ if(confirm("ဖျက်မှာလား?")){ await sc.from('transactions').delete().eq('id',id); loadD(); } }
 
-        /* Sidebar Auto-Close Logic */
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
             const menuBtn = document.getElementById('menuToggle');
