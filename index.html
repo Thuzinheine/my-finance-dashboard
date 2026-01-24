@@ -98,7 +98,7 @@
 
     <div id="loginOverlay">
         <div class="login-card">
-            <h2 class="my-font" style="color:#fff; margin-bottom:30px;">အကောင့်ဝင်ရန်</h2>
+            <h2 class="my-font" id="loginHeader" style="color:#fff; margin-bottom:30px;">အကောင့်ဝင်ရန်</h2>
             <input type="email" id="lEmail" placeholder="Email Address">
             <input type="password" id="lPass" placeholder="Password">
             <button class="btn-login" onclick="handleLogin()">Login</button>
@@ -112,8 +112,8 @@
             <div class="nav-item active" onclick="location.reload()"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-house"></i> <span class="my-font" id="navDash">ခြုံသုံးသပ်ချက်</span></div></div>
             <div class="nav-item" onclick="handleMenuToggle('recSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-plus-circle"></i> <span class="my-font" id="navAdd">စာရင်းသွင်းရန်</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="recSub" class="submenu">
-                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openEntryModal()">စာရင်းအသစ်</div>
-                <div style="padding:10px; cursor:pointer; font-size:13px;" onclick="openTradeModal()">Trading Record</div>
+                <div style="padding:10px; cursor:pointer; font-size:13px;" id="subNew" onclick="openEntryModal()">စာရင်းအသစ်</div>
+                <div style="padding:10px; cursor:pointer; font-size:13px;" id="subTrade" onclick="openTradeModal()">Trading Record</div>
             </div>
             <div class="nav-item" onclick="handleMenuToggle('langSub')"><div style="display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div><i class="fa-solid fa-chevron-down"></i></div>
             <div id="langSub" class="submenu">
@@ -128,7 +128,7 @@
             <div class="logout-box">
                 <div class="logout-btn" onclick="handleLogout()">
                     <i class="fa-solid fa-power-off"></i> 
-                    <span>Logout</span>
+                    <span id="navLogout">Logout</span>
                 </div>
             </div>
         </div>
@@ -153,8 +153,8 @@
                     <div class="chart-box"><h4 class="my-font" id="chart2Title" style="font-size:12px; color:var(--menu-head);">Trade Bars</h4><div class="chart-container"><canvas id="tradeChart"></canvas></div></div>
                     <div class="chart-box"><h4 class="my-font" id="chart3Title" style="font-size:12px; color:var(--menu-head);">Share Ratio</h4><div class="chart-container"><canvas id="pieChart"></canvas></div></div>
                 </div>
-                <div class="table-card" style="border-top:3px solid var(--primary);"><h3 class="my-font" id="histTradeTitle" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);">Trading Journal</h3><div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Asset</th><th>Pos</th><th>Lev</th><th>Trade Note</th><th style="text-align:right;">Result</th><th style="text-align:center;">Action</th></tr></thead><tbody id="tradingList"></tbody></table></div></div>
-                <div class="table-card"><h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);" id="histTitle">စာရင်းမှတ်တမ်း</h3><div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Description</th><th>Category</th><th>Notes</th><th style="text-align:right;">Amount</th><th style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
+                <div class="table-card" style="border-top:3px solid var(--primary);"><h3 class="my-font" id="histTradeTitle" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);">Trading Journal</h3><div class="table-wrap"><table><thead><tr><th id="thDate1">Date & Time</th><th id="thAsset">Asset</th><th id="thPos">Pos</th><th id="thLev">Lev</th><th id="thNote1">Trade Note</th><th id="thRes" style="text-align:right;">Result</th><th id="thAct1" style="text-align:center;">Action</th></tr></thead><tbody id="tradingList"></tbody></table></div></div>
+                <div class="table-card"><h3 class="my-font" style="padding:22px 25px; font-size:15px; border-bottom:1px solid var(--border);" id="histTitle">စာရင်းမှတ်တမ်း</h3><div class="table-wrap"><table><thead><tr><th id="thDate2">Date & Time</th><th id="thDesc">Description</th><th id="thCat">Category</th><th id="thNote2">Notes</th><th id="thAmt" style="text-align:right;">Amount</th><th id="thAct2" style="text-align:center;">Action</th></tr></thead><tbody id="transactionList"></tbody></table></div></div>
             </div>
         </div>
     </div>
@@ -163,13 +163,13 @@
         <div class="modal-content">
             <h2 class="my-font" id="modalEntryTitle">စာရင်းသွင်းရန်</h2><br>
             <input type="hidden" id="editId">
-            <input type="text" id="tIn" placeholder="အကြောင်းအရာ">
-            <input type="number" id="aIn" placeholder="ပမာဏ">
-            <input type="text" id="nIn" placeholder="မှတ်စု">
+            <input type="text" id="tIn" placeholder="...">
+            <input type="number" id="aIn" placeholder="...">
+            <input type="text" id="nIn" placeholder="...">
             <select id="cIn"><option value="Income">Income (+)</option><option value="Food">Food</option><option value="Others">Others</option></select>
             <div style="display:flex; gap:15px;">
-                <button onclick="closeModal('entryModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button>
-                <button onclick="saveData('standard')" class="btn-ui" style="background:var(--primary); color:#000;">Confirm</button>
+                <button onclick="closeModal('entryModal')" class="btn-ui" id="btnCancel1" style="background:#2a2e39; color:#fff;">Cancel</button>
+                <button onclick="saveData('standard')" class="btn-ui" id="btnConfirm1" style="background:var(--primary); color:#000;">Confirm</button>
             </div>
         </div>
     </div>
@@ -186,8 +186,8 @@
             <input type="number" id="trRes" placeholder="Result ($)">
             <input type="text" id="trNote" placeholder="Trade Note">
             <div style="display:flex; gap:15px;">
-                <button onclick="closeModal('tradeModal')" class="btn-ui" style="background:#2a2e39; color:#fff;">Cancel</button>
-                <button onclick="saveData('trading')" class="btn-ui" style="background:var(--primary); color:#000;">Save</button>
+                <button onclick="closeModal('tradeModal')" class="btn-ui" id="btnCancel2" style="background:#2a2e39; color:#fff;">Cancel</button>
+                <button onclick="saveData('trading')" class="btn-ui" id="btnSave2" style="background:var(--primary); color:#000;">Save</button>
             </div>
         </div>
     </div>
@@ -197,8 +197,8 @@
             <div style="font-size: 60px; color: var(--expense); margin-bottom: 20px;">
                 <i class="fa-solid fa-circle-exclamation"></i>
             </div>
-            <h2 class="my-font" style="color: #fff; margin-bottom: 15px; font-size: 22px;">သေချာပါသလား?</h2>
-            <p style="color: var(--text-dim); margin-bottom: 30px; font-size: 14px; line-height: 1.6;">
+            <h2 class="my-font" id="delSureTitle" style="color: #fff; margin-bottom: 15px; font-size: 22px;">သေချာပါသလား?</h2>
+            <p id="delSureDesc" style="color: var(--text-dim); margin-bottom: 30px; font-size: 14px; line-height: 1.6;">
                 ဤမှတ်တမ်းကို ဖျက်လိုက်ပါက ပြန်ယူ၍ရတော့မည် မဟုတ်ပါ။<br>သေချာပေါက် ဖျက်လိုပါသလား?
             </p>
             <div style="display: flex; gap: 15px;">
@@ -211,7 +211,34 @@
     <script>
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         const sc = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const i18n = { en: { navDash: "Overview", navAdd: "Add Record", navLang: "Language", navCurr: "Currency", headTitle: "Dashboard Pro", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "Recent History" }, my: { navDash: "ခြုံသုံးသပ်ချက်", navAdd: "စာရင်းသွင်းရန်", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", headTitle: "Dashboard Pro", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", chart1Title: "Zero Baseline Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", histTradeTitle: "Trading Journal", histTitle: "စာရင်းမှတ်တမ်း" } };
+        
+        const i18n = { 
+            en: { 
+                loginHeader: "Account Login", loginErr: "Incorrect Email or Password.",
+                navDash: "Overview", navAdd: "Add Record", subNew: "New Entry", subTrade: "Trade Record", navLang: "Language", navCurr: "Currency", navLogout: "Logout",
+                headTitle: "Dashboard Pro", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", 
+                chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", 
+                histTradeTitle: "Trading Journal", histTitle: "Recent History",
+                thDate1: "Date & Time", thAsset: "Asset", thPos: "Pos", thLev: "Lev", thNote1: "Trade Note", thRes: "Result", thAct1: "Action",
+                thDate2: "Date & Time", thDesc: "Description", thCat: "Category", thNote2: "Notes", thAmt: "Amount", thAct2: "Action",
+                modalEntryTitle: "Add Entry", tIn: "Description", aIn: "Amount", nIn: "Note", btnCancel1: "Cancel", btnConfirm1: "Confirm",
+                modalTradeTitle: "Trade Record", trPair: "Pair", trLev: "Leverage", trRes: "Result ($)", trNote: "Trade Note", btnCancel2: "Cancel", btnSave2: "Save",
+                delSureTitle: "Are you sure?", delSureDesc: "Deleting this record cannot be undone. Do you want to proceed?", closeDelBtn: "Cancel", confirmDelBtn: "Delete"
+            }, 
+            my: { 
+                loginHeader: "အကောင့်ဝင်ရန်", loginErr: "Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။",
+                navDash: "ခြုံသုံးသပ်ချက်", navAdd: "စာရင်းသွင်းရန်", subNew: "စာရင်းအသစ်", subTrade: "Trading Record", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", navLogout: "Logout",
+                headTitle: "Dashboard Pro", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", 
+                chart1Title: "Zero Baseline Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", 
+                histTradeTitle: "Trading Journal", histTitle: "စာရင်းမှတ်တမ်း",
+                thDate1: "နေ့စွဲနှင့်အချိန်", thAsset: "အဆက် (Pair)", thPos: "အနေအထား", thLev: "လီဗာရိတ်", thNote1: "မှတ်စု", thRes: "ရလဒ်", thAct1: "လုပ်ဆောင်ချက်",
+                thDate2: "နေ့စွဲနှင့်အချိန်", thDesc: "အကြောင်းအရာ", thCat: "အမျိုးအစား", thNote2: "မှတ်စု", thAmt: "ပမာဏ", thAct2: "လုပ်ဆောင်ချက်",
+                modalEntryTitle: "စာရင်းသွင်းရန်", tIn: "အကြောင်းအရာ", aIn: "ပမာဏ", nIn: "မှတ်စု", btnCancel1: "မလုပ်တော့ပါ", btnConfirm1: "အတည်ပြုမည်",
+                modalTradeTitle: "Trade မှတ်တမ်း", trPair: "အဆက် (Pair)", trLev: "လီဗာရိတ်", trRes: "ရလဒ် ($)", trNote: "မှတ်စု", btnCancel2: "မလုပ်တော့ပါ", btnSave2: "သိမ်းမည်",
+                delSureTitle: "သေချာပါသလား?", delSureDesc: "ဤမှတ်တမ်းကို ဖျက်လိုက်ပါက ပြန်ယူ၍ရတော့မည် မဟုတ်ပါ။ သေချာပေါက် ဖျက်လိုပါသလား?", closeDelBtn: "မဖျက်တော့ပါ", confirmDelBtn: "ဖျက်မည်"
+            } 
+        };
+        
         let lang = localStorage.getItem('lang') || 'my', curr = localStorage.getItem('curr') || 'USD';
 
         async function checkUser() { 
@@ -228,17 +255,30 @@
         function handleMenuToggle(id) { const subs = document.querySelectorAll('.submenu'); subs.forEach(s => { if(s.id !== id) s.classList.remove('active'); }); document.getElementById(id).classList.toggle('active'); }
         function changeLanguage(v) { lang = v; localStorage.setItem('lang', v); updateUI(); loadD(); }
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); updateUI(); loadD(); }
-        function updateUI() { const t = i18n[lang]; Object.keys(t).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = t[id]; }); document.querySelectorAll('.custom-option').forEach(el => el.classList.remove('active')); if(lang === 'en') document.getElementById('btnEn').classList.add('active'); else document.getElementById('btnMy').classList.add('active'); if(document.getElementById('curr' + curr)) document.getElementById('curr' + curr).classList.add('active'); }
+        
+        function updateUI() { 
+            const t = i18n[lang]; 
+            Object.keys(t).forEach(id => { 
+                const el = document.getElementById(id);
+                if(el) {
+                    if(el.tagName === 'INPUT') el.placeholder = t[id];
+                    else el.innerText = t[id];
+                }
+            }); 
+            document.querySelectorAll('.custom-option').forEach(el => el.classList.remove('active')); 
+            if(lang === 'en') document.getElementById('btnEn').classList.add('active'); else document.getElementById('btnMy').classList.add('active'); 
+            if(document.getElementById('curr' + curr)) document.getElementById('curr' + curr).classList.add('active'); 
+        }
 
         function openEntryModal() { 
             document.getElementById('editId').value = ""; 
-            document.getElementById('modalEntryTitle').innerText = "စာရင်းသွင်းရန်";
+            document.getElementById('modalEntryTitle').innerText = i18n[lang].modalEntryTitle;
             document.getElementById('tIn').value = ""; document.getElementById('aIn').value = ""; document.getElementById('nIn').value = "";
             openModal('entryModal'); 
         }
         function openTradeModal() { 
             document.getElementById('editTradeId').value = "";
-            document.getElementById('modalTradeTitle').innerText = "Trade Record";
+            document.getElementById('modalTradeTitle').innerText = i18n[lang].modalTradeTitle;
             document.getElementById('trPair').value = ""; document.getElementById('trRes').value = ""; document.getElementById('trNote').value = "";
             openModal('tradeModal'); 
         }
@@ -297,7 +337,7 @@
         function editT(data) {
             if(data.category === 'Trading') {
                 document.getElementById('editTradeId').value = data.id;
-                document.getElementById('modalTradeTitle').innerText = "စာရင်းပြင်ဆင်ရန် (Trade)";
+                document.getElementById('modalTradeTitle').innerText = (lang === 'my' ? "စာရင်းပြင်ဆင်ရန် (Trade)" : "Edit Trade Record");
                 document.getElementById('trPair').value = data.title;
                 document.getElementById('trRes').value = data.amount;
                 const p = (data.note || '').split(' | ');
@@ -307,7 +347,7 @@
                 openModal('tradeModal');
             } else {
                 document.getElementById('editId').value = data.id;
-                document.getElementById('modalEntryTitle').innerText = "စာရင်းပြင်ဆင်ရန်";
+                document.getElementById('modalEntryTitle').innerText = (lang === 'my' ? "စာရင်းပြင်ဆင်ရန်" : "Edit Entry");
                 document.getElementById('tIn').value = data.title;
                 document.getElementById('aIn').value = data.amount;
                 document.getElementById('nIn').value = data.note || "";
@@ -327,22 +367,17 @@
             window.c3 = new Chart(ctx3, { type:'doughnut', data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc, exp, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0 }] }, options: { maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom', labels:{color:'#8f9bb3', font:{size:10}, padding: 10}}} } });
         }
 
-        /* --- CUSTOM DELETE LOGIC (OVERWRITING ORIGINAL) --- */
         let deleteTargetId = null;
-
-        // မူရင်း deleteT function ကို overwrite လုပ်ပြီး custom modal ထဲကနေ confirm ယူခိုင်းခြင်း
         window.deleteT = function(id) {
             deleteTargetId = id;
             document.getElementById('customDelModal').classList.add('active');
         };
 
-        // Cancel ခလုတ်
         document.getElementById('closeDelBtn').onclick = function() {
             document.getElementById('customDelModal').classList.remove('active');
             deleteTargetId = null;
         };
 
-        // တကယ်ဖျက်မယ့် Confirm ခလုတ်
         document.getElementById('confirmDelBtn').onclick = async function() {
             if (deleteTargetId) {
                 const { error } = await sc.from('transactions').delete().eq('id', deleteTargetId);
