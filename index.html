@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Replaced Nunito with Quicksand for a better rounded match with Walone -->
+    <!-- Quicksand for English, Walone for Myanmar -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Libraries -->
@@ -20,7 +20,6 @@
 
     <style>
         /* --- SYSTEM TOKENS --- */
-        /* Define Walone Bold */
         @font-face { 
             font-family: 'WaloneBold'; 
             src: url('fonts/Z06-Walone Bold.ttf') format('truetype'); 
@@ -59,7 +58,7 @@
         /* Force Font Inheritance for Form Elements in Myanmar Mode */
         body.is-myanmar input, 
         body.is-myanmar select, 
-        body.is-myanmar button,
+        body.is-myanmar button, 
         body.is-myanmar .txt-mono,
         body.is-myanmar .my-font {
             font-family: 'WaloneBold', 'Quicksand', sans-serif !important;
@@ -77,7 +76,7 @@
             font-size: 14px;
             line-height: 1.5;
             letter-spacing: 0.3px; 
-            font-weight: 500; /* Quicksand looks better slightly heavier */
+            font-weight: 500; 
         }
 
         /* --- AURORA ANIMATION --- */
@@ -199,12 +198,12 @@
         /* --- DASHBOARD WIDGETS --- */
         .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
         
-        /* NEW BEAUTIFUL CARD DESIGN */
+        /* CARD DESIGN */
         .stat-card { 
             position: relative;
-            height: 160px; /* Taller for grandeur */
-            border-radius: 28px; 
-            padding: 24px;
+            height: 145px; 
+            border-radius: 24px; 
+            padding: 20px; 
             display: flex; flex-direction: column; justify-content: space-between;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -220,55 +219,77 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
 
-        /* Ambient Glow in Card */
         .stat-glow {
             position: absolute;
-            width: 150px; height: 150px;
+            width: 120px; height: 120px;
             border-radius: 50%;
-            filter: blur(70px);
-            opacity: 0.25;
-            top: -20px; right: -20px;
+            filter: blur(60px);
+            opacity: 0.2;
+            top: -30px; right: -30px;
             pointer-events: none;
             transition: 0.3s;
         }
-        .stat-card:hover .stat-glow { opacity: 0.4; }
+        .stat-card:hover .stat-glow { opacity: 0.35; }
 
         .stat-content {
             position: relative; z-index: 2;
             display: flex; flex-direction: column; height: 100%;
-            justify-content: space-between;
         }
 
         .stat-header-new {
-            display: flex; flex-direction: column; gap: 6px;
+            display: flex; flex-direction: column; gap: 4px;
+            margin-bottom: 2px;
         }
 
         .stat-label-new {
-            font-size: 13px; font-weight: 700; letter-spacing: 1px;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
             text-transform: uppercase; color: var(--text-mute);
             display: flex; align-items: center; gap: 8px;
         }
         
+        .stat-val-group {
+            display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+            margin-bottom: auto;
+        }
+        
         .stat-val {
-            font-size: 34px; font-weight: 800; color: #fff;
+            font-size: 26px; 
+            font-weight: 800; color: #fff;
             letter-spacing: -0.5px; line-height: 1.2;
             text-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
 
-        /* Floating Big Icon */
+        .stat-change {
+            font-size: 11px; font-weight: 700;
+            padding: 2px 8px; border-radius: 6px;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .stat-change.pos { color: var(--primary); background: rgba(0, 255, 163, 0.15); border: 1px solid rgba(0, 255, 163, 0.1); }
+        .stat-change.neg { color: var(--expense); background: rgba(255, 61, 113, 0.15); border: 1px solid rgba(255, 61, 113, 0.1); }
+        .stat-change.neu { color: var(--text-sec); background: rgba(255,255,255,0.05); }
+
+        .stat-chart-wrapper {
+            position: absolute; bottom: 0; left: 0; right: 0; 
+            height: 50px; 
+            z-index: 1; opacity: 0.5; pointer-events: none;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+            -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
+        }
+
         .stat-icon-bg {
             position: absolute;
-            right: -10px; bottom: -20px;
-            font-size: 100px;
-            opacity: 0.08;
+            right: -10px; bottom: -15px;
+            font-size: 80px;
+            opacity: 0.05;
             transform: rotate(-10deg);
             pointer-events: none;
             transition: 0.3s;
+            z-index: 0;
         }
         .stat-card:hover .stat-icon-bg {
             transform: rotate(0deg) scale(1.1);
-            opacity: 0.12;
-            bottom: -10px;
+            opacity: 0.08;
+            bottom: -5px;
         }
 
         /* Color Themes */
@@ -281,7 +302,7 @@
         .theme-trd .stat-glow { background: var(--warning); }
         .theme-trd .stat-icon-bg { color: var(--warning); }
         
-        .theme-net .stat-glow { background: #3b82f6; } /* Blue for Net */
+        .theme-net .stat-glow { background: #3b82f6; } 
         .theme-net .stat-icon-bg { color: #3b82f6; }
         .theme-net .text-neon { text-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
 
@@ -343,7 +364,7 @@
             padding: 16px 24px;
             border-top: 1px solid var(--glass-border);
             display: flex;
-            justify-content: flex-end; /* Moved numbers to the right */
+            justify-content: flex-end; 
             align-items: center;
             background: rgba(0,0,0,0.1);
         }
@@ -361,7 +382,6 @@
         .page-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
         .page-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
         
-        /* NEW HEADER ACTIONS & SELECTOR DESIGN */
         .header-actions {
             display: flex; align-items: center; gap: 12px;
         }
@@ -371,7 +391,7 @@
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--glass-border);
             color: var(--text-sec);
-            padding: 8px 32px 8px 16px; /* Space for arrow */
+            padding: 8px 32px 8px 16px; 
             border-radius: 10px;
             font-size: 12px; font-weight: 700;
             font-family: var(--font-header);
@@ -419,7 +439,6 @@
         }
         .modal-overlay.active .modal-box { transform: scale(1); }
 
-        /* --- NEW MODAL UI ELEMENTS --- */
         .input-group-icon {
             position: relative;
             display: flex;
@@ -525,7 +544,6 @@
         .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; }
         .btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
-        /* Custom Input Transition */
         #customCatInput { 
             display: none; 
             animation: slideInInput 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -684,7 +702,12 @@
                             <div class="stat-header-new">
                                 <span class="stat-label-new my-font" id="incTitle">ဝင်ငွေ</span>
                             </div>
-                            <div class="stat-val txt-mono" id="totalInc">0</div>
+                            <div class="stat-val-group">
+                                <div class="stat-val txt-mono" id="totalInc">0</div>
+                                <div class="stat-change" id="incChange"></div>
+                            </div>
+                            <!-- SPARKLINE -->
+                            <div class="stat-chart-wrapper"><canvas id="sparkInc"></canvas></div>
                         </div>
                         <i class="fa-solid fa-arrow-trend-up stat-icon-bg"></i>
                     </div>
@@ -696,7 +719,12 @@
                             <div class="stat-header-new">
                                 <span class="stat-label-new my-font" id="expTitle">ထွက်ငွေ</span>
                             </div>
-                            <div class="stat-val txt-mono" id="totalExp">0</div>
+                            <div class="stat-val-group">
+                                <div class="stat-val txt-mono" id="totalExp">0</div>
+                                <div class="stat-change" id="expChange"></div>
+                            </div>
+                            <!-- SPARKLINE -->
+                            <div class="stat-chart-wrapper"><canvas id="sparkExp"></canvas></div>
                         </div>
                         <i class="fa-solid fa-receipt stat-icon-bg"></i>
                     </div>
@@ -708,7 +736,12 @@
                             <div class="stat-header-new">
                                 <span class="stat-label-new my-font" id="statTrade">Trading Balance</span>
                             </div>
-                            <div class="stat-val txt-mono" id="tradeProfit">0</div>
+                            <div class="stat-val-group">
+                                <div class="stat-val txt-mono" id="tradeProfit">0</div>
+                                <div class="stat-change" id="trdChange"></div>
+                            </div>
+                            <!-- SPARKLINE -->
+                            <div class="stat-chart-wrapper"><canvas id="sparkTrd"></canvas></div>
                         </div>
                         <i class="fa-solid fa-chart-simple stat-icon-bg"></i>
                     </div>
@@ -720,7 +753,12 @@
                             <div class="stat-header-new">
                                 <span class="stat-label-new my-font" id="netTitle">လက်ကျန်</span>
                             </div>
-                            <div class="stat-val txt-mono text-neon" id="netBal">0</div>
+                            <div class="stat-val-group">
+                                <div class="stat-val txt-mono text-neon" id="netBal">0</div>
+                                <div class="stat-change" id="netChange"></div>
+                            </div>
+                            <!-- SPARKLINE -->
+                            <div class="stat-chart-wrapper"><canvas id="sparkNet"></canvas></div>
                         </div>
                         <i class="fa-solid fa-wallet stat-icon-bg"></i>
                     </div>
@@ -1028,13 +1066,15 @@
         let curr = localStorage.getItem('curr') || 'USD';
         
         // --- CUSTOM RATES ---
-        // Stored in localStorage for persistence. Default: USD=1, MMK=3500, THB=35
         let rates = JSON.parse(localStorage.getItem('rates')) || { USD: 1, MMK: 3500, THB: 35 };
 
         // --- GLOBAL DATA & PAGINATION ---
         let allData = [];
         let pgTrade = 1, limTrade = 10;
         let pgTrans = 1, limTrans = 10;
+
+        // Sparkline Chart Instances
+        let spk1, spk2, spk3, spk4;
         
         // --- INIT ---
         window.onload = async function() {
@@ -1110,7 +1150,6 @@
         function changeCurrency(v) { curr = v; localStorage.setItem('curr', v); updateUI(); loadD(); }
         
         function updateUI() { 
-            // Toggle Body Class for Myanmar Font Override
             if (lang === 'my') {
                 document.body.classList.add('is-myanmar');
             } else {
@@ -1132,7 +1171,6 @@
             if(document.getElementById('curr' + curr)) document.getElementById('curr' + curr).classList.add('active'); 
         }
 
-        /* --- NEW RATE LOGIC --- */
         function openRateModal() {
             document.getElementById('modalRateTitle').innerText = i18n[lang].modalRateTitle;
             document.getElementById('ratMMK').value = rates.MMK;
@@ -1149,19 +1187,17 @@
                 rates.THB = newTHB;
                 localStorage.setItem('rates', JSON.stringify(rates));
                 closeModal('rateModal');
-                loadD(); // Refresh data with new rates
+                loadD(); 
             } else {
                 alert("Please enter valid rates.");
             }
         }
 
-        /* --- NEW UI LOGIC --- */
         function selectCategory(val, el) {
             document.getElementById('cIn').value = val;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
 
-            // Show/Hide Custom Input
             const customInput = document.getElementById('customCatInput');
             if (val === 'Custom') {
                 customInput.style.display = 'flex';
@@ -1188,19 +1224,14 @@
             document.getElementById('modalEntryTitle').innerText = i18n[lang].modalEntryTitle;
             document.getElementById('tIn').value = ""; document.getElementById('aIn').value = ""; document.getElementById('nIn').value = "";
             document.getElementById('customCatText').value = "";
-            
-            // Reset Category to Others & Type to Expense
             selectCategory('Others', document.getElementById('cat_Others'));
             selectEntryType('Expense', document.getElementById('type_Expense'));
-            
             openModal('entryModal'); 
         }
         function openTradeModal() { 
             document.getElementById('editTradeId').value = "";
             document.getElementById('modalTradeTitle').innerText = i18n[lang].modalTradeTitle;
             document.getElementById('trPair').value = ""; document.getElementById('trRes').value = ""; document.getElementById('trNote').value = ""; document.getElementById('trLev').value = "";
-            
-            // Reset to Long
             selectTradeType('Long', document.getElementById('btn_Long'));
             openModal('tradeModal'); 
         }
@@ -1213,20 +1244,8 @@
                 const id = document.getElementById('editId').value;
                 const typeVal = document.getElementById('typeIn').value;
                 let catVal = document.getElementById('cIn').value;
-                
-                // Handle Custom Category
-                if (catVal === 'Custom') {
-                    catVal = document.getElementById('customCatText').value || 'Others';
-                }
-
-                // HANDLE INCOME/EXPENSE LOGIC
-                // If Type is Income, we prepend "Income: " to the category so we can identify it later
-                // If it's already "Income" (old data), it's fine.
-                if (typeVal === 'Income') {
-                    if (!catVal.startsWith('Income')) {
-                         catVal = 'Income: ' + catVal;
-                    }
-                }
+                if (catVal === 'Custom') catVal = document.getElementById('customCatText').value || 'Others';
+                if (typeVal === 'Income' && !catVal.startsWith('Income')) catVal = 'Income: ' + catVal;
 
                 const payload = {
                     title:document.getElementById('tIn').value, 
@@ -1258,33 +1277,25 @@
         async function loadD() {
             const {data}=await sc.from('transactions').select('*').order('created_at',{ascending:false});
             if(!data) return;
-            
-            // Store global for pagination/export
             allData = data;
-
-            // Render Overview & Charts
-            renderOverview();
             
-            // Render Tables
+            // Render Stats & Charts
+            try { renderOverview(); } catch (e) { console.warn("Chart render failed:", e); }
+            
+            // Render tables
             renderTables();
         }
 
         function renderOverview() {
             let inc=0, exp=0, tp=0; 
             
-            // --- CURRENCY LOGIC ---
-            // Use user-defined rates from localStorage
             let conversion = 1;
             let sym = '$';
 
-            if(curr === 'MMK') {
-                conversion = rates.MMK;
-                sym = 'Ks';
-            } else if (curr === 'THB') {
-                conversion = rates.THB;
-                sym = '฿';
-            }
+            if(curr === 'MMK') { conversion = rates.MMK; sym = 'Ks'; }
+            else if (curr === 'THB') { conversion = rates.THB; sym = '฿'; }
 
+            // Big Numbers (Total All Time)
             allData.forEach(d => {
                 if(d.category==='Trading') { 
                     tp += d.amount;
@@ -1299,8 +1310,179 @@
             animateValue(document.getElementById('totalExp'), exp*conversion, symHead);
             animateValue(document.getElementById('tradeProfit'), tp*conversion, symHead);
             animateValue(document.getElementById('netBal'), (inc-exp+tp)*conversion, symHead);
+
+            // --- SPARKLINE & PERCENTAGE LOGIC ---
+            // Prepare 30-day sparklines
+            try {
+                const incTrend = getSparkData(allData, 'Income', 30);
+                const expTrend = getSparkData(allData, 'Expense', 30);
+                const trdTrend = getSparkData(allData, 'Trading', 30);
+                const netTrend = getBalanceHistory(allData, 30);
+
+                // Render Percentages
+                renderChange('incChange', incTrend.percent);
+                renderChange('expChange', expTrend.percent);
+                renderChange('trdChange', trdTrend.percent);
+                renderChange('netChange', netTrend.percent);
+
+                // Render Sparklines
+                if(spk1) spk1.destroy(); spk1 = renderSpark('sparkInc', incTrend.values, '#00ffa3');
+                if(spk2) spk2.destroy(); spk2 = renderSpark('sparkExp', expTrend.values, '#ff3d71');
+                if(spk3) spk3.destroy(); spk3 = renderSpark('sparkTrd', trdTrend.values, '#ffaa00');
+                if(spk4) spk4.destroy(); spk4 = renderSpark('sparkNet', netTrend.values, '#3b82f6');
+                
+                renderCharts(allData, inc, exp, conversion);
+            } catch(e) {
+                console.log("Sparkline error:", e);
+                // Even if sparkline fails, old charts might still work
+                try { renderCharts(allData, inc, exp, conversion); } catch(ex){}
+            }
+        }
+
+        // Helper to process last N days data
+        function getSparkData(data, type, days) {
+            const today = new Date();
+            today.setHours(23,59,59,999);
             
-            renderCharts(allData, inc, exp, conversion);
+            // Buckets
+            const currentVals = new Array(days).fill(0);
+            let sumCurrent = 0, sumPrev = 0;
+
+            const cutoffCurrent = new Date(today); cutoffCurrent.setDate(today.getDate() - days);
+            const cutoffPrev = new Date(cutoffCurrent); cutoffPrev.setDate(cutoffCurrent.getDate() - days);
+
+            data.forEach(d => {
+                const dDate = new Date(d.created_at);
+                let val = d.amount;
+                // Check Type
+                let isMatch = false;
+                if(type === 'Trading') isMatch = (d.category === 'Trading');
+                else if(type === 'Income') isMatch = (d.category === 'Income' || d.category.startsWith('Income:'));
+                else if(type === 'Expense') isMatch = (d.category !== 'Income' && !d.category.startsWith('Income:') && d.category !== 'Trading');
+
+                if(isMatch) {
+                    // Populate current chart array
+                    const diffDays = Math.floor((today - dDate) / (1000 * 60 * 60 * 24));
+                    if(diffDays >= 0 && diffDays < days) {
+                        currentVals[(days - 1) - diffDays] += val;
+                        sumCurrent += val;
+                    }
+                    // Calculate previous sum for %
+                    const diffPrevDays = Math.floor((cutoffCurrent - dDate) / (1000 * 60 * 60 * 24));
+                    if(diffPrevDays >= 0 && diffPrevDays < days) {
+                        sumPrev += val;
+                    }
+                }
+            });
+
+            // Calculate Percent
+            let percent = 0;
+            if(sumPrev !== 0) percent = ((sumCurrent - sumPrev) / Math.abs(sumPrev)) * 100;
+            else if (sumCurrent !== 0) percent = 100; 
+
+            return { values: currentVals, percent: percent };
+        }
+
+        function getBalanceHistory(data, days) {
+            const sorted = [...data].sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+            
+            const today = new Date();
+            today.setHours(23,59,59,999);
+            
+            const dailyBalances = new Array(days).fill(0);
+            const cutoffDate = new Date(today); cutoffDate.setDate(today.getDate() - days);
+            
+            // Define Day boundaries
+            const dayBoundaries = [];
+            for(let i=0; i<days; i++) {
+                const d = new Date(cutoffDate); d.setDate(cutoffDate.getDate() + 1 + i); d.setHours(23,59,59,999);
+                dayBoundaries.push(d.getTime());
+            }
+
+            for(let i=0; i<days; i++) {
+                const targetEnd = dayBoundaries[i];
+                const bal = sorted.reduce((acc, t) => {
+                     if(new Date(t.created_at).getTime() <= targetEnd) {
+                         const isInc = t.category === 'Income' || t.category.startsWith('Income:');
+                         const isTrade = t.category === 'Trading';
+                         if(isTrade) return acc + t.amount;
+                         return isInc ? acc + t.amount : acc - t.amount;
+                     }
+                     return acc;
+                }, 0);
+                dailyBalances[i] = bal;
+            }
+
+            const balNow = dailyBalances[days-1];
+            const cutoffTime = dayBoundaries[0] - (24*60*60*1000); 
+            const balAgo = sorted.reduce((acc, t) => {
+                 if(new Date(t.created_at).getTime() <= cutoffTime) {
+                     const isInc = t.category === 'Income' || t.category.startsWith('Income:');
+                     const isTrade = t.category === 'Trading';
+                     if(isTrade) return acc + t.amount;
+                     return isInc ? acc + t.amount : acc - t.amount;
+                 }
+                 return acc;
+            }, 0);
+
+            let percent = 0;
+            if(balAgo !== 0) percent = ((balNow - balAgo) / Math.abs(balAgo)) * 100;
+            else if(balNow !== 0) percent = 100;
+
+            return { values: dailyBalances, percent: percent };
+        }
+
+        function renderChange(id, percent) {
+            const el = document.getElementById(id);
+            if(!el) return;
+            const r = Math.round(percent);
+            if(r > 0) {
+                el.className = 'stat-change pos';
+                el.innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${r}%`;
+            } else if (r < 0) {
+                el.className = 'stat-change neg';
+                el.innerHTML = `<i class="fa-solid fa-arrow-trend-down"></i> ${Math.abs(r)}%`;
+            } else {
+                el.className = 'stat-change neu';
+                el.innerHTML = `<i class="fa-solid fa-minus"></i> 0%`;
+            }
+        }
+
+        function renderSpark(id, data, color) {
+            const canvas = document.getElementById(id);
+            if(!canvas) return null;
+            const ctx = canvas.getContext('2d');
+            
+            // Gradient fill
+            const grad = ctx.createLinearGradient(0, 0, 0, 60);
+            grad.addColorStop(0, color);
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: new Array(data.length).fill(''),
+                    datasets: [{
+                        data: data,
+                        borderColor: color,
+                        borderWidth: 2,
+                        backgroundColor: grad,
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: {display: false}, tooltip: {enabled: false} },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false, min: Math.min(...data) - (Math.max(...data)*0.1) }
+                    },
+                    animation: { duration: 1000 }
+                }
+            });
         }
 
         function renderTables() {
@@ -1315,10 +1497,11 @@
         function renderTableHTML(data, tableId, pgId, page, limit, isTrade) {
             const tbody = document.getElementById(tableId);
             const pgContainer = document.getElementById(pgId);
+            if(!tbody || !pgContainer) return;
+
             tbody.innerHTML = '';
             pgContainer.innerHTML = '';
 
-            // --- CURRENCY LOGIC FOR TABLES ---
             let conversion = 1;
             let sym = '$';
             if(curr === 'MMK') { conversion = rates.MMK; sym = 'Ks'; }
@@ -1335,8 +1518,11 @@
             sliced.forEach(d => {
                 const dt = new Date(d.created_at);
                 const dtStr = `<div style="font-weight:600; color:#fff;">${dt.toLocaleDateString()}<br><span style="font-size:11px; color:var(--text-mute); font-weight:500;">${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`;
+                
+                // Safe data passing
+                const safeData = JSON.stringify(d).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
                 const acts = `<td style="text-align:center;">
-                    <div class="btn-icon" onclick='editT(${JSON.stringify(d)})'><i class="fa-solid fa-pen"></i></div>
+                    <div class="btn-icon" onclick='editT(${safeData})'><i class="fa-solid fa-pen"></i></div>
                     <div class="btn-icon del" onclick="deleteT(${d.id})"><i class="fa-solid fa-trash"></i></div>
                 </td></tr>`;
 
@@ -1354,17 +1540,12 @@
             // Pagination Controls
             const totalPages = Math.ceil(data.length / limit);
             if(totalPages > 1) {
-                // Determine visible pages (e.g., 1, 2, 3 ... Last)
-                // For simplicity, showing all if <= 7, else simplified
                 for (let i = 1; i <= totalPages; i++) {
                     const btn = document.createElement('div');
                     btn.className = `page-btn ${i === parseInt(page) ? 'active' : ''}`;
                     btn.innerText = i;
                     btn.onclick = () => changePage(isTrade ? 'trade' : 'trans', i);
                     pgContainer.appendChild(btn);
-                    
-                    // Simple logic to prevent too many buttons: show first 3, last 1, and current neighborhood
-                    // If complex logic is needed, we can add it. For now, simple list.
                 }
             }
         }
@@ -1390,7 +1571,7 @@
         }
 
         function animateValue(obj, end, prefix) {
-            obj.innerText = prefix + end.toLocaleString();
+            if(obj) obj.innerText = prefix + end.toLocaleString();
         }
 
         function editT(data) {
@@ -1443,65 +1624,158 @@
             if(typeof Chart === 'undefined') return;
             
             // DYNAMIC FONT BASED ON LANGUAGE
-            const activeFont = lang === 'my' ? "'WaloneBold', 'Nunito', sans-serif" : "'Nunito', 'WaloneBold', sans-serif";
+            const activeFont = lang === 'my' ? "'WaloneBold', 'Quicksand', sans-serif" : "'Quicksand', 'WaloneBold', sans-serif";
 
+            // Common Options for modern look
             const commonOptions = {
                 responsive: true, 
                 maintainAspectRatio:false, 
                 plugins:{
                     legend:{ display:false },
                     tooltip: {
-                        backgroundColor: 'rgba(20, 20, 23, 0.95)',
+                        backgroundColor: 'rgba(9, 9, 11, 0.95)',
                         titleColor: '#fff',
-                        bodyColor: '#94a3b8',
-                        borderColor: 'rgba(255,255,255,0.1)',
+                        bodyColor: '#cbd5e1',
+                        borderColor: 'rgba(255,255,255,0.08)',
                         borderWidth: 1,
-                        padding: 12,
-                        cornerRadius: 8,
+                        padding: 14,
+                        cornerRadius: 16,
                         displayColors: true,
-                        titleFont: { family: activeFont },
-                        bodyFont: { family: activeFont }
+                        titleFont: { family: activeFont, size: 13 },
+                        bodyFont: { family: activeFont, size: 13, weight: 600 },
+                        boxPadding: 6,
+                        usePointStyle: true
                     }
                 }
             };
 
-            const ctx1 = document.getElementById('cashChart').getContext('2d'); if(window.c1) window.c1.destroy();
-            const raw = data.slice(0,15).reverse();
+            // --- CHART 1: HISTORY TREND ---
+            const ctx1 = document.getElementById('cashChart').getContext('2d'); 
+            if(window.c1) window.c1.destroy();
             
-            const gradInc = ctx1.createLinearGradient(0,0,0,350); 
-            gradInc.addColorStop(0, 'rgba(0, 255, 163, 0.2)'); 
+            const raw = data.slice(0, 20).reverse(); // Show last 20 for density
+            
+            // Enhanced Gradients
+            const gradInc = ctx1.createLinearGradient(0, 0, 0, 400); 
+            gradInc.addColorStop(0, 'rgba(0, 255, 163, 0.25)'); 
             gradInc.addColorStop(1, 'rgba(0, 255, 163, 0)');
 
-            const gradExp = ctx1.createLinearGradient(0,0,0,350); 
-            gradExp.addColorStop(0, 'rgba(255, 61, 113, 0.2)'); 
+            const gradExp = ctx1.createLinearGradient(0, 0, 0, 400); 
+            gradExp.addColorStop(0, 'rgba(255, 61, 113, 0.25)'); 
             gradExp.addColorStop(1, 'rgba(255, 61, 113, 0)');
+
+            const gradTrade = ctx1.createLinearGradient(0, 0, 0, 400); 
+            gradTrade.addColorStop(0, 'rgba(255, 170, 0, 0.25)'); 
+            gradTrade.addColorStop(1, 'rgba(255, 170, 0, 0)');
             
             window.c1 = new Chart(ctx1, { 
                 type:'line', 
                 data: { 
-                    labels: ['Start', ...raw.map(d=>'')], 
+                    labels: ['Start', ...raw.map((d, i) => '')], // Add Start label
                     datasets: [
-                        // UPDATED CHART LOGIC: Multiply by conversion rate
-                        { label: 'Inc', data: [0, ...raw.map(d=>(d.category==='Income' || d.category.startsWith('Income:'))?d.amount*conversion:null)], borderColor:'#00ffa3', backgroundColor: gradInc, tension:0.4, fill:true, spanGaps:true, pointRadius: 0, pointHoverRadius:6, borderWidth: 2 }, 
-                        { label: 'Exp', data: [0, ...raw.map(d=>(d.category!=='Income' && !d.category.startsWith('Income:') && d.category!=='Trading')?d.amount*conversion:null)], borderColor:'#ff3d71', backgroundColor: gradExp, tension:0.4, fill:true, spanGaps:true, pointRadius: 0, pointHoverRadius:6, borderWidth: 2 }, 
-                        { label: 'Trade', data: [0, ...raw.map(d=>d.category==='Trading'?d.amount*conversion:null)], borderColor:'#ffaa00', borderDash:[6,6], tension:0.4, fill:false, spanGaps:true, pointRadius: 0, borderWidth: 2 }
+                        { 
+                            label: 'Income', 
+                            data: [0, ...raw.map(d=>(d.category==='Income' || d.category.startsWith('Income:'))?d.amount*conversion:null)], 
+                            borderColor:'#00ffa3', 
+                            backgroundColor: gradInc, 
+                            tension: 0.4, 
+                            fill: true, 
+                            spanGaps: true, 
+                            pointRadius: 0, 
+                            pointHoverRadius: 6, 
+                            pointBackgroundColor: '#00ffa3',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            borderWidth: 3
+                        }, 
+                        { 
+                            label: 'Expense', 
+                            data: [0, ...raw.map(d=>(d.category!=='Income' && !d.category.startsWith('Income:') && d.category!=='Trading')?d.amount*conversion:null)], 
+                            borderColor:'#ff3d71', 
+                            backgroundColor: gradExp, 
+                            tension: 0.4, 
+                            fill: true, 
+                            spanGaps: true, 
+                            pointRadius: 0, 
+                            pointHoverRadius: 6, 
+                            pointBackgroundColor: '#ff3d71',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            borderWidth: 3
+                        }, 
+                        { 
+                            label: 'Trade', 
+                            data: [0, ...raw.map(d=>d.category==='Trading'?d.amount*conversion:null)], 
+                            borderColor:'#ffaa00', 
+                            backgroundColor: gradTrade, 
+                            tension: 0.4, 
+                            fill: true, 
+                            spanGaps: true, 
+                            pointRadius: 0, 
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#ffaa00',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            borderWidth: 3
+                        }
                     ]
                 }, 
                 options: { 
                     ...commonOptions,
                     interaction: { mode: 'index', intersect: false },
                     scales:{
-                        y:{ beginAtZero:true, grid:{color:'rgba(255,255,255,0.03)', drawBorder: false}, ticks:{ color:'#64748b', font:{size:11, family: activeFont} } }, 
-                        x:{ grid:{display:false}, ticks:{display:false} }
+                        y:{ 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(255,255,255,0.04)', borderDash: [6, 6], drawBorder: false }, 
+                            ticks: { color: '#64748b', font: { size: 10, family: activeFont, weight: 600 } } 
+                        }, 
+                        x:{ 
+                            display: false 
+                        }
                     } 
                 } 
             });
             
-            const ctx3 = document.getElementById('pieChart').getContext('2d'); if(window.c3) window.c3.destroy();
+            // --- CHART 2: SHARE RATIO ---
+            const ctx3 = document.getElementById('pieChart').getContext('2d'); 
+            if(window.c3) window.c3.destroy();
+
+            const tradeVol = Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))*conversion;
+
             window.c3 = new Chart(ctx3, { 
                 type:'doughnut', 
-                data: { labels: ['Inc','Exp','Trade'], datasets: [{ data: [inc*conversion, exp*conversion, Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))*conversion], backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], borderWidth:0, hoverOffset: 4 }] }, 
-                options: { ...commonOptions, cutout:'85%', plugins:{legend:{position:'bottom', labels:{usePointStyle:true, padding: 15, color:'#94a3b8', font:{family: activeFont}}}} } 
+                data: { 
+                    labels: ['Income','Expense','Trading'], 
+                    datasets: [{ 
+                        data: [inc*conversion, exp*conversion, tradeVol], 
+                        backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], 
+                        borderColor: 'transparent', 
+                        borderWidth: 0,
+                        hoverOffset: 12,
+                        borderRadius: 6,
+                        spacing: 5
+                    }] 
+                }, 
+                options: { 
+                    ...commonOptions, 
+                    cutout: '72%', 
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 20,
+                                color: '#94a3b8',
+                                font: { family: activeFont, size: 11, weight: 700 }
+                            }
+                        },
+                        tooltip: {
+                            ...commonOptions.plugins.tooltip
+                        }
+                    } 
+                } 
             });
         }
 
