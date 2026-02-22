@@ -3,23 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spendio - Pro Dashboard</title>
+    <title>Spendio - Finance Dashboard</title>
     
     <!-- Icons & Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Quicksand for English, Walone for Myanmar -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Excel Export Library -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
     <style>
-        /* --- SYSTEM TOKENS --- */
         @font-face { 
             font-family: 'WaloneBold'; 
             src: url('fonts/Z06-Walone Bold.ttf') format('truetype'); 
@@ -27,95 +24,97 @@
         }
         
         :root {
-            /* Colors */
-            --bg-dark: #09090b;
-            --primary: #00ffa3; 
-            --primary-dim: rgba(0, 255, 163, 0.1);
-            --expense: #ff3d71;
-            --expense-dim: rgba(255, 61, 113, 0.1);
-            --warning: #ffaa00;
-            --warning-dim: rgba(255, 170, 0, 0.1);
-            --text-main: #ffffff;
-            --text-sec: #94a3b8;
-            --text-mute: #64748b;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-elevated: #16161f;
+            --bg-surface: #1c1c27;
+
+            --accent: #10b981;
+            --accent-dim: rgba(16, 185, 129, 0.1);
+            --accent-glow: rgba(16, 185, 129, 0.25);
+            --expense: #ef4444;
+            --expense-dim: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.1);
+            --info: #3b82f6;
+            --info-dim: rgba(59, 130, 246, 0.1);
+
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #475569;
+            --text-dim: #334155;
             
-            /* Surfaces */
-            --glass-bg: rgba(20, 20, 23, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.06);
-            --sidebar-bg: rgba(10, 10, 12, 0.8);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --ring: rgba(16, 185, 129, 0.4);
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 24px;
+
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
+            --shadow-glow: 0 0 30px var(--accent-glow);
+
+            --font-stack: 'Inter', 'WaloneBold', system-ui, sans-serif; 
+            --font-header: 'Inter', 'WaloneBold', system-ui, sans-serif;
             
-            /* Typography Defaults (English Primary - Quicksand) */
-            --font-stack: 'Quicksand', 'WaloneBold', sans-serif; 
-            --font-header: 'Quicksand', 'WaloneBold', sans-serif;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Override for Myanmar Language Mode */
         body.is-myanmar {
-            --font-stack: 'WaloneBold', 'Quicksand', sans-serif;
-            --font-header: 'WaloneBold', 'Quicksand', sans-serif;
+            --font-stack: 'WaloneBold', 'Inter', system-ui, sans-serif;
+            --font-header: 'WaloneBold', 'Inter', system-ui, sans-serif;
         }
 
-        /* Force Font Inheritance for Form Elements in Myanmar Mode */
         body.is-myanmar input, 
         body.is-myanmar select, 
         body.is-myanmar button, 
         body.is-myanmar .txt-mono,
         body.is-myanmar .my-font {
-            font-family: 'WaloneBold', 'Quicksand', sans-serif !important;
+            font-family: 'WaloneBold', 'Inter', system-ui, sans-serif !important;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            background: var(--bg-dark); 
-            color: var(--text-main); 
+            background: var(--bg-primary); 
+            color: var(--text-primary); 
             font-family: var(--font-stack); 
             display: flex; 
             height: 100vh; 
             overflow: hidden; 
             font-size: 14px;
-            line-height: 1.5;
-            letter-spacing: 0.3px; 
-            font-weight: 500; 
+            line-height: 1.6;
+            letter-spacing: -0.01em; 
+            font-weight: 400; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- AURORA ANIMATION --- */
-        .ambient-light { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-        .blob { position: absolute; filter: blur(100px); opacity: 0.3; animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; }
-        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #1e3a8a; } 
-        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: #064e3b; animation-delay: -5s; }
-        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: #4c1d95; animation-delay: -10s; transform: translate(-50%, -50%); }
-        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(20px, 40px) scale(1.05); } }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-dim); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-        /* --- UTILITIES --- */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Typography Helpers */
-        .txt-h1 { font-size: 24px; font-weight: 700; }
-        .txt-h2 { font-size: 18px; font-weight: 700; }
-        .txt-h3 { font-size: 15px; font-weight: 700; }
-        .txt-body { font-size: 14px; color: var(--text-sec); font-weight: 500; } 
-        .txt-sm { font-size: 12px; color: var(--text-mute); font-weight: 600; }
+        /* --- TYPOGRAPHY --- */
+        .txt-h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+        .txt-h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+        .txt-h3 { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+        .txt-body { font-size: 13px; color: var(--text-secondary); font-weight: 400; } 
+        .txt-sm { font-size: 11px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.02em; }
         .txt-mono { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; font-family: var(--font-stack); }
         .my-font { font-family: var(--font-header) !important; letter-spacing: 0; } 
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-mute); }
-
-        /* --- LAYOUT STRUCTURE --- */
+        /* --- LAYOUT --- */
         .sidebar { 
             width: 260px; 
-            background: var(--sidebar-bg); 
-            backdrop-filter: blur(30px); 
-            border-right: 1px solid var(--glass-border); 
+            background: var(--bg-secondary); 
+            border-right: 1px solid var(--border); 
             display: flex; flex-direction: column; 
             height: 100vh; flex-shrink: 0;
             z-index: 1000;
@@ -125,111 +124,113 @@
         .main-container { flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
         
         .top-header { 
-            height: 72px; padding: 0 32px; 
+            height: 64px; padding: 0 28px; 
             display: flex; align-items: center; justify-content: space-between; 
             flex-shrink: 0; position: sticky; top: 0; z-index: 500;
-            background: rgba(9, 9, 11, 0.6); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
+            background: rgba(10, 10, 15, 0.8); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
         }
 
         .content-body { 
-            padding: 32px; max-width: 1600px; margin: 0 auto; width: 100%; 
-            display: flex; flex-direction: column; gap: 24px; padding-bottom: 60px;
+            padding: 24px 28px; max-width: 1520px; margin: 0 auto; width: 100%; 
+            display: flex; flex-direction: column; gap: 20px; padding-bottom: 60px;
         }
 
-        /* --- SIDEBAR COMPONENTS --- */
+        /* --- SIDEBAR --- */
         .logo-box { 
-            height: 72px; padding: 0 24px; display: flex; align-items: center; gap: 12px;
-            font-size: 22px; font-weight: 700; color: #fff; 
-            border-bottom: 1px solid transparent; 
+            height: 64px; padding: 0 20px; display: flex; align-items: center; gap: 12px;
+            font-size: 18px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em;
+            border-bottom: 1px solid var(--border); 
         }
         .logo-icon {
-            width: 32px; height: 32px; background: var(--primary); 
-            border-radius: 10px; 
+            width: 34px; height: 34px; background: var(--accent); 
+            border-radius: var(--radius-sm); 
             display: flex; align-items: center; justify-content: center;
-            color: #000; font-size: 16px; box-shadow: 0 0 15px var(--primary-dim);
+            color: #fff; font-size: 14px; 
+            box-shadow: 0 0 20px var(--accent-dim);
         }
 
-        .nav-group { padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; }
+        .nav-group { padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; flex: 1; overflow-y: auto; }
         .nav-label { 
-            font-size: 11px; font-weight: 700; text-transform: uppercase; 
-            color: var(--text-mute); letter-spacing: 1px; padding: 0 12px; margin: 16px 0 8px; 
+            font-size: 10px; font-weight: 600; text-transform: uppercase; 
+            color: var(--text-dim); letter-spacing: 0.08em; padding: 8px 12px; margin-top: 12px;
         }
+        .nav-label:first-child { margin-top: 0; }
         
         .nav-item { 
             display: flex; align-items: center; justify-content: space-between; 
-            padding: 12px; color: var(--text-sec); 
-            cursor: pointer; border-radius: 12px; font-weight: 600; font-size: 14px;
-            transition: all 0.2s;
+            padding: 9px 12px; color: var(--text-secondary); 
+            cursor: pointer; border-radius: var(--radius-sm); font-weight: 500; font-size: 13px;
+            transition: var(--transition);
         }
-        .nav-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
+        .nav-item:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
         .nav-item.active { 
-            background: var(--primary-dim); color: var(--primary); 
-            font-weight: 700;
+            background: var(--accent-dim); color: var(--accent); 
+            font-weight: 600;
         }
+        .nav-item i { font-size: 13px; width: 20px; text-align: center; }
         
         .submenu { 
-            display: none; padding-left: 12px; margin-top: 2px;
-            border-left: 2px solid rgba(255,255,255,0.05); margin-left: 18px; 
+            display: none; padding-left: 8px; margin-top: 2px;
+            border-left: 2px solid var(--border); margin-left: 22px; 
         }
         .submenu.active { display: block; animation: slideDown 0.2s ease-out; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
         .sub-link {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 12px; font-size: 13px; color: var(--text-mute);
-            cursor: pointer; border-radius: 8px; margin-top: 2px;
-            transition: 0.2s; font-weight: 600;
+            padding: 8px 12px; font-size: 12px; color: var(--text-muted);
+            cursor: pointer; border-radius: var(--radius-sm); margin-top: 1px;
+            transition: var(--transition); font-weight: 500;
         }
-        .sub-link:hover { color: var(--text-main); }
-        .sub-link.active { color: var(--primary); }
-        .radio-dot { width: 8px; height: 8px; border-radius: 50%; background: #333; }
-        .sub-link.active .radio-dot { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
+        .sub-link:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+        .sub-link.active { color: var(--accent); }
+        .radio-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); transition: var(--transition); }
+        .sub-link.active .radio-dot { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
 
-        .logout-box { margin-top: auto; padding: 24px; border-top: 1px solid var(--glass-border); }
+        .logout-box { padding: 16px 12px; border-top: 1px solid var(--border); }
         .logout-btn {
-            width: 100%; padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
-            background: rgba(255, 61, 113, 0.05); border: 1px solid rgba(255, 61, 113, 0.1);
-            color: var(--expense); border-radius: 14px; font-weight: 700; cursor: pointer;
-            transition: 0.2s; font-size: 14px;
+            width: 100%; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--expense-dim); border: 1px solid rgba(239, 68, 68, 0.08);
+            color: var(--expense); border-radius: var(--radius-sm); font-weight: 600; cursor: pointer;
+            transition: var(--transition); font-size: 13px;
         }
         .logout-btn:hover { background: var(--expense); color: #fff; border-color: var(--expense); }
 
-        /* --- DASHBOARD WIDGETS --- */
-        .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        /* --- STAT CARDS --- */
+        .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
         
-        /* CARD DESIGN */
         .stat-card { 
             position: relative;
-            height: 145px; 
-            border-radius: 24px; 
-            padding: 20px; 
+            border-radius: var(--radius-lg); 
+            padding: 20px;
             display: flex; flex-direction: column; justify-content: space-between;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(20, 20, 23, 0.4);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            transition: var(--transition);
             cursor: default;
+            min-height: 140px;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
 
         .stat-glow {
             position: absolute;
-            width: 120px; height: 120px;
+            width: 100px; height: 100px;
             border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.2;
-            top: -30px; right: -30px;
+            filter: blur(50px);
+            opacity: 0.12;
+            top: -20px; right: -20px;
             pointer-events: none;
-            transition: 0.3s;
+            transition: var(--transition);
         }
-        .stat-card:hover .stat-glow { opacity: 0.35; }
+        .stat-card:hover .stat-glow { opacity: 0.2; }
 
         .stat-content {
             position: relative; z-index: 2;
@@ -237,207 +238,220 @@
         }
 
         .stat-header-new {
-            display: flex; flex-direction: column; gap: 4px;
-            margin-bottom: 2px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px;
         }
 
         .stat-label-new {
-            font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
-            text-transform: uppercase; color: var(--text-mute);
-            display: flex; align-items: center; gap: 8px;
+            font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+            text-transform: uppercase; color: var(--text-muted);
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .stat-icon-inline {
+            width: 28px; height: 28px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px;
         }
         
         .stat-val-group {
-            display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+            display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
             margin-bottom: auto;
         }
         
         .stat-val {
-            font-size: 26px; 
-            font-weight: 800; color: #fff;
-            letter-spacing: -0.5px; line-height: 1.2;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            font-size: 24px; 
+            font-weight: 800; color: var(--text-primary);
+            letter-spacing: -0.03em; line-height: 1;
         }
 
         .stat-change {
-            font-size: 11px; font-weight: 700;
-            padding: 2px 8px; border-radius: 6px;
-            display: flex; align-items: center; gap: 4px;
+            font-size: 11px; font-weight: 600;
+            padding: 2px 8px; border-radius: 20px;
+            display: inline-flex; align-items: center; gap: 3px;
         }
-        .stat-change.pos { color: var(--primary); background: rgba(0, 255, 163, 0.15); border: 1px solid rgba(0, 255, 163, 0.1); }
-        .stat-change.neg { color: var(--expense); background: rgba(255, 61, 113, 0.15); border: 1px solid rgba(255, 61, 113, 0.1); }
-        .stat-change.neu { color: var(--text-sec); background: rgba(255,255,255,0.05); }
+        .stat-change.pos { color: var(--accent); background: var(--accent-dim); }
+        .stat-change.neg { color: var(--expense); background: var(--expense-dim); }
+        .stat-change.neu { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
 
         .stat-chart-wrapper {
             position: absolute; bottom: 0; left: 0; right: 0; 
             height: 50px; 
-            z-index: 1; opacity: 0.5; pointer-events: none;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+            z-index: 1; opacity: 0.4; pointer-events: none;
+            mask-image: linear-gradient(to top, black 30%, transparent 100%);
             -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
         }
 
         .stat-icon-bg {
             position: absolute;
-            right: -10px; bottom: -15px;
-            font-size: 80px;
-            opacity: 0.05;
+            right: -8px; bottom: -12px;
+            font-size: 72px;
+            opacity: 0.03;
             transform: rotate(-10deg);
             pointer-events: none;
-            transition: 0.3s;
+            transition: var(--transition);
             z-index: 0;
         }
         .stat-card:hover .stat-icon-bg {
-            transform: rotate(0deg) scale(1.1);
-            opacity: 0.08;
-            bottom: -5px;
+            transform: rotate(0deg) scale(1.05);
+            opacity: 0.06;
         }
 
-        /* Color Themes */
-        .theme-inc .stat-glow { background: var(--primary); }
-        .theme-inc .stat-icon-bg { color: var(--primary); }
+        .theme-inc .stat-glow { background: var(--accent); }
+        .theme-inc .stat-icon-bg { color: var(--accent); }
+        .theme-inc .stat-icon-inline { background: var(--accent-dim); color: var(--accent); }
         
         .theme-exp .stat-glow { background: var(--expense); }
         .theme-exp .stat-icon-bg { color: var(--expense); }
+        .theme-exp .stat-icon-inline { background: var(--expense-dim); color: var(--expense); }
         
         .theme-trd .stat-glow { background: var(--warning); }
         .theme-trd .stat-icon-bg { color: var(--warning); }
+        .theme-trd .stat-icon-inline { background: var(--warning-dim); color: var(--warning); }
         
-        .theme-net .stat-glow { background: #3b82f6; } 
-        .theme-net .stat-icon-bg { color: #3b82f6; }
-        .theme-net .text-neon { text-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+        .theme-net .stat-glow { background: var(--info); } 
+        .theme-net .stat-icon-bg { color: var(--info); }
+        .theme-net .stat-icon-inline { background: var(--info-dim); color: var(--info); }
 
-        /* Charts */
-        .charts-main-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 24px; }
+        /* --- CHARTS --- */
+        .charts-main-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 16px; }
         .chart-box { 
-            border-radius: 26px; padding: 26px; height: 400px; 
+            border-radius: var(--radius-lg); padding: 20px; height: 380px; 
             display: flex; flex-direction: column;
+            background: var(--bg-secondary); border: 1px solid var(--border);
+            transition: var(--transition);
         }
-        .chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .chart-box:hover { border-color: var(--border-hover); }
+        .chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .chart-container { flex: 1; width: 100%; position: relative; overflow: hidden; }
 
-        /* Tables */
-        .table-card { border-radius: 26px; overflow: hidden; display: flex; flex-direction: column; }
+        /* --- TABLES --- */
+        .table-card { 
+            border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; 
+            background: var(--bg-secondary); border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .table-card:hover { border-color: var(--border-hover); }
         .table-head-bar { 
-            padding: 20px 24px; border-bottom: 1px solid var(--glass-border); 
+            padding: 16px 20px; border-bottom: 1px solid var(--border); 
             display: flex; align-items: center; justify-content: space-between;
         }
-        .table-title-group { display: flex; align-items: center; gap: 12px; }
+        .table-title-group { display: flex; align-items: center; gap: 10px; }
         .table-icon { 
-            width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; 
-            font-size: 14px;
+            width: 30px; height: 30px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; 
+            font-size: 13px;
         }
         
-        .table-wrap { overflow-x: auto; min-height: 200px; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        .table-wrap { overflow-x: auto; min-height: 180px; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
         
         th { 
-            text-align: left; padding: 18px 24px; 
-            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-            color: var(--text-mute); background: rgba(0,0,0,0.2); backdrop-filter: blur(5px);
-            position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--glass-border);
+            text-align: left; padding: 12px 20px; 
+            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--text-muted); background: rgba(0,0,0,0.15);
+            position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--border);
         }
         td { 
-            padding: 18px 24px; border-bottom: 1px solid var(--glass-border); 
-            font-size: 14px; color: var(--text-sec); font-weight: 600;
+            padding: 14px 20px; border-bottom: 1px solid var(--border); 
+            font-size: 13px; color: var(--text-secondary); font-weight: 500;
         }
-        tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-main); }
+        tr { transition: var(--transition); }
+        tr:hover td { background: rgba(255,255,255,0.015); color: var(--text-primary); }
         
-        /* Pills & Badges */
+        /* Pills */
         .pill { 
-            display: inline-flex; padding: 6px 12px; border-radius: 20px; 
-            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            display: inline-flex; padding: 4px 10px; border-radius: 20px; 
+            font-size: 11px; font-weight: 600; letter-spacing: 0.01em;
         }
-        .pill-inc { background: var(--primary-dim); color: var(--primary); border: 1px solid rgba(0,255,163,0.2); }
-        .pill-exp { background: var(--expense-dim); color: var(--expense); border: 1px solid rgba(255,61,113,0.2); }
+        .pill-inc { background: var(--accent-dim); color: var(--accent); }
+        .pill-exp { background: var(--expense-dim); color: var(--expense); }
 
         .btn-icon { 
-            width: 34px; height: 34px; border-radius: 10px; 
+            width: 30px; height: 30px; border-radius: var(--radius-sm); 
             display: inline-flex; align-items: center; justify-content: center;
-            background: rgba(255,255,255,0.03); color: var(--text-mute); border: 1px solid var(--glass-border);
-            cursor: pointer; transition: 0.2s; margin-left: 4px;
+            background: rgba(255,255,255,0.03); color: var(--text-muted); border: 1px solid var(--border);
+            cursor: pointer; transition: var(--transition); margin-left: 4px; font-size: 12px;
         }
-        .btn-icon:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-2px); }
+        .btn-icon:hover { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
         .btn-icon.del:hover { background: var(--expense); color: #fff; border-color: var(--expense); }
 
-        /* Pagination & Export */
+        /* Pagination */
         .pagination-bar {
-            padding: 16px 24px;
-            border-top: 1px solid var(--glass-border);
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: flex-end; 
             align-items: center;
-            background: rgba(0,0,0,0.1);
         }
-        .page-numbers { display: flex; gap: 6px; }
+        .page-numbers { display: flex; gap: 4px; }
         .page-btn {
-            width: 32px; height: 32px; border-radius: 8px;
-            border: 1px solid var(--glass-border);
-            background: rgba(255,255,255,0.03);
-            color: var(--text-sec);
+            width: 30px; height: 30px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
             cursor: pointer;
-            font-size: 13px; font-weight: 700;
+            font-size: 12px; font-weight: 600;
             display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
+            transition: var(--transition);
         }
-        .page-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .page-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
+        .page-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
+        .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
         
         .header-actions {
-            display: flex; align-items: center; gap: 12px;
+            display: flex; align-items: center; gap: 8px;
         }
 
         .rows-sel {
             appearance: none; -webkit-appearance: none; -moz-appearance: none;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-sec);
-            padding: 8px 32px 8px 16px; 
-            border-radius: 10px;
-            font-size: 12px; font-weight: 700;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 28px 6px 12px; 
+            border-radius: var(--radius-sm);
+            font-size: 12px; font-weight: 500;
             font-family: var(--font-header);
             cursor: pointer;
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px top 50%;
-            background-size: 10px auto;
-            transition: all 0.2s;
-            height: 36px;
+            background-position: right 10px top 50%;
+            background-size: 8px auto;
+            transition: var(--transition);
+            height: 32px;
         }
-        .rows-sel:hover { background-color: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
-        .rows-sel:focus { border-color: var(--primary); outline: none; }
-        .rows-sel option { background: #121215; color: #fff; }
+        .rows-sel:hover { background-color: rgba(255,255,255,0.07); color: var(--text-primary); }
+        .rows-sel:focus { border-color: var(--accent); }
+        .rows-sel option { background: var(--bg-elevated); color: var(--text-primary); }
 
         .export-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-sec);
-            padding: 0 16px;
-            height: 36px;
-            border-radius: 10px;
-            font-size: 12px; font-weight: 700;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0 12px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            font-size: 12px; font-weight: 500;
             cursor: pointer;
-            display: flex; align-items: center; gap: 8px;
-            transition: 0.2s;
+            display: flex; align-items: center; gap: 6px;
+            transition: var(--transition);
         }
-        .export-btn:hover { background: #fff; color: #000; }
-
+        .export-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
         /* --- MODALS --- */
         .modal-overlay { 
             position: fixed; inset: 0; z-index: 2000;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(12px);
             display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s;
         }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         
         .modal-box { 
-            background: #121215; border: 1px solid var(--glass-border); 
-            padding: 32px; border-radius: 30px; width: 440px; 
-            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
-            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: var(--bg-elevated); border: 1px solid var(--border); 
+            padding: 28px; border-radius: var(--radius-xl); width: 420px; 
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.96) translateY(8px); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
 
         .input-group-icon {
             position: relative;
@@ -446,177 +460,247 @@
         }
         .input-group-icon i {
             position: absolute;
-            left: 20px;
-            color: var(--text-mute);
-            font-size: 16px;
+            left: 16px;
+            color: var(--text-dim);
+            font-size: 14px;
         }
         .input-group-icon .form-input {
-            padding-left: 50px;
+            padding-left: 44px;
         }
         
         /* Category Grid */
         .category-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 8px;
+            margin-bottom: 16px;
         }
         .cat-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 16px 10px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            padding: 14px 8px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: 0.2s;
-            color: var(--text-sec);
+            transition: var(--transition);
+            color: var(--text-secondary);
         }
-        .cat-btn:hover { background: rgba(255,255,255,0.06); }
+        .cat-btn:hover { background: rgba(255,255,255,0.04); border-color: var(--border-hover); }
         .cat-btn.active { 
-            background: var(--primary-dim); 
-            border-color: var(--primary);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(0,255,163,0.1);
+            background: var(--accent-dim); 
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--text-primary);
         }
-        .cat-btn.active .cat-icon { color: var(--primary); transform: scale(1.1); }
+        .cat-btn.active .cat-icon { color: var(--accent); transform: scale(1.05); }
         
-        .cat-icon { font-size: 20px; margin-bottom: 8px; transition: 0.2s; }
-        .cat-label { font-size: 12px; font-weight: 700; text-align: center; }
+        .cat-icon { font-size: 18px; margin-bottom: 6px; transition: var(--transition); }
+        .cat-label { font-size: 11px; font-weight: 600; text-align: center; }
 
         /* Trade Toggle */
         .trade-toggle {
             display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 8px;
+            margin-bottom: 16px;
         }
         .type-btn {
             flex: 1;
-            padding: 18px;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            background: rgba(255,255,255,0.03);
-            color: var(--text-sec);
-            font-weight: 700;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+            color: var(--text-secondary);
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: 0.2s;
+            gap: 8px;
+            transition: var(--transition);
             font-family: var(--font-header);
+            font-size: 13px;
         }
-        .type-btn.long:hover { border-color: var(--primary); color: #fff; }
-        .type-btn.short:hover { border-color: var(--expense); color: #fff; }
+        .type-btn.long:hover { border-color: rgba(16, 185, 129, 0.3); color: var(--text-primary); }
+        .type-btn.short:hover { border-color: rgba(239, 68, 68, 0.3); color: var(--text-primary); }
         
         .type-btn.long.active {
-            background: var(--primary-dim);
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 15px rgba(0,255,163,0.15);
+            background: var(--accent-dim);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--accent);
         }
         .type-btn.short.active {
             background: var(--expense-dim);
-            border-color: var(--expense);
+            border-color: rgba(239, 68, 68, 0.3);
             color: var(--expense);
-            box-shadow: 0 0 15px rgba(255,61,113,0.15);
         }
 
         /* Forms */
-        .form-group { margin-bottom: 16px; }
+        .form-group { margin-bottom: 12px; }
         .form-input, .form-select { 
-            width: 100%; padding: 16px 20px; 
-            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); 
-            color: #fff; border-radius: 16px; outline: none; 
-            font-family: var(--font-stack); font-size: 15px; font-weight: 600; transition: 0.2s;
+            width: 100%; padding: 12px 16px; 
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
+            color: var(--text-primary); border-radius: var(--radius-md); outline: none; 
+            font-family: var(--font-stack); font-size: 14px; font-weight: 500; transition: var(--transition);
         }
-        .form-input:focus, .form-select:focus { border-color: var(--primary); background: var(--primary-dim); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-input::placeholder { color: var(--text-dim); }
+        .form-input:focus, .form-select:focus { border-color: var(--accent); background: rgba(16, 185, 129, 0.04); box-shadow: 0 0 0 3px var(--ring); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         .btn-primary, .btn-secondary { 
-            height: 52px; border-radius: 16px; font-weight: 700; cursor: pointer; border: none; 
-            font-family: var(--font-header); flex: 1; transition: 0.2s; font-size: 15px;
+            height: 44px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; border: none; 
+            font-family: var(--font-header); flex: 1; transition: var(--transition); font-size: 14px;
         }
-        .btn-primary { background: var(--primary); color: #000; box-shadow: 0 4px 12px var(--primary-dim); }
-        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        .btn-secondary { background: rgba(255,255,255,0.05); color: #fff; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: var(--shadow-glow); }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); }
 
         #customCatInput { 
             display: none; 
-            animation: slideInInput 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 24px;
+            animation: slideInInput 0.2s ease-out;
+            margin-bottom: 16px;
         }
         @keyframes slideInInput {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* --- LOGIN --- */
-        #loginOverlay { position: fixed; inset: 0; z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-box { 
-            background: rgba(18, 18, 22, 0.8); backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border); padding: 48px 40px; 
-            border-radius: 32px; width: 380px; text-align: center;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
-            animation: fadeInLogin 0.6s ease-out;
+        #loginOverlay { 
+            position: fixed; inset: 0; z-index: 5000; 
+            display: flex; align-items: center; justify-content: center; 
+            background: var(--bg-primary);
         }
-        @keyframes fadeInLogin { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .login-bg-pattern {
+            position: fixed; inset: 0; z-index: 0; overflow: hidden;
+        }
+        .login-bg-pattern .grid-line {
+            position: absolute; background: var(--border);
+        }
+        .login-bg-pattern .grid-v {
+            width: 1px; height: 100%;
+        }
+        .login-bg-pattern .grid-h {
+            height: 1px; width: 100%;
+        }
+        .login-bg-glow {
+            position: absolute; width: 500px; height: 500px;
+            border-radius: 50%; filter: blur(120px); opacity: 0.15;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--accent);
+            z-index: 0;
+        }
+        .login-box { 
+            background: var(--bg-secondary);
+            border: 1px solid var(--border); padding: 40px 36px; 
+            border-radius: var(--radius-xl); width: 380px; text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: fadeInLogin 0.5s ease-out;
+            position: relative; z-index: 1;
+        }
+        @keyframes fadeInLogin { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 1200px) {
             .grid-stats { grid-template-columns: repeat(2, 1fr); }
             .charts-main-grid { grid-template-columns: 1fr; }
-            .chart-box { height: 350px; }
+            .chart-box { height: 340px; }
         }
         @media (max-width: 900px) {
             .sidebar { position: fixed; left: -100%; height: 100%; box-shadow: 20px 0 50px rgba(0,0,0,0.5); }
             .sidebar.active { left: 0; }
-            .top-header { padding: 0 20px; }
-            .content-body { padding: 20px; }
+            .top-header { padding: 0 16px; }
+            .content-body { padding: 16px; }
+        }
+        @media (max-width: 640px) {
+            .grid-stats { grid-template-columns: 1fr; }
         }
 
         /* Utils */
-        .text-neon { color: var(--primary); text-shadow: 0 0 12px var(--primary-dim); }
-        .fade-in { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+        .text-neon { color: var(--accent); }
+        .fade-in { animation: fadeIn 0.4s ease forwards; opacity: 0; }
         @keyframes fadeIn { to { opacity: 1; } }
         #appContainer { display: none; width: 100%; height: 100%; }
-        #loader-screen { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.4s; }
-        .loader-spin { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+
+        #loader-screen { 
+            position: fixed; inset: 0; background: var(--bg-primary); z-index: 9000; 
+            display: flex; align-items: center; justify-content: center; flex-direction: column; 
+            transition: opacity 0.4s; 
+        }
+        .loader-spin { 
+            width: 40px; height: 40px; 
+            border: 2px solid var(--border); border-top-color: var(--accent); 
+            border-radius: 50%; animation: spin 0.8s linear infinite; 
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Email badge in header */
+        .user-badge {
+            font-size: 12px; color: var(--accent); font-weight: 600; 
+            background: var(--accent-dim); padding: 6px 14px; 
+            border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.15);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .user-badge::before {
+            content: '';
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent);
+            display: inline-block;
+        }
+
+        /* Header title group */
+        .header-title-group h2 {
+            color: var(--text-primary); font-size: 15px; font-weight: 700; letter-spacing: -0.02em;
+        }
+        .header-title-group span {
+            font-size: 12px; color: var(--text-muted); font-weight: 400;
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            width: 36px; height: 36px;
+            align-items: center; justify-content: center;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-right: 12px;
+            transition: var(--transition);
+        }
+        .mobile-menu-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: flex; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- BG ANIMATION -->
-    <div class="ambient-light">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
-
     <!-- LOADER -->
     <div id="loader-screen">
         <div class="loader-spin"></div>
-        <p style="margin-top:20px; color:var(--text-mute); font-size:11px; letter-spacing:2px; font-weight:700;">INITIALIZING</p>
+        <p style="margin-top:16px; color:var(--text-muted); font-size:10px; letter-spacing:0.15em; font-weight:600; text-transform: uppercase;">Loading</p>
     </div>
 
     <!-- LOGIN -->
     <div id="loginOverlay">
+        <div class="login-bg-pattern">
+            <div class="login-bg-glow"></div>
+        </div>
         <div class="login-box">
-            <div style="width: 56px; height: 56px; background: var(--primary-dim); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 1px solid rgba(0,255,163,0.2);">
-                <i class="fa-solid fa-gem text-neon" style="font-size: 24px;"></i>
+            <div style="width: 48px; height: 48px; background: var(--accent); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 0 30px var(--accent-dim);">
+                <i class="fa-solid fa-layer-group" style="font-size: 20px; color: #fff;"></i>
             </div>
-            <h2 class="my-font txt-h2" id="loginHeader" style="color:#fff; margin-bottom:8px;">အကောင့်ဝင်ရန်</h2>
-            <p class="txt-body" style="font-size:13px; margin-bottom: 24px;">Welcome back to Spendio Pro</p>
+            <h2 class="my-font" style="color: var(--text-primary); margin-bottom: 4px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em;">Spendio</h2>
+            <p class="txt-body" style="font-size: 13px; margin-bottom: 28px; color: var(--text-muted);" id="loginHeader">Sign in to your account</p>
             
-            <input type="email" class="form-input" id="lEmail" placeholder="Email Address" style="text-align:center; margin-bottom:12px;">
+            <input type="email" class="form-input" id="lEmail" placeholder="Email Address" style="text-align:center; margin-bottom:10px;">
             <input type="password" class="form-input" id="lPass" placeholder="Password" style="text-align:center; margin-bottom:16px;">
-            <button class="btn-primary" style="width:100%; height:52px;" onclick="handleLogin()">LOGIN SYSTEM</button>
-            <p id="loginErr" style="color:var(--expense); font-size:12px; margin-top:16px; display:none; background: var(--expense-dim); padding: 10px; border-radius: 12px;"><i class="fa-solid fa-triangle-exclamation"></i> Invalid Credentials</p>
+            <button class="btn-primary" style="width:100%; height:44px;" onclick="handleLogin()">Sign In</button>
+            <p id="loginErr" style="color:var(--expense); font-size:12px; margin-top:14px; display:none; background: var(--expense-dim); padding: 10px; border-radius: var(--radius-sm); font-weight: 500;"><i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> Invalid credentials</p>
         </div>
     </div>
 
@@ -633,40 +717,40 @@
             <div class="nav-group">
                 <div class="nav-label">Main Menu</div>
                 <div class="nav-item active" onclick="location.reload()">
-                    <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-grid-2"></i> <span class="my-font" id="navDash">ခြုံသုံးသပ်ချက်</span></div>
+                    <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-grid-2"></i> <span class="my-font" id="navDash">Overview</span></div>
                 </div>
 
                 <div class="nav-item" onclick="handleMenuToggle('recSub')">
-                    <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-circle-plus"></i> <span class="my-font" id="navAdd">စာရင်းသွင်းရန်</span></div>
-                    <i class="fa-solid fa-chevron-down" style="font-size: 10px; opacity: 0.7;"></i>
+                    <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-circle-plus"></i> <span class="my-font" id="navAdd">Add Record</span></div>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 9px; opacity: 0.5;"></i>
                 </div>
                 <div id="recSub" class="submenu">
-                    <div class="sub-link" id="subNew" onclick="openEntryModal()"><span class="my-font">စာရင်းအသစ်</span> <div class="radio-dot"></div></div>
+                    <div class="sub-link" id="subNew" onclick="openEntryModal()"><span class="my-font">New Entry</span> <div class="radio-dot"></div></div>
                     <div class="sub-link" id="subTrade" onclick="openTradeModal()"><span class="my-font">Trading Record</span> <div class="radio-dot"></div></div>
                 </div>
 
                 <div class="nav-label">Preferences</div>
                 <div class="nav-item" onclick="handleMenuToggle('langSub')">
-                    <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">ဘာသာစကား</span></div>
-                    <i class="fa-solid fa-chevron-down" style="font-size: 10px; opacity: 0.7;"></i>
+                    <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-language"></i> <span class="my-font" id="navLang">Language</span></div>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 9px; opacity: 0.5;"></i>
                 </div>
                 <div id="langSub" class="submenu">
                     <div id="btnEn" class="sub-link" onclick="changeLanguage('en')"><span>English</span> <div class="radio-dot"></div></div>
-                    <div id="btnMy" class="sub-link" onclick="changeLanguage('my')"><span class="my-font">မြန်မာဘာသာ</span> <div class="radio-dot"></div></div>
+                    <div id="btnMy" class="sub-link" onclick="changeLanguage('my')"><span class="my-font">Myanmar</span> <div class="radio-dot"></div></div>
                 </div>
 
                 <div class="nav-item" onclick="handleMenuToggle('currSub')">
-                    <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-coins"></i> <span class="my-font" id="navCurr">ကာရင်စီ</span></div>
-                    <i class="fa-solid fa-chevron-down" style="font-size: 10px; opacity: 0.7;"></i>
+                    <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-coins"></i> <span class="my-font" id="navCurr">Currency</span></div>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 9px; opacity: 0.5;"></i>
                 </div>
                 <div id="currSub" class="submenu">
                     <div id="currMMK" class="sub-link" onclick="changeCurrency('MMK')"><span>Myanmar (Ks)</span> <div class="radio-dot"></div></div>
                     <div id="currUSD" class="sub-link" onclick="changeCurrency('USD')"><span>United States ($)</span> <div class="radio-dot"></div></div>
-                    <div id="currTHB" class="sub-link" onclick="changeCurrency('THB')"><span>Thai Baht (฿)</span> <div class="radio-dot"></div></div>
+                    <div id="currTHB" class="sub-link" onclick="changeCurrency('THB')"><span>Thai Baht (&#3647;)</span> <div class="radio-dot"></div></div>
                 </div>
 
                 <div class="nav-item" onclick="openRateModal()">
-                    <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-money-bill-transfer"></i> <span class="my-font" id="navRates">Exchange Rates</span></div>
+                    <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-money-bill-transfer"></i> <span class="my-font" id="navRates">Exchange Rates</span></div>
                 </div>
             </div>
 
@@ -682,31 +766,33 @@
         <div class="main-container" id="scrollArea">
             <div class="top-header">
                 <div style="display:flex; align-items:center;">
-                    <i class="fa-solid fa-bars" id="menuToggle" style="color:var(--text-sec); margin-right:20px; cursor:pointer; font-size:20px; display:none;" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
-                    <div>
-                        <h2 class="my-font txt-h3" style="color: #fff;" id="headTitle">Dashboard Pro</h2>
-                        <span class="txt-sm">Financial Overview</span>
+                    <div class="mobile-menu-btn" id="menuToggle" onclick="document.getElementById('sidebar').classList.toggle('active')">
+                        <i class="fa-solid fa-bars" style="font-size: 14px;"></i>
+                    </div>
+                    <div class="header-title-group">
+                        <h2 class="my-font" id="headTitle">Dashboard</h2>
+                        <span>Financial Overview</span>
                     </div>
                 </div>
-                <div id="displayEmail" style="font-size:12px; color:var(--primary); font-weight:800; background:var(--primary-dim); padding:8px 16px; border-radius:12px; border:1px solid rgba(0,255,163,0.15);"></div>
+                <div class="user-badge" id="displayEmail"></div>
             </div>
 
             <div class="content-body">
                 
                 <!-- STATS -->
-                <div class="grid-stats fade-in" style="animation-delay: 0.1s;">
+                <div class="grid-stats fade-in" style="animation-delay: 0.05s;">
                     <!-- Income Card -->
                     <div class="stat-card theme-inc">
                         <div class="stat-glow"></div>
                         <div class="stat-content">
                             <div class="stat-header-new">
-                                <span class="stat-label-new my-font" id="incTitle">ဝင်ငွေ</span>
+                                <span class="stat-label-new my-font" id="incTitle">Income</span>
+                                <div class="stat-icon-inline"><i class="fa-solid fa-arrow-trend-up"></i></div>
                             </div>
                             <div class="stat-val-group">
                                 <div class="stat-val txt-mono" id="totalInc">0</div>
-                                <div class="stat-change" id="incChange"></div>
                             </div>
-                            <!-- SPARKLINE -->
+                            <div class="stat-change" id="incChange" style="margin-top: 8px;"></div>
                             <div class="stat-chart-wrapper"><canvas id="sparkInc"></canvas></div>
                         </div>
                         <i class="fa-solid fa-arrow-trend-up stat-icon-bg"></i>
@@ -717,13 +803,13 @@
                         <div class="stat-glow"></div>
                         <div class="stat-content">
                             <div class="stat-header-new">
-                                <span class="stat-label-new my-font" id="expTitle">ထွက်ငွေ</span>
+                                <span class="stat-label-new my-font" id="expTitle">Expenses</span>
+                                <div class="stat-icon-inline"><i class="fa-solid fa-receipt"></i></div>
                             </div>
                             <div class="stat-val-group">
                                 <div class="stat-val txt-mono" id="totalExp">0</div>
-                                <div class="stat-change" id="expChange"></div>
                             </div>
-                            <!-- SPARKLINE -->
+                            <div class="stat-change" id="expChange" style="margin-top: 8px;"></div>
                             <div class="stat-chart-wrapper"><canvas id="sparkExp"></canvas></div>
                         </div>
                         <i class="fa-solid fa-receipt stat-icon-bg"></i>
@@ -735,12 +821,12 @@
                         <div class="stat-content">
                             <div class="stat-header-new">
                                 <span class="stat-label-new my-font" id="statTrade">Trading Balance</span>
+                                <div class="stat-icon-inline"><i class="fa-solid fa-chart-simple"></i></div>
                             </div>
                             <div class="stat-val-group">
                                 <div class="stat-val txt-mono" id="tradeProfit">0</div>
-                                <div class="stat-change" id="trdChange"></div>
                             </div>
-                            <!-- SPARKLINE -->
+                            <div class="stat-change" id="trdChange" style="margin-top: 8px;"></div>
                             <div class="stat-chart-wrapper"><canvas id="sparkTrd"></canvas></div>
                         </div>
                         <i class="fa-solid fa-chart-simple stat-icon-bg"></i>
@@ -751,13 +837,13 @@
                         <div class="stat-glow"></div>
                         <div class="stat-content">
                             <div class="stat-header-new">
-                                <span class="stat-label-new my-font" id="netTitle">လက်ကျန်</span>
+                                <span class="stat-label-new my-font" id="netTitle">Net Balance</span>
+                                <div class="stat-icon-inline"><i class="fa-solid fa-wallet"></i></div>
                             </div>
                             <div class="stat-val-group">
                                 <div class="stat-val txt-mono text-neon" id="netBal">0</div>
-                                <div class="stat-change" id="netChange"></div>
                             </div>
-                            <!-- SPARKLINE -->
+                            <div class="stat-change" id="netChange" style="margin-top: 8px;"></div>
                             <div class="stat-chart-wrapper"><canvas id="sparkNet"></canvas></div>
                         </div>
                         <i class="fa-solid fa-wallet stat-icon-bg"></i>
@@ -765,23 +851,29 @@
                 </div>
                 
                 <!-- CHARTS -->
-                <div class="charts-main-grid fade-in" style="animation-delay: 0.2s;">
-                    <div class="chart-box glass-panel">
+                <div class="charts-main-grid fade-in" style="animation-delay: 0.1s;">
+                    <div class="chart-box">
                         <div class="chart-head">
-                            <h4 class="txt-h3 my-font" id="chart1Title"><i class="fa-solid fa-wave-square" style="color:var(--primary); margin-right:8px;"></i> History Trend</h4>
+                            <h4 class="txt-h3 my-font" id="chart1Title" style="display: flex; align-items: center; gap: 8px;">
+                                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
+                                History Trend
+                            </h4>
                         </div>
                         <div class="chart-container"><canvas id="cashChart"></canvas></div>
                     </div>
-                    <div class="chart-box glass-panel">
+                    <div class="chart-box">
                         <div class="chart-head">
-                            <h4 class="txt-h3 my-font" id="chart3Title"><i class="fa-solid fa-chart-pie" style="color:var(--warning); margin-right:8px;"></i> Share Ratio</h4>
+                            <h4 class="txt-h3 my-font" id="chart3Title" style="display: flex; align-items: center; gap: 8px;">
+                                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--warning); display: inline-block;"></span>
+                                Share Ratio
+                            </h4>
                         </div>
                         <div class="chart-container"><canvas id="pieChart"></canvas></div>
                     </div>
                 </div>
 
                 <!-- TABLES -->
-                <div class="table-card glass-panel fade-in" style="animation-delay: 0.3s;">
+                <div class="table-card fade-in" style="animation-delay: 0.15s;">
                     <div class="table-head-bar">
                         <div class="table-title-group">
                             <div class="table-icon" style="background:var(--warning-dim); color:var(--warning);"><i class="fa-solid fa-book-journal-whills"></i></div>
@@ -820,10 +912,10 @@
                     </div>
                 </div>
 
-                <div class="table-card glass-panel fade-in" style="animation-delay: 0.4s;">
+                <div class="table-card fade-in" style="animation-delay: 0.2s;">
                     <div class="table-head-bar">
                         <div class="table-title-group">
-                            <div class="table-icon" style="background:var(--primary-dim); color:var(--primary);"><i class="fa-solid fa-list-check"></i></div>
+                            <div class="table-icon" style="background:var(--accent-dim); color:var(--accent);"><i class="fa-solid fa-list-check"></i></div>
                             <h3 class="my-font txt-h3" id="histTitle">Transactions</h3>
                         </div>
                         <div class="header-actions">
@@ -866,25 +958,25 @@
     <!-- RATE SETTINGS MODAL -->
     <div id="rateModal" class="modal-overlay">
         <div class="modal-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-                <h2 class="my-font txt-h2" id="modalRateTitle" style="color:#fff;">Exchange Rates</h2>
-                <div style="width:36px; height:36px; background:rgba(255,255,255,0.1); color:#fff; border-radius:10px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-sliders"></i></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 class="my-font txt-h2" id="modalRateTitle" style="color:var(--text-primary);">Exchange Rates</h2>
+                <div style="width:32px; height:32px; background:rgba(255,255,255,0.05); color:var(--text-secondary); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size: 13px;"><i class="fa-solid fa-sliders"></i></div>
             </div>
             
-            <p class="txt-body" style="font-size:13px; margin-bottom:20px; color:var(--text-sec);">Base Currency: <b>1 USD ($)</b></p>
+            <p class="txt-body" style="font-size:12px; margin-bottom:16px; color:var(--text-muted);">Base Currency: <b style="color: var(--text-secondary);">1 USD ($)</b></p>
 
             <div class="form-group input-group-icon">
                 <i class="fa-solid fa-money-bill"></i>
                 <input type="number" class="form-input" id="ratMMK" placeholder="MMK Rate (e.g. 3500)">
-                <span style="position:absolute; right:20px; font-size:12px; color:var(--text-mute); font-weight:700;">MMK</span>
+                <span style="position:absolute; right:16px; font-size:11px; color:var(--text-dim); font-weight:600;">MMK</span>
             </div>
             <div class="form-group input-group-icon">
                 <i class="fa-solid fa-baht-sign"></i>
                 <input type="number" class="form-input" id="ratTHB" placeholder="THB Rate (e.g. 35)">
-                <span style="position:absolute; right:20px; font-size:12px; color:var(--text-mute); font-weight:700;">THB</span>
+                <span style="position:absolute; right:16px; font-size:11px; color:var(--text-dim); font-weight:600;">THB</span>
             </div>
             
-            <div style="display:flex; gap:12px; margin-top: 24px;">
+            <div style="display:flex; gap:10px; margin-top: 20px;">
                 <button onclick="closeModal('rateModal')" class="btn-secondary">Cancel</button>
                 <button onclick="saveRates()" class="btn-primary" id="btnSaveRates">Update Rates</button>
             </div>
@@ -894,14 +986,14 @@
     <!-- NEW ENTRY MODAL -->
     <div id="entryModal" class="modal-overlay">
         <div class="modal-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-                <h2 class="my-font txt-h2" id="modalEntryTitle" style="color:#fff;">စာရင်းသွင်းရန်</h2>
-                <div style="width:36px; height:36px; background:var(--primary-dim); color:var(--primary); border-radius:10px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-pen-nib"></i></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 class="my-font txt-h2" id="modalEntryTitle" style="color:var(--text-primary);">Add Entry</h2>
+                <div style="width:32px; height:32px; background:var(--accent-dim); color:var(--accent); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size: 13px;"><i class="fa-solid fa-pen-nib"></i></div>
             </div>
             
             <input type="hidden" id="editId">
-            <input type="hidden" id="cIn" value="Others"> <!-- Hidden input for category -->
-            <input type="hidden" id="typeIn" value="Expense"> <!-- New Hidden input for Type -->
+            <input type="hidden" id="cIn" value="Others">
+            <input type="hidden" id="typeIn" value="Expense">
 
             <!-- Income/Expense Toggle -->
             <div class="trade-toggle">
@@ -931,14 +1023,12 @@
                     <i class="fa-solid fa-shapes cat-icon"></i>
                     <span class="cat-label my-font">Others</span>
                 </div>
-                <!-- New Custom Button -->
                 <div class="cat-btn" onclick="selectCategory('Custom', this)" id="cat_Custom">
                     <i class="fa-solid fa-pen-fancy cat-icon"></i>
                     <span class="cat-label my-font">Custom</span>
                 </div>
             </div>
 
-            <!-- Custom Category Input (Hidden by default) -->
             <div id="customCatInput" class="form-group input-group-icon">
                 <i class="fa-solid fa-tag"></i>
                 <input type="text" class="form-input" id="customCatText" placeholder="Category Name (e.g. Salary)">
@@ -950,14 +1040,14 @@
             </div>
             <div class="form-group input-group-icon">
                 <i class="fa-solid fa-dollar-sign"></i>
-                <input type="number" class="form-input" id="aIn" placeholder="Amount (USD)" style="font-weight:700; color:var(--primary);">
+                <input type="number" class="form-input" id="aIn" placeholder="Amount (USD)" style="font-weight:600; color:var(--accent);">
             </div>
             <div class="form-group input-group-icon">
                 <i class="fa-solid fa-note-sticky"></i>
                 <input type="text" class="form-input" id="nIn" placeholder="Note (Optional)">
             </div>
             
-            <div style="display:flex; gap:12px; margin-top: 24px;">
+            <div style="display:flex; gap:10px; margin-top: 20px;">
                 <button onclick="closeModal('entryModal')" class="btn-secondary" id="btnCancel1">Cancel</button>
                 <button onclick="saveData('standard')" class="btn-primary" id="btnConfirm1">Save Entry</button>
             </div>
@@ -967,19 +1057,18 @@
     <!-- NEW TRADE MODAL -->
     <div id="tradeModal" class="modal-overlay">
         <div class="modal-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-                <h2 class="my-font txt-h2" id="modalTradeTitle" style="color:#fff;">Trade Record</h2>
-                <div style="width:36px; height:36px; background:var(--warning-dim); color:var(--warning); border-radius:10px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-chart-line"></i></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 class="my-font txt-h2" id="modalTradeTitle" style="color:var(--text-primary);">Trade Record</h2>
+                <div style="width:32px; height:32px; background:var(--warning-dim); color:var(--warning); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size: 13px;"><i class="fa-solid fa-chart-line"></i></div>
             </div>
 
             <input type="hidden" id="editTradeId">
-            <input type="hidden" id="trPos" value="Long"> <!-- Hidden input for Position -->
+            <input type="hidden" id="trPos" value="Long">
 
             <div class="form-group">
-                <input type="text" class="form-input" id="trPair" placeholder="BTC/USDT" style="font-weight:800; text-align:center; letter-spacing:1px; font-size:18px; text-transform:uppercase;">
+                <input type="text" class="form-input" id="trPair" placeholder="BTC/USDT" style="font-weight:700; text-align:center; letter-spacing:0.05em; font-size:16px; text-transform:uppercase;">
             </div>
 
-            <!-- Position Toggle -->
             <div class="trade-toggle">
                 <div class="type-btn long active" onclick="selectTradeType('Long', this)" id="btn_Long">
                     <i class="fa-solid fa-arrow-trend-up"></i> LONG
@@ -1004,23 +1093,24 @@
                 <input type="text" class="form-input" id="trNote" placeholder="Strategy / Notes">
             </div>
 
-            <div style="display:flex; gap:12px; margin-top: 24px;">
+            <div style="display:flex; gap:10px; margin-top: 20px;">
                 <button onclick="closeModal('tradeModal')" class="btn-secondary" id="btnCancel2">Cancel</button>
                 <button onclick="saveData('trading')" class="btn-primary" id="btnSave2" style="background:var(--warning); color:#000;">Save Record</button>
             </div>
         </div>
     </div>
 
+    <!-- DELETE CONFIRM MODAL -->
     <div id="customDelModal" class="modal-overlay">
         <div class="modal-box" style="text-align: center; width: 380px;">
-            <div style="font-size: 48px; color: var(--expense); margin-bottom: 16px; text-shadow: 0 0 24px var(--expense-dim);">
-                <i class="fa-solid fa-trash-can"></i>
+            <div style="width: 48px; height: 48px; background: var(--expense-dim); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                <i class="fa-solid fa-trash-can" style="font-size: 18px; color: var(--expense);"></i>
             </div>
-            <h2 class="my-font txt-h2" id="delSureTitle" style="color: #fff; margin-bottom: 8px;">သေချာပါသလား?</h2>
-            <p id="delSureDesc" class="txt-body" style="margin-bottom: 24px;">
-                ဤမှတ်တမ်းကို ဖျက်လိုက်ပါက ပြန်ယူ၍ရတော့မည် မဟုတ်ပါ။
+            <h2 class="my-font txt-h2" id="delSureTitle" style="color: var(--text-primary); margin-bottom: 6px;">Are you sure?</h2>
+            <p id="delSureDesc" class="txt-body" style="margin-bottom: 20px; font-size: 13px; color: var(--text-muted);">
+                This action cannot be undone.
             </p>
-            <div style="display: flex; gap: 12px;">
+            <div style="display: flex; gap: 10px;">
                 <button id="closeDelBtn" class="btn-secondary">Cancel</button>
                 <button id="confirmDelBtn" class="btn-primary" style="background: var(--expense); color: #fff; box-shadow:none;">Delete</button>
             </div>
@@ -1031,12 +1121,11 @@
         const SUPABASE_URL = 'https://tfarfiporzdpcjrqxxxj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYXJmaXBvcnpkcGNqcnF4eHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTk1NTMsImV4cCI6MjA4NDQ3NTU1M30.Kww0TMDxeCtybOtnAWakXiEIA0hZSKpB19K_cLrB7qo';
         
-        // --- TRANSLATIONS ---
         const i18n = { 
             en: { 
-                loginHeader: "Account Login", loginErr: "Incorrect Email or Password.",
+                loginHeader: "Sign in to your account", loginErr: "Incorrect email or password.",
                 navDash: "Overview", navAdd: "Add Record", subNew: "New Entry", subTrade: "Trade Record", navLang: "Language", navCurr: "Currency", navLogout: "Sign Out", navRates: "Exchange Rates",
-                headTitle: "Dashboard Pro", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", 
+                headTitle: "Dashboard", incTitle: "INCOME", expTitle: "EXPENSES", statTrade: "TRADING BALANCE", netTitle: "NET BALANCE", 
                 chart1Title: "History Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", 
                 histTradeTitle: "Trading Journal", histTitle: "Recent History",
                 thDate1: "Date", thAsset: "Asset", thPos: "Pos", thLev: "Lev", thNote1: "Strategy", thRes: "Result", thAct1: "Action",
@@ -1049,7 +1138,7 @@
             my: { 
                 loginHeader: "အကောင့်ဝင်ရန်", loginErr: "Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။",
                 navDash: "ခြုံသုံးသပ်ချက်", navAdd: "စာရင်းသွင်းရန်", subNew: "စာရင်းအသစ်", subTrade: "Trading Record", navLang: "ဘာသာစကား", navCurr: "ကာရင်စီ", navLogout: "အကောင့်ထွက်ရန်", navRates: "ငွေလဲနှုန်း",
-                headTitle: "Dashboard Pro", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", 
+                headTitle: "Dashboard", incTitle: "ဝင်ငွေ", expTitle: "ထွက်ငွေ", statTrade: "Trading Balance", netTitle: "လက်ကျန်", 
                 chart1Title: "Zero Baseline Trend", chart2Title: "Trade Bars", chart3Title: "Share Ratio", 
                 histTradeTitle: "Trading Journal", histTitle: "စာရင်းမှတ်တမ်း",
                 thDate1: "နေ့စွဲ", thAsset: "Pair", thPos: "Pos", thLev: "Lev", thNote1: "မှတ်စု", thRes: "ရလဒ်", thAct1: "Action",
@@ -1064,19 +1153,12 @@
         let sc; 
         let lang = localStorage.getItem('lang') || 'my';
         let curr = localStorage.getItem('curr') || 'USD';
-        
-        // --- CUSTOM RATES ---
         let rates = JSON.parse(localStorage.getItem('rates')) || { USD: 1, MMK: 3500, THB: 35 };
-
-        // --- GLOBAL DATA & PAGINATION ---
         let allData = [];
         let pgTrade = 1, limTrade = 10;
         let pgTrans = 1, limTrans = 10;
-
-        // Sparkline Chart Instances
         let spk1, spk2, spk3, spk4;
         
-        // --- INIT ---
         window.onload = async function() {
             try {
                 if(typeof supabase === 'undefined') {
@@ -1102,10 +1184,6 @@
                 document.getElementById('displayEmail').innerText = user.email.split('@')[0]; 
                 updateUI(); 
                 loadD(); 
-                // Adjust Menu for Mobile
-                if(window.innerWidth <= 900) {
-                    document.getElementById('menuToggle').style.display = 'block';
-                }
             } else { 
                 document.getElementById('loginOverlay').style.display='flex'; 
                 document.getElementById('appContainer').style.display='none'; 
@@ -1113,7 +1191,7 @@
         }
 
         async function handleLogin() { 
-            const btn = document.querySelector('.btn-primary');
+            const btn = document.querySelector('#loginOverlay .btn-primary');
             const originalText = btn.innerText;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
             try {
@@ -1136,12 +1214,8 @@
 
         function handleMenuToggle(id) { 
             const subs = document.querySelectorAll('.submenu'); 
-            const links = document.querySelectorAll('.nav-item');
-            
-            // Toggle Logic
             const target = document.getElementById(id);
             const wasActive = target.classList.contains('active');
-            
             subs.forEach(s => s.classList.remove('active'));
             if(!wasActive) target.classList.add('active');
         }
@@ -1164,10 +1238,8 @@
                     else el.innerText = t[id];
                 }
             }); 
-            // Update Active States
             document.querySelectorAll('.sub-link').forEach(el => el.classList.remove('active')); 
             if(lang === 'en') document.getElementById('btnEn').classList.add('active'); else document.getElementById('btnMy').classList.add('active'); 
-            
             if(document.getElementById('curr' + curr)) document.getElementById('curr' + curr).classList.add('active'); 
         }
 
@@ -1181,7 +1253,6 @@
         function saveRates() {
             const newMMK = parseFloat(document.getElementById('ratMMK').value);
             const newTHB = parseFloat(document.getElementById('ratTHB').value);
-            
             if(newMMK > 0 && newTHB > 0) {
                 rates.MMK = newMMK;
                 rates.THB = newTHB;
@@ -1197,7 +1268,6 @@
             document.getElementById('cIn').value = val;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-
             const customInput = document.getElementById('customCatInput');
             if (val === 'Custom') {
                 customInput.style.display = 'flex';
@@ -1278,24 +1348,17 @@
             const {data}=await sc.from('transactions').select('*').order('created_at',{ascending:false});
             if(!data) return;
             allData = data;
-            
-            // Render Stats & Charts
             try { renderOverview(); } catch (e) { console.warn("Chart render failed:", e); }
-            
-            // Render tables
             renderTables();
         }
 
         function renderOverview() {
             let inc=0, exp=0, tp=0; 
-            
             let conversion = 1;
             let sym = '$';
-
             if(curr === 'MMK') { conversion = rates.MMK; sym = 'Ks'; }
             else if (curr === 'THB') { conversion = rates.THB; sym = '฿'; }
 
-            // Big Numbers (Total All Time)
             allData.forEach(d => {
                 if(d.category==='Trading') { 
                     tp += d.amount;
@@ -1311,63 +1374,51 @@
             animateValue(document.getElementById('tradeProfit'), tp*conversion, symHead);
             animateValue(document.getElementById('netBal'), (inc-exp+tp)*conversion, symHead);
 
-            // --- SPARKLINE & PERCENTAGE LOGIC ---
-            // Prepare 30-day sparklines
             try {
                 const incTrend = getSparkData(allData, 'Income', 30);
                 const expTrend = getSparkData(allData, 'Expense', 30);
                 const trdTrend = getSparkData(allData, 'Trading', 30);
                 const netTrend = getBalanceHistory(allData, 30);
 
-                // Render Percentages
                 renderChange('incChange', incTrend.percent);
                 renderChange('expChange', expTrend.percent);
                 renderChange('trdChange', trdTrend.percent);
                 renderChange('netChange', netTrend.percent);
 
-                // Render Sparklines
-                if(spk1) spk1.destroy(); spk1 = renderSpark('sparkInc', incTrend.values, '#00ffa3');
-                if(spk2) spk2.destroy(); spk2 = renderSpark('sparkExp', expTrend.values, '#ff3d71');
-                if(spk3) spk3.destroy(); spk3 = renderSpark('sparkTrd', trdTrend.values, '#ffaa00');
+                if(spk1) spk1.destroy(); spk1 = renderSpark('sparkInc', incTrend.values, '#10b981');
+                if(spk2) spk2.destroy(); spk2 = renderSpark('sparkExp', expTrend.values, '#ef4444');
+                if(spk3) spk3.destroy(); spk3 = renderSpark('sparkTrd', trdTrend.values, '#f59e0b');
                 if(spk4) spk4.destroy(); spk4 = renderSpark('sparkNet', netTrend.values, '#3b82f6');
                 
                 renderCharts(allData, inc, exp, conversion);
             } catch(e) {
                 console.log("Sparkline error:", e);
-                // Even if sparkline fails, old charts might still work
                 try { renderCharts(allData, inc, exp, conversion); } catch(ex){}
             }
         }
 
-        // Helper to process last N days data
         function getSparkData(data, type, days) {
             const today = new Date();
             today.setHours(23,59,59,999);
-            
-            // Buckets
             const currentVals = new Array(days).fill(0);
             let sumCurrent = 0, sumPrev = 0;
-
             const cutoffCurrent = new Date(today); cutoffCurrent.setDate(today.getDate() - days);
             const cutoffPrev = new Date(cutoffCurrent); cutoffPrev.setDate(cutoffCurrent.getDate() - days);
 
             data.forEach(d => {
                 const dDate = new Date(d.created_at);
                 let val = d.amount;
-                // Check Type
                 let isMatch = false;
                 if(type === 'Trading') isMatch = (d.category === 'Trading');
                 else if(type === 'Income') isMatch = (d.category === 'Income' || d.category.startsWith('Income:'));
                 else if(type === 'Expense') isMatch = (d.category !== 'Income' && !d.category.startsWith('Income:') && d.category !== 'Trading');
 
                 if(isMatch) {
-                    // Populate current chart array
                     const diffDays = Math.floor((today - dDate) / (1000 * 60 * 60 * 24));
                     if(diffDays >= 0 && diffDays < days) {
                         currentVals[(days - 1) - diffDays] += val;
                         sumCurrent += val;
                     }
-                    // Calculate previous sum for %
                     const diffPrevDays = Math.floor((cutoffCurrent - dDate) / (1000 * 60 * 60 * 24));
                     if(diffPrevDays >= 0 && diffPrevDays < days) {
                         sumPrev += val;
@@ -1375,30 +1426,23 @@
                 }
             });
 
-            // Calculate Percent
             let percent = 0;
             if(sumPrev !== 0) percent = ((sumCurrent - sumPrev) / Math.abs(sumPrev)) * 100;
             else if (sumCurrent !== 0) percent = 100; 
-
             return { values: currentVals, percent: percent };
         }
 
         function getBalanceHistory(data, days) {
             const sorted = [...data].sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
-            
             const today = new Date();
             today.setHours(23,59,59,999);
-            
             const dailyBalances = new Array(days).fill(0);
             const cutoffDate = new Date(today); cutoffDate.setDate(today.getDate() - days);
-            
-            // Define Day boundaries
             const dayBoundaries = [];
             for(let i=0; i<days; i++) {
                 const d = new Date(cutoffDate); d.setDate(cutoffDate.getDate() + 1 + i); d.setHours(23,59,59,999);
                 dayBoundaries.push(d.getTime());
             }
-
             for(let i=0; i<days; i++) {
                 const targetEnd = dayBoundaries[i];
                 const bal = sorted.reduce((acc, t) => {
@@ -1412,7 +1456,6 @@
                 }, 0);
                 dailyBalances[i] = bal;
             }
-
             const balNow = dailyBalances[days-1];
             const cutoffTime = dayBoundaries[0] - (24*60*60*1000); 
             const balAgo = sorted.reduce((acc, t) => {
@@ -1424,11 +1467,9 @@
                  }
                  return acc;
             }, 0);
-
             let percent = 0;
             if(balAgo !== 0) percent = ((balNow - balAgo) / Math.abs(balAgo)) * 100;
             else if(balNow !== 0) percent = 100;
-
             return { values: dailyBalances, percent: percent };
         }
 
@@ -1438,13 +1479,13 @@
             const r = Math.round(percent);
             if(r > 0) {
                 el.className = 'stat-change pos';
-                el.innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${r}%`;
+                el.innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i> ' + r + '%';
             } else if (r < 0) {
                 el.className = 'stat-change neg';
-                el.innerHTML = `<i class="fa-solid fa-arrow-trend-down"></i> ${Math.abs(r)}%`;
+                el.innerHTML = '<i class="fa-solid fa-arrow-trend-down"></i> ' + Math.abs(r) + '%';
             } else {
                 el.className = 'stat-change neu';
-                el.innerHTML = `<i class="fa-solid fa-minus"></i> 0%`;
+                el.innerHTML = '<i class="fa-solid fa-minus"></i> 0%';
             }
         }
 
@@ -1452,10 +1493,8 @@
             const canvas = document.getElementById(id);
             if(!canvas) return null;
             const ctx = canvas.getContext('2d');
-            
-            // Gradient fill
             const grad = ctx.createLinearGradient(0, 0, 0, 60);
-            grad.addColorStop(0, color);
+            grad.addColorStop(0, color + '40');
             grad.addColorStop(1, 'rgba(0,0,0,0)');
 
             return new Chart(ctx, {
@@ -1465,7 +1504,7 @@
                     datasets: [{
                         data: data,
                         borderColor: color,
-                        borderWidth: 2,
+                        borderWidth: 1.5,
                         backgroundColor: grad,
                         fill: true,
                         pointRadius: 0,
@@ -1480,16 +1519,14 @@
                         x: { display: false },
                         y: { display: false, min: Math.min(...data) - (Math.max(...data)*0.1) }
                     },
-                    animation: { duration: 1000 }
+                    animation: { duration: 800 }
                 }
             });
         }
 
         function renderTables() {
-            // Filter Data
             const trades = allData.filter(d => d.category === 'Trading');
             const trans = allData.filter(d => d.category !== 'Trading');
-
             renderTableHTML(trades, 'tradingList', 'pgTrade', pgTrade, limTrade, true);
             renderTableHTML(trans, 'transactionList', 'pgTrans', pgTrans, limTrans, false);
         }
@@ -1498,51 +1535,42 @@
             const tbody = document.getElementById(tableId);
             const pgContainer = document.getElementById(pgId);
             if(!tbody || !pgContainer) return;
-
             tbody.innerHTML = '';
             pgContainer.innerHTML = '';
-
             let conversion = 1;
             let sym = '$';
             if(curr === 'MMK') { conversion = rates.MMK; sym = 'Ks'; }
             else if (curr === 'THB') { conversion = rates.THB; sym = '฿'; }
-            
             const start = (page - 1) * limit;
             const end = start + parseInt(limit);
             const sliced = data.slice(start, end);
 
             if(sliced.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-mute);">No records found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-dim); font-size: 13px;">No records found</td></tr>';
             }
 
             sliced.forEach(d => {
                 const dt = new Date(d.created_at);
-                const dtStr = `<div style="font-weight:600; color:#fff;">${dt.toLocaleDateString()}<br><span style="font-size:11px; color:var(--text-mute); font-weight:500;">${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`;
-                
-                // Safe data passing
+                const dtStr = '<div style="font-weight:500; color:var(--text-primary); font-size: 13px;">' + dt.toLocaleDateString() + '<br><span style="font-size:11px; color:var(--text-dim); font-weight:400;">' + dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + '</span></div>';
                 const safeData = JSON.stringify(d).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-                const acts = `<td style="text-align:center;">
-                    <div class="btn-icon" onclick='editT(${safeData})'><i class="fa-solid fa-pen"></i></div>
-                    <div class="btn-icon del" onclick="deleteT(${d.id})"><i class="fa-solid fa-trash"></i></div>
-                </td></tr>`;
+                const acts = '<td style="text-align:center;"><div class="btn-icon" onclick=\'editT(' + safeData + ')\'><i class="fa-solid fa-pen"></i></div><div class="btn-icon del" onclick="deleteT(' + d.id + ')"><i class="fa-solid fa-trash"></i></div></td></tr>';
 
                 if(isTrade) {
                     const p = (d.note || '').split('|'); 
                     const isWin = d.amount > 0;
-                    tbody.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:700; color:#fff;">${d.title}</td><td><span class="pill ${p[0].trim()==='Long'?'pill-inc':'pill-exp'}">${p[0]||'-'}</span></td><td><span class="txt-mono" style="color:var(--text-sec);">${p[1]||'-'}</span></td><td style="color:var(--text-sec);">${p[2]||'-'}</td><td class="txt-mono" style="text-align:right; font-weight:700; font-size:15px; color:${isWin?'#00ffa3':'#ff3d71'}">${isWin?'+':''}${sym} ${(Math.abs(d.amount)*conversion).toLocaleString()}</td>` + acts;
+                    tbody.innerHTML += '<tr><td>' + dtStr + '</td><td style="font-weight:600; color:var(--text-primary);">' + d.title + '</td><td><span class="pill ' + (p[0].trim()==='Long'?'pill-inc':'pill-exp') + '">' + (p[0]||'-') + '</span></td><td><span class="txt-mono" style="color:var(--text-secondary);">' + (p[1]||'-') + '</span></td><td style="color:var(--text-secondary);">' + (p[2]||'-') + '</td><td class="txt-mono" style="text-align:right; font-weight:700; font-size:14px; color:' + (isWin?'#10b981':'#ef4444') + '">' + (isWin?'+':'') + sym + ' ' + (Math.abs(d.amount)*conversion).toLocaleString() + '</td>' + acts;
                 } else {
                     const isInc = d.category === 'Income' || d.category.startsWith('Income:');
                     const displayCat = d.category.replace('Income: ', '');
-                    tbody.innerHTML += `<tr><td>${dtStr}</td><td style="font-weight:600; color:#fff;">${d.title}</td><td><span class="pill ${isInc?'pill-inc':'pill-exp'}">${displayCat}</span></td><td style="color:var(--text-sec); max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${d.note||'-'}</td><td class="txt-mono" style="text-align:right; font-weight:700; font-size:15px; color:${isInc?'#00ffa3':'#fff'}">${sym} ${(d.amount*conversion).toLocaleString()}</td>` + acts;
+                    tbody.innerHTML += '<tr><td>' + dtStr + '</td><td style="font-weight:500; color:var(--text-primary);">' + d.title + '</td><td><span class="pill ' + (isInc?'pill-inc':'pill-exp') + '">' + displayCat + '</span></td><td style="color:var(--text-secondary); max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + (d.note||'-') + '</td><td class="txt-mono" style="text-align:right; font-weight:700; font-size:14px; color:' + (isInc?'#10b981':'var(--text-primary)') + '">' + sym + ' ' + (d.amount*conversion).toLocaleString() + '</td>' + acts;
                 }
             });
 
-            // Pagination Controls
             const totalPages = Math.ceil(data.length / limit);
             if(totalPages > 1) {
                 for (let i = 1; i <= totalPages; i++) {
                     const btn = document.createElement('div');
-                    btn.className = `page-btn ${i === parseInt(page) ? 'active' : ''}`;
+                    btn.className = 'page-btn ' + (i === parseInt(page) ? 'active' : '');
                     btn.innerText = i;
                     btn.onclick = () => changePage(isTrade ? 'trade' : 'trans', i);
                     pgContainer.appendChild(btn);
@@ -1551,22 +1579,14 @@
         }
 
         function changeLimit(type, val) {
-            if(type === 'trade') {
-                limTrade = parseInt(val);
-                pgTrade = 1; // Reset to page 1
-            } else {
-                limTrans = parseInt(val);
-                pgTrans = 1;
-            }
+            if(type === 'trade') { limTrade = parseInt(val); pgTrade = 1; }
+            else { limTrans = parseInt(val); pgTrans = 1; }
             renderTables();
         }
 
         function changePage(type, pageNum) {
-            if(type === 'trade') {
-                pgTrade = pageNum;
-            } else {
-                pgTrans = pageNum;
-            }
+            if(type === 'trade') pgTrade = pageNum;
+            else pgTrans = pageNum;
             renderTables();
         }
 
@@ -1581,13 +1601,10 @@
                 document.getElementById('trPair').value = data.title;
                 document.getElementById('trRes').value = data.amount;
                 const p = (data.note || '').split(' | ');
-                
-                // Set Toggle State
                 const type = p[0].trim() || 'Long';
                 selectTradeType(type, document.getElementById('btn_' + type));
-
-                document.getElementById('trLev').value = p[1].trim() || '';
-                document.getElementById('trNote').value = p[2].trim() || '';
+                document.getElementById('trLev').value = p[1] ? p[1].trim() : '';
+                document.getElementById('trNote').value = p[2] ? p[2].trim() : '';
                 openModal('tradeModal');
             } else {
                 document.getElementById('editId').value = data.id;
@@ -1595,128 +1612,103 @@
                 document.getElementById('tIn').value = data.title;
                 document.getElementById('aIn').value = data.amount;
                 document.getElementById('nIn').value = data.note || "";
-                
-                // Determine Type & Category from Data
                 const isInc = data.category === 'Income' || data.category.startsWith('Income:');
                 const typeToSet = isInc ? 'Income' : 'Expense';
-                
-                // Set Type Toggle
                 selectEntryType(typeToSet, document.getElementById('type_' + typeToSet));
-
-                // Handle Category Selection
                 let catName = data.category.replace('Income: ', '');
-                
-                // Check if it's a standard category
                 const standardCats = ['Income', 'Food', 'Transport', 'Shopping', 'Others'];
                 if (standardCats.includes(catName)) {
                      selectCategory(catName, document.getElementById('cat_' + (catName === 'Income' ? 'Others' : catName))); 
                 } else {
-                     // It is a custom category
                      selectCategory('Custom', document.getElementById('cat_Custom'));
                      document.getElementById('customCatText').value = catName;
                 }
-                
                 openModal('entryModal');
             }
         }
 
         function renderCharts(data, inc, exp, conversion) {
             if(typeof Chart === 'undefined') return;
-            
-            // DYNAMIC FONT BASED ON LANGUAGE
-            const activeFont = lang === 'my' ? "'WaloneBold', 'Quicksand', sans-serif" : "'Quicksand', 'WaloneBold', sans-serif";
+            const activeFont = lang === 'my' ? "'WaloneBold', 'Inter', system-ui, sans-serif" : "'Inter', 'WaloneBold', system-ui, sans-serif";
 
-            // Common Options for modern look
             const commonOptions = {
                 responsive: true, 
-                maintainAspectRatio:false, 
+                maintainAspectRatio: false, 
                 plugins:{
                     legend:{ display:false },
                     tooltip: {
-                        backgroundColor: 'rgba(9, 9, 11, 0.95)',
-                        titleColor: '#fff',
-                        bodyColor: '#cbd5e1',
-                        borderColor: 'rgba(255,255,255,0.08)',
+                        backgroundColor: 'rgba(10, 10, 15, 0.95)',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#94a3b8',
+                        borderColor: 'rgba(255,255,255,0.06)',
                         borderWidth: 1,
-                        padding: 14,
-                        cornerRadius: 16,
+                        padding: 12,
+                        cornerRadius: 10,
                         displayColors: true,
-                        titleFont: { family: activeFont, size: 13 },
-                        bodyFont: { family: activeFont, size: 13, weight: 600 },
-                        boxPadding: 6,
+                        titleFont: { family: activeFont, size: 12, weight: 600 },
+                        bodyFont: { family: activeFont, size: 12, weight: 500 },
+                        boxPadding: 4,
                         usePointStyle: true
                     }
                 }
             };
 
-            // --- CHART 1: HISTORY TREND ---
             const ctx1 = document.getElementById('cashChart').getContext('2d'); 
             if(window.c1) window.c1.destroy();
-            
-            const raw = data.slice(0, 20).reverse(); // Show last 20 for density
-            
-            // Enhanced Gradients
-            const gradInc = ctx1.createLinearGradient(0, 0, 0, 400); 
-            gradInc.addColorStop(0, 'rgba(0, 255, 163, 0.25)'); 
-            gradInc.addColorStop(1, 'rgba(0, 255, 163, 0)');
+            const raw = data.slice(0, 20).reverse();
 
-            const gradExp = ctx1.createLinearGradient(0, 0, 0, 400); 
-            gradExp.addColorStop(0, 'rgba(255, 61, 113, 0.25)'); 
-            gradExp.addColorStop(1, 'rgba(255, 61, 113, 0)');
+            const gradInc = ctx1.createLinearGradient(0, 0, 0, 380); 
+            gradInc.addColorStop(0, 'rgba(16, 185, 129, 0.15)'); 
+            gradInc.addColorStop(1, 'rgba(16, 185, 129, 0)');
 
-            const gradTrade = ctx1.createLinearGradient(0, 0, 0, 400); 
-            gradTrade.addColorStop(0, 'rgba(255, 170, 0, 0.25)'); 
-            gradTrade.addColorStop(1, 'rgba(255, 170, 0, 0)');
+            const gradExp = ctx1.createLinearGradient(0, 0, 0, 380); 
+            gradExp.addColorStop(0, 'rgba(239, 68, 68, 0.15)'); 
+            gradExp.addColorStop(1, 'rgba(239, 68, 68, 0)');
+
+            const gradTrade = ctx1.createLinearGradient(0, 0, 0, 380); 
+            gradTrade.addColorStop(0, 'rgba(245, 158, 11, 0.15)'); 
+            gradTrade.addColorStop(1, 'rgba(245, 158, 11, 0)');
             
             window.c1 = new Chart(ctx1, { 
                 type:'line', 
                 data: { 
-                    labels: ['Start', ...raw.map((d, i) => '')], // Add Start label
+                    labels: ['Start', ...raw.map((d, i) => '')],
                     datasets: [
                         { 
                             label: 'Income', 
                             data: [0, ...raw.map(d=>(d.category==='Income' || d.category.startsWith('Income:'))?d.amount*conversion:null)], 
-                            borderColor:'#00ffa3', 
+                            borderColor:'#10b981', 
                             backgroundColor: gradInc, 
-                            tension: 0.4, 
-                            fill: true, 
-                            spanGaps: true, 
-                            pointRadius: 0, 
-                            pointHoverRadius: 6, 
-                            pointBackgroundColor: '#00ffa3',
+                            tension: 0.4, fill: true, spanGaps: true, 
+                            pointRadius: 0, pointHoverRadius: 5, 
+                            pointBackgroundColor: '#10b981',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            borderWidth: 3
+                            borderWidth: 2
                         }, 
                         { 
                             label: 'Expense', 
                             data: [0, ...raw.map(d=>(d.category!=='Income' && !d.category.startsWith('Income:') && d.category!=='Trading')?d.amount*conversion:null)], 
-                            borderColor:'#ff3d71', 
+                            borderColor:'#ef4444', 
                             backgroundColor: gradExp, 
-                            tension: 0.4, 
-                            fill: true, 
-                            spanGaps: true, 
-                            pointRadius: 0, 
-                            pointHoverRadius: 6, 
-                            pointBackgroundColor: '#ff3d71',
+                            tension: 0.4, fill: true, spanGaps: true, 
+                            pointRadius: 0, pointHoverRadius: 5, 
+                            pointBackgroundColor: '#ef4444',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            borderWidth: 3
+                            borderWidth: 2
                         }, 
                         { 
                             label: 'Trade', 
                             data: [0, ...raw.map(d=>d.category==='Trading'?d.amount*conversion:null)], 
-                            borderColor:'#ffaa00', 
+                            borderColor:'#f59e0b', 
                             backgroundColor: gradTrade, 
-                            tension: 0.4, 
-                            fill: true, 
-                            spanGaps: true, 
-                            pointRadius: 0, 
-                            pointHoverRadius: 6,
-                            pointBackgroundColor: '#ffaa00',
+                            tension: 0.4, fill: true, spanGaps: true, 
+                            pointRadius: 0, pointHoverRadius: 5,
+                            pointBackgroundColor: '#f59e0b',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            borderWidth: 3
+                            borderWidth: 2
                         }
                     ]
                 }, 
@@ -1726,20 +1718,16 @@
                     scales:{
                         y:{ 
                             beginAtZero: true, 
-                            grid: { color: 'rgba(255,255,255,0.04)', borderDash: [6, 6], drawBorder: false }, 
-                            ticks: { color: '#64748b', font: { size: 10, family: activeFont, weight: 600 } } 
+                            grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false }, 
+                            ticks: { color: '#475569', font: { size: 10, family: activeFont, weight: 500 } } 
                         }, 
-                        x:{ 
-                            display: false 
-                        }
+                        x:{ display: false }
                     } 
                 } 
             });
             
-            // --- CHART 2: SHARE RATIO ---
             const ctx3 = document.getElementById('pieChart').getContext('2d'); 
             if(window.c3) window.c3.destroy();
-
             const tradeVol = Math.abs(data.filter(d=>d.category==='Trading').reduce((s,d)=>s+d.amount,0))*conversion;
 
             window.c3 = new Chart(ctx3, { 
@@ -1748,17 +1736,17 @@
                     labels: ['Income','Expense','Trading'], 
                     datasets: [{ 
                         data: [inc*conversion, exp*conversion, tradeVol], 
-                        backgroundColor: ['#00ffa3','#ff3d71','#ffaa00'], 
+                        backgroundColor: ['#10b981','#ef4444','#f59e0b'], 
                         borderColor: 'transparent', 
                         borderWidth: 0,
-                        hoverOffset: 12,
-                        borderRadius: 6,
-                        spacing: 5
+                        hoverOffset: 8,
+                        borderRadius: 4,
+                        spacing: 3
                     }] 
                 }, 
                 options: { 
                     ...commonOptions, 
-                    cutout: '72%', 
+                    cutout: '75%', 
                     plugins: {
                         legend: {
                             display: true,
@@ -1766,56 +1754,33 @@
                             labels: {
                                 usePointStyle: true,
                                 pointStyle: 'circle',
-                                padding: 20,
+                                padding: 16,
                                 color: '#94a3b8',
-                                font: { family: activeFont, size: 11, weight: 700 }
+                                font: { family: activeFont, size: 11, weight: 500 }
                             }
                         },
-                        tooltip: {
-                            ...commonOptions.plugins.tooltip
-                        }
+                        tooltip: { ...commonOptions.plugins.tooltip }
                     } 
                 } 
             });
         }
 
-        // --- EXPORT FUNCTION ---
         function exportData(type) {
             let dataToExport = [];
             let fileName = "Spendio_Export.xlsx";
-
             if(type === 'trade') {
                 dataToExport = allData.filter(d => d.category === 'Trading').map(d => {
                     const p = (d.note || '').split('|'); 
-                    return {
-                        Date: new Date(d.created_at).toLocaleDateString(),
-                        Pair: d.title,
-                        Position: p[0] || '',
-                        Leverage: p[1] || '',
-                        Strategy: p[2] || '',
-                        PnL: d.amount
-                    };
+                    return { Date: new Date(d.created_at).toLocaleDateString(), Pair: d.title, Position: p[0] || '', Leverage: p[1] || '', Strategy: p[2] || '', PnL: d.amount };
                 });
                 fileName = "Trading_Journal.xlsx";
             } else {
                 dataToExport = allData.filter(d => d.category !== 'Trading').map(d => {
-                    return {
-                        Date: new Date(d.created_at).toLocaleDateString(),
-                        Title: d.title,
-                        Category: d.category.replace('Income: ', ''),
-                        Note: d.note,
-                        Amount: d.amount,
-                        Type: (d.category.startsWith('Income:') || d.category === 'Income') ? 'Income' : 'Expense'
-                    };
+                    return { Date: new Date(d.created_at).toLocaleDateString(), Title: d.title, Category: d.category.replace('Income: ', ''), Note: d.note, Amount: d.amount, Type: (d.category.startsWith('Income:') || d.category === 'Income') ? 'Income' : 'Expense' };
                 });
                 fileName = "Transactions.xlsx";
             }
-
-            if(dataToExport.length === 0) {
-                alert("No data to export");
-                return;
-            }
-
+            if(dataToExport.length === 0) { alert("No data to export"); return; }
             const ws = XLSX.utils.json_to_sheet(dataToExport);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Data");
